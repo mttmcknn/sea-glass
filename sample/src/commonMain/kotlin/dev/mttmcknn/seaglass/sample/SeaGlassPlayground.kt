@@ -11,8 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -40,6 +43,16 @@ private val Muted = Color(0xff74847c)
 private val Page = Color(0xfff4f5f0)
 private val Border = Color(0xffe2e6dd)
 
+// Store primitives so the current material survives rotation and activity recreation.
+private val RecipeSaver = listSaver<SeaGlassStyle, Any>(
+    save = { listOf(it.frost, it.grain, it.tumble, it.thickness.value, it.bulge,
+        it.elevation.value, it.lightDegrees, it.transmission, it.seed) },
+    restore = { SeaGlassStyle(frost = it[0] as Float, grain = it[1] as Float,
+        tumble = it[2] as Float, thickness = (it[3] as Float).dp, bulge = it[4] as Float,
+        elevation = (it[5] as Float).dp, lightDegrees = it[6] as Float,
+        transmission = it[7] as Float, seed = it[8] as Int) },
+)
+
 /** The same material recipe and specimens as the HTML playground, rendered by Compose. */
 @Composable
 fun SeaGlassPlayground() {
@@ -55,13 +68,16 @@ fun SeaGlassPlayground() {
             onBackground = Ink,
         ),
     ) {
-        var style by remember { mutableStateOf(SeaGlassStyle()) }
-        var paletteIndex by remember { mutableIntStateOf(0) }
-        var preset by remember { mutableStateOf("Reference") }
-        var tab by remember { mutableIntStateOf(0) }
-        var saved by remember { mutableStateOf(false) }
-        var showComposer by remember { mutableStateOf(false) }
-        var note by remember { mutableStateOf("") }
+        var style by rememberSaveable(stateSaver = RecipeSaver) { mutableStateOf(SeaGlassStyle()) }
+        var paletteIndex by rememberSaveable { mutableIntStateOf(0) }
+        var preset by rememberSaveable { mutableStateOf("Reference") }
+        var tab by rememberSaveable { mutableIntStateOf(0) }
+        var saved by rememberSaveable { mutableStateOf(false) }
+        var showComposer by rememberSaveable { mutableStateOf(false) }
+        var note by rememberSaveable { mutableStateOf("") }
+        val previewScroll = rememberScrollState()
+        val controlsScroll = rememberScrollState()
+        val compactScroll = rememberScrollState()
         val snackbar = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
         val report: (String) -> Unit = { message -> scope.launch { snackbar.showSnackbar(message) }; Unit }
@@ -69,7 +85,7 @@ fun SeaGlassPlayground() {
         val reset = { style = SeaGlassStyle(); paletteIndex = 0; preset = "Reference" }
 
         Box(Modifier.fillMaxSize().background(Page)) {
-            Column(Modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize().safeDrawingPadding()) {
                 Row(
                     Modifier.fillMaxWidth().border(1.dp, Border).padding(horizontal = 24.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -84,14 +100,19 @@ fun SeaGlassPlayground() {
                     TextButton(onClick = reset) { Text("Reset") }
                 }
                 BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
-                    val wide = maxWidth >= 960.dp
+                    // Use the available app window, including live multi-window resizing.
+                    val wide = maxWidth >= 600.dp
                     if (wide) {
-                        Row(Modifier.fillMaxSize().padding(28.dp), horizontalArrangement = Arrangement.spacedBy(28.dp)) {
-                            Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+                        val gutter = if (maxWidth >= 960.dp) 28.dp else 16.dp
+                        val controlsWidth = (maxWidth * .34f).coerceIn(240.dp, 326.dp)
+                        Row(Modifier.fillMaxSize().padding(gutter), horizontalArrangement = Arrangement.spacedBy(gutter)) {
+                            Column(Modifier.weight(1f).fillMaxHeight().testTag("playground-preview")
+                                .verticalScroll(previewScroll)) {
                                 PlaygroundPreview(style, paletteIndex, tab, { tab = it }, { paletteIndex = it },
-                                    { showComposer = true }, saved, { saved = !saved }, report)
+                                    { showComposer = true }, saved, { saved = !saved }, report, compactIntro = true)
                             }
-                            Column(Modifier.width(326.dp).verticalScroll(rememberScrollState())) {
+                            Column(Modifier.width(controlsWidth).fillMaxHeight().testTag("playground-controls")
+                                .verticalScroll(controlsScroll)) {
                                 MaterialControls(style, updateStyle, preset, { name ->
                                     style = presetStyle(name, style.seed); preset = name
                                 }, paletteIndex, { paletteIndex = it })
@@ -99,7 +120,8 @@ fun SeaGlassPlayground() {
                         }
                     } else {
                         Column(
-                            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
+                            Modifier.fillMaxSize().testTag("playground-stacked")
+                                .verticalScroll(compactScroll).padding(20.dp),
                             verticalArrangement = Arrangement.spacedBy(28.dp),
                         ) {
                             PlaygroundPreview(style, paletteIndex, tab, { tab = it }, { paletteIndex = it },
@@ -111,7 +133,7 @@ fun SeaGlassPlayground() {
                     }
                 }
             }
-            SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(16.dp))
+            SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).safeDrawingPadding().padding(16.dp))
         }
         if (showComposer) {
             AlertDialog(
@@ -146,31 +168,41 @@ private fun PlaygroundPreview(
     saved: Boolean,
     onSave: () -> Unit,
     report: (String) -> Unit,
+    compactIntro: Boolean = false,
 ) {
     // The controls provide subtree defaults. Individual pieces only override identity,
     // and the mixed-pigment view overrides colors where the specimen calls for it.
     SeaGlassTheme(style = style, palette = palettes.getOrNull(paletteIndex - 1) ?: SeaGlassPalette.Lagoon) {
         Column(Modifier.fillMaxWidth()) {
-            Eyebrow("SMOOTHED BY THE SEA. SHAPED BY YOU.")
-            Spacer(Modifier.height(14.dp))
-            Text("A little less perfect.", fontSize = 34.sp, lineHeight = 40.sp, fontFamily = FontFamily.Serif, color = Ink)
-            Text("A little more character.", fontSize = 34.sp, lineHeight = 40.sp, fontFamily = FontFamily.Serif,
-                fontStyle = FontStyle.Italic, color = Color(0xff728879))
-            Spacer(Modifier.height(14.dp))
-            Text("Frosted color, softened edges, a little weight.\nFind the feel of your next interface.",
-                fontSize = 14.sp, lineHeight = 22.sp, color = Muted)
-            Spacer(Modifier.height(28.dp))
+            if (compactIntro) {
+                Text("Live preview", fontSize = 26.sp, fontFamily = FontFamily.Serif, color = Ink)
+                Spacer(Modifier.height(6.dp))
+                Text("Shape the glass. See it change.", fontSize = 13.sp, color = Muted)
+                Spacer(Modifier.height(16.dp))
+            } else {
+                Eyebrow("SMOOTHED BY THE SEA. SHAPED BY YOU.")
+                Spacer(Modifier.height(14.dp))
+                Text("A little less perfect.", fontSize = 34.sp, lineHeight = 40.sp, fontFamily = FontFamily.Serif, color = Ink)
+                Text("A little more character.", fontSize = 34.sp, lineHeight = 40.sp, fontFamily = FontFamily.Serif,
+                    fontStyle = FontStyle.Italic, color = Color(0xff728879))
+                Spacer(Modifier.height(14.dp))
+                Text("Frosted color, softened edges, a little weight.\nFind the feel of your next interface.",
+                    fontSize = 14.sp, lineHeight = 22.sp, color = Muted)
+                Spacer(Modifier.height(28.dp))
+            }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 listOf("Components", "Shape study", "In context").forEachIndexed { index, title ->
-                    TextButton(onClick = { onTab(index) }, contentPadding = PaddingValues(horizontal = 10.dp)) {
+                    TextButton(onClick = { onTab(index) }, modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = 2.dp)) {
                         Text(title, color = if (tab == index) Ink else Muted,
+                            fontSize = 12.sp,
                             fontWeight = if (tab == index) FontWeight.SemiBold else FontWeight.Normal)
                     }
                 }
             }
             Column(
                 Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(20.dp))
-                    .border(1.dp, Border, RoundedCornerShape(20.dp)).padding(20.dp),
+                    .border(1.dp, Border, RoundedCornerShape(20.dp)).padding(if (compactIntro) 12.dp else 20.dp),
             ) {
                 Eyebrow(when (tab) {
                     1 -> "02 / NO TWO ALIKE"
@@ -211,48 +243,27 @@ private fun ComponentStudy(
     onCompose: () -> Unit, report: (String) -> Unit,
 ) {
     val style = SeaGlassTheme.style
-    var showMenu by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(Modifier.height(42.dp))
-        Row(Modifier.widthIn(max = 550.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            val toolbarPalette = selectedPalette(paletteIndex, SeaGlassPalette.Lilac)
-            SeaGlassSurface(
-                modifier = Modifier.weight(1f).height(66.dp), style = style.copy(seed = style.seed + 11),
-                palette = toolbarPalette, shape = SeaGlassShape.Capsule,
-            ) {
-                Row(Modifier.fillMaxSize().padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                    ActionIcon(GlassGlyph.Share, "Share", toolbarPalette.ink, Modifier.weight(1f)) { report("Sharing is a visual demo") }
-                    ActionIcon(GlassGlyph.Message, "Comments", toolbarPalette.ink, Modifier.weight(1f)) { report("No comments yet. Start with a small moment.") }
-                    ActionIcon(GlassGlyph.Download, "Download recipe", toolbarPalette.ink, Modifier.weight(1f)) { report("Use the HTML playground to export a material recipe") }
-                    ActionIcon(GlassGlyph.Edit, "Edit", toolbarPalette.ink, Modifier.weight(1f), onCompose)
-                    Box(Modifier.weight(1f)) {
-                        ActionIcon(GlassGlyph.More, "More actions", toolbarPalette.ink, Modifier.fillMaxWidth()) { showMenu = true }
-                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                            DropdownMenuItem(text = { Text("Compose a moment") }, onClick = { showMenu = false; onCompose() })
-                            DropdownMenuItem(text = { Text("About this material") }, onClick = {
-                                showMenu = false; report("Seeded curves, frosted color, and soft transmitted light")
-                            })
-                        }
+        BoxWithConstraints(Modifier.widthIn(max = 550.dp).fillMaxWidth()) {
+            val compact = maxWidth < 350.dp
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    GlassToolbar(paletteIndex, onCompose, report, Modifier.weight(1f))
+                    if (!compact) AddMomentButton(paletteIndex, onCompose)
+                }
+                Spacer(Modifier.height(48.dp))
+                if (compact) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        ComposeMomentButton(onCompose, Modifier.weight(1f), compact = true)
+                        AddMomentButton(paletteIndex, onCompose)
                     }
+                } else {
+                    ComposeMomentButton(onCompose, Modifier.widthIn(max = 280.dp).fillMaxWidth())
                 }
             }
-            SeaGlassButton(
-                onClick = onCompose, modifier = Modifier.size(64.dp).semantics { contentDescription = "Add a moment" },
-                style = style.copy(seed = style.seed + 25), palette = selectedPalette(paletteIndex, SeaGlassPalette.Rose),
-                contentPadding = PaddingValues(12.dp),
-            ) { GlassIcon(GlassGlyph.Plus, modifier = Modifier.size(28.dp)) }
-        }
-        Spacer(Modifier.height(48.dp))
-        SeaGlassButton(
-            onClick = onCompose, modifier = Modifier.widthIn(max = 280.dp).fillMaxWidth().height(86.dp),
-            style = SeaGlassTheme.componentStyle.withSeed(style.seed + 33),
-            contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp),
-        ) {
-            GlassIcon(GlassGlyph.Edit, modifier = Modifier.size(30.dp))
-            Spacer(Modifier.width(18.dp))
-            Text("Compose", fontSize = 24.sp, fontWeight = FontWeight.Medium)
         }
         Spacer(Modifier.height(46.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -267,6 +278,58 @@ private fun ComponentStudy(
         }
         Spacer(Modifier.height(12.dp))
     }
+}
+
+@Composable
+private fun ComposeMomentButton(onCompose: () -> Unit, modifier: Modifier = Modifier, compact: Boolean = false) {
+    SeaGlassButton(
+        onClick = onCompose, modifier = modifier.height(if (compact) 72.dp else 86.dp),
+        style = SeaGlassTheme.componentStyle.withSeed(SeaGlassTheme.style.seed + 33),
+        contentPadding = PaddingValues(horizontal = if (compact) 14.dp else 30.dp, vertical = 20.dp),
+    ) {
+        GlassIcon(GlassGlyph.Edit, modifier = Modifier.size(if (compact) 24.dp else 30.dp))
+        Spacer(Modifier.width(if (compact) 10.dp else 18.dp))
+        Text("Compose", fontSize = if (compact) 20.sp else 24.sp, fontWeight = FontWeight.Medium)
+    }
+}
+
+@Composable
+private fun AddMomentButton(paletteIndex: Int, onCompose: () -> Unit) {
+    SeaGlassButton(
+        onClick = onCompose, modifier = Modifier.size(64.dp).semantics { contentDescription = "Add a moment" },
+        style = SeaGlassTheme.style.copy(seed = SeaGlassTheme.style.seed + 25),
+        palette = selectedPalette(paletteIndex, SeaGlassPalette.Rose),
+        contentPadding = PaddingValues(12.dp),
+    ) { GlassIcon(GlassGlyph.Plus, modifier = Modifier.size(28.dp)) }
+}
+
+@Composable
+private fun GlassToolbar(paletteIndex: Int, onCompose: () -> Unit, report: (String) -> Unit, modifier: Modifier) {
+    val style = SeaGlassTheme.style
+    var showMenu by remember { mutableStateOf(false) }
+    val toolbarPalette = selectedPalette(paletteIndex, SeaGlassPalette.Lilac)
+    SeaGlassSurface(
+        modifier = modifier.height(66.dp), style = style.copy(seed = style.seed + 11),
+        palette = toolbarPalette, shape = SeaGlassShape.Capsule,
+    ) {
+        Row(Modifier.fillMaxSize().padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+            ActionIcon(GlassGlyph.Share, "Share", toolbarPalette.ink, Modifier.weight(1f)) { report("Sharing is a visual demo") }
+            ActionIcon(GlassGlyph.Message, "Comments", toolbarPalette.ink, Modifier.weight(1f)) { report("No comments yet. Start with a small moment.") }
+            ActionIcon(GlassGlyph.Download, "Download recipe", toolbarPalette.ink, Modifier.weight(1f)) { report("Use the HTML playground to export a material recipe") }
+            ActionIcon(GlassGlyph.Edit, "Edit", toolbarPalette.ink, Modifier.weight(1f), onCompose)
+            Box(Modifier.weight(1f)) {
+                ActionIcon(GlassGlyph.More, "More actions", toolbarPalette.ink, Modifier.fillMaxWidth()) { showMenu = true }
+                DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                    DropdownMenuItem(text = { Text("Compose a moment") }, onClick = { showMenu = false; onCompose() })
+                    DropdownMenuItem(text = { Text("About this material") }, onClick = {
+                        showMenu = false; report("Seeded curves, frosted color, and soft transmitted light")
+                    })
+                }
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -334,15 +397,15 @@ private fun MaterialControls(
     paletteIndex: Int, onPalette: (Int) -> Unit,
 ) {
     Column(Modifier.fillMaxWidth().background(Color(0xfffbfcf8), RoundedCornerShape(18.dp))
-        .border(1.dp, Border, RoundedCornerShape(18.dp)).padding(20.dp)) {
+        .border(1.dp, Border, RoundedCornerShape(18.dp)).padding(16.dp)) {
         Eyebrow("MAKE IT YOURS")
         Spacer(Modifier.height(8.dp))
-        Text("Shape the material", color = Ink, fontSize = 25.sp, fontFamily = FontFamily.Serif)
+        Text("Shape the material", color = Ink, fontSize = 22.sp, fontFamily = FontFamily.Serif)
         Spacer(Modifier.height(6.dp))
         Text("One recipe. Every component.", fontSize = 13.sp, color = Muted)
         Spacer(Modifier.height(24.dp))
         Text("Start with a feeling", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Ink)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             listOf("Reference", "Tumbled", "Quiet").forEach { name ->
                 FilterChip(selected = preset == name, onClick = { onPreset(name) }, label = { Text(name, fontSize = 11.sp) })
             }

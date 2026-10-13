@@ -20,12 +20,16 @@ fun main(args: Array<String>) = runBlocking {
     val captures = listOf(
         Capture("playground-desktop", 1180, 1280) { SeaGlassPlayground() },
         Capture("playground-narrow", 420, 1840) { SeaGlassPlayground() },
+        Capture("playground-tablet", 900, 900) { SeaGlassPlayground() },
+        Capture("playground-foldable", 700, 840) { SeaGlassPlayground() },
+        Capture("playground-split", 600, 840) { SeaGlassPlayground() },
+        Capture("playground-compact", 420, 840) { SeaGlassPlayground() },
         Capture("composable-specimens", 1400, 1000) { SpecimenGallery() },
         Capture("tumble-bulge", 1400, 1000) { TumbleBulgeGallery() },
         Capture("material-recipes", 1400, 1000) { MaterialRecipesGallery() },
         Capture("theme-styles", 1400, 1000) { ThemeStylesGallery() },
     )
-    val selected = args.getOrNull(1)?.let { name -> captures.filter { it.name == name } } ?: captures
+    val selected = args.getOrNull(1)?.split(',')?.let { names -> captures.filter { it.name in names } } ?: captures
     require(selected.isNotEmpty()) { "Unknown screenshot: ${args.getOrNull(1)}" }
     for (capture in selected) {
         val scene = ImageComposeScene(

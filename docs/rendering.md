@@ -48,6 +48,10 @@ These images capture the actual Compose hierarchy with the desktop Skia renderer
 
 [Narrow playground layout](screenshots/playground-narrow.png)
 
+![Tablet playground with live preview and independent controls](screenshots/playground-tablet.png)
+
+The shared playground switches to two panes at 600 dp of available width. The preview stays visible while scrolling the controls; settings survive resizing and Android activity recreation. These captures exercise [700 dp unfolded windows](screenshots/playground-foldable.png), [the 600 dp split-window boundary](screenshots/playground-split.png), and [a compact 420 dp window](screenshots/playground-compact.png).
+
 ![Composable specimens](screenshots/composable-specimens.png)
 
 ![Tumble and bulge comparison](screenshots/tumble-bulge.png)
@@ -56,10 +60,12 @@ These images capture the actual Compose hierarchy with the desktop Skia renderer
 
 ![Theme inheritance and reusable component styles](screenshots/theme-styles.png)
 
-Recreate all six images with JDK 17:
+Recreate all ten images with JDK 17:
 
 ```sh
 ./gradlew -PseaGlass.android=false :desktopApp:captureScreenshots
 ```
 
 The capture entry point and galleries are in `desktopApp/src/main/kotlin/dev/mttmcknn/seaglass/desktop/`. Output is written to `docs/screenshots/`. The public recipe/component APIs used by these galleries are the same APIs used by the app.
+
+`./gradlew -PseaGlass.android=false :desktopApp:verifyPlayground` checks the actual Compose hierarchy: controls scroll without moving or changing the visible preview, the Tumble slider redraws the material, and resizing through 600 → 599 → 700 dp preserves the selected value. This is headless Compose verification, not an Android device performance measurement.

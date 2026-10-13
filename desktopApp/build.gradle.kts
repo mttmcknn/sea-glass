@@ -30,3 +30,11 @@ tasks.register<JavaExec>("captureScreenshots") {
     args(rootProject.layout.projectDirectory.dir("docs/screenshots").asFile.absolutePath)
     providers.gradleProperty("capture").orNull?.let { args(it) }
 }
+
+tasks.register<JavaExec>("verifyPlayground") {
+    group = "verification"
+    description = "Check independent panes, live material changes, and resizing in the real Compose playground."
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass = "dev.mttmcknn.seaglass.desktop.VerifyPlaygroundKt"
+    systemProperty("java.awt.headless", "true")
+}

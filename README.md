@@ -54,6 +54,14 @@ Without an Android SDK, pass `-PseaGlass.android=false` for desktop work:
 ./gradlew -PseaGlass.android=false :desktopApp:run
 ```
 
+The Compose playground uses a live two-pane layout from 600 dp of available window width: components on the left, independently scrolling controls on the right. Narrower windows stack the sections. It adapts when resizing, rotating, or folding, preserves the current recipe and selections, and respects system-bar insets.
+
+Check slider updates, independent scrolling, and the resize boundary with:
+
+```sh
+./gradlew -PseaGlass.android=false :desktopApp:verifyPlayground
+```
+
 The web demo is buildless:
 
 ```sh
