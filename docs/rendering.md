@@ -60,7 +60,11 @@ The shared playground switches to two panes at 600 dp of available width. The pr
 
 ![Theme inheritance and reusable component styles](screenshots/theme-styles.png)
 
-Recreate all ten images with JDK 17:
+![Sea glass in music, phone, email, and AI chat interfaces](screenshots/app-interfaces.png)
+
+These interactive mock interfaces use ordinary Compose layouts with sea glass reserved for playback controls, call controls, the inbox toolbar and compose action, and chat suggestions/send. Select them in the playground's scene dropdown; the active material recipe applies to their accents. `SeaGlassShowcase(scene)` also renders any example without playground chrome for native galleries and screenshots.
+
+Recreate all eleven images with JDK 17:
 
 ```sh
 ./gradlew -PseaGlass.android=false :desktopApp:captureScreenshots

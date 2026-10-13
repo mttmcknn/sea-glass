@@ -56,6 +56,10 @@ Without an Android SDK, pass `-PseaGlass.android=false` for desktop work:
 
 The Compose playground uses a live two-pane layout from 600 dp of available window width: components on the left, independently scrolling controls on the right. Narrower windows stack the sections. It adapts when resizing, rotating, or folding, preserves the current recipe and selections, and respects system-bar insets.
 
+Choose **Music player**, **Phone call**, **Email**, or **AI chat** from the scene dropdown to try the material in familiar interfaces. The same sliders change their glass accents live. **Mix** gives each scene its own palette; choosing a color changes its main glass accents. These are interactive local mockups with sample content.
+
+For screenshots, tap **Preview only** to hide the playground controls. Double-tap the background to return (or use the **Show controls** accessibility action). [Preview the four app interfaces](docs/screenshots/app-interfaces.png).
+
 Check slider updates, independent scrolling, and the resize boundary with:
 
 ```sh

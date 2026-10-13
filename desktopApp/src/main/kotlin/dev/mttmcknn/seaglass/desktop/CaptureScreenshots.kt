@@ -28,6 +28,7 @@ fun main(args: Array<String>) = runBlocking {
         Capture("tumble-bulge", 1400, 1000) { TumbleBulgeGallery() },
         Capture("material-recipes", 1400, 1000) { MaterialRecipesGallery() },
         Capture("theme-styles", 1400, 1000) { ThemeStylesGallery() },
+        Capture("app-interfaces", 1000, 1920) { AppScenesGallery() },
     )
     val selected = args.getOrNull(1)?.split(',')?.let { names -> captures.filter { it.name in names } } ?: captures
     require(selected.isNotEmpty()) { "Unknown screenshot: ${args.getOrNull(1)}" }

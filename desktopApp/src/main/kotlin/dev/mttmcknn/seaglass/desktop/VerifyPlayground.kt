@@ -77,9 +77,49 @@ fun main() = runBlocking {
             }
         }
         println("PASS: 600 → 599 → 700 dp switches layout without losing the selected recipe.")
+
+        scene.tagged("playground-scene-selector").click()
+        scene.settle()
+        val musicItem = scene.nodes().single {
+            it.config.getOrNull(SemanticsProperties.Text)?.any { text -> text.text == "Music player" } == true
+        }
+        musicItem.click()
+        scene.settle()
+        check(scene.hasText("Evening tide")) { "Selecting Music player must show the music scene" }
+        scene.assertTumble(tumble)
+        scene.described("Pause").click()
+        scene.settle()
+        scene.described("Play")
+
+        scene.tagged("playground-preview-toggle").click()
+        scene.settle()
+        check(scene.hasText("Evening tide")) { "Preview only must keep the selected scene" }
+        scene.described("Play")
+        check(scene.nodes().none {
+            it.config.getOrNull(SemanticsProperties.TestTag) in setOf("playground-controls", "playground-scene-selector")
+        }) { "Preview only must hide the editing controls and scene selector" }
+        val exitPreview = scene.tagged("playground-showcase").config[SemanticsActions.CustomActions]
+            .single { it.label == "Show controls" }
+        check(exitPreview.action())
+        scene.settle()
+        scene.tagged("playground-controls")
+        check(scene.hasText("Evening tide")) { "Leaving Preview only must keep the selected scene" }
+        scene.described("Play")
+        scene.assertTumble(tumble)
+        println("PASS: Scene selection and Preview only keep the selected scene and recipe while toggling editing controls.")
     } finally {
         scene.close()
     }
+}
+
+private fun SemanticsNode.click() {
+    val clickable = generateSequence(this) { it.parent }.first { it.config.contains(SemanticsActions.OnClick) }
+    check(clickable.config[SemanticsActions.OnClick].action?.invoke() == true)
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+private fun ImageComposeScene.hasText(value: String): Boolean = nodes().any {
+    it.config.getOrNull(SemanticsProperties.Text)?.any { text -> text.text == value } == true
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -91,6 +131,11 @@ private fun ImageComposeScene.nodes(): List<SemanticsNode> {
 @OptIn(ExperimentalComposeUiApi::class)
 private fun ImageComposeScene.tagged(tag: String): SemanticsNode = nodes().single {
     it.config.getOrNull(SemanticsProperties.TestTag) == tag
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+private fun ImageComposeScene.described(description: String): SemanticsNode = nodes().single {
+    it.config.getOrNull(SemanticsProperties.ContentDescription)?.contains(description) == true
 }
 
 @OptIn(ExperimentalComposeUiApi::class)

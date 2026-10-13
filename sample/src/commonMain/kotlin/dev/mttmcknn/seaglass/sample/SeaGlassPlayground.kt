@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -23,6 +26,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -71,10 +76,13 @@ fun SeaGlassPlayground() {
         var style by rememberSaveable(stateSaver = RecipeSaver) { mutableStateOf(SeaGlassStyle()) }
         var paletteIndex by rememberSaveable { mutableIntStateOf(0) }
         var preset by rememberSaveable { mutableStateOf("Reference") }
-        var tab by rememberSaveable { mutableIntStateOf(0) }
+        var sceneName by rememberSaveable { mutableStateOf(SeaGlassScene.Components.name) }
+        val scene = SeaGlassScene.valueOf(sceneName)
+        var previewOnly by rememberSaveable { mutableStateOf(false) }
         var saved by rememberSaveable { mutableStateOf(false) }
         var showComposer by rememberSaveable { mutableStateOf(false) }
         var note by rememberSaveable { mutableStateOf("") }
+        val showcase = remember { movableContentOf<SeaGlassScene> { SeaGlassShowcase(it) } }
         val previewScroll = rememberScrollState()
         val controlsScroll = rememberScrollState()
         val compactScroll = rememberScrollState()
@@ -84,51 +92,59 @@ fun SeaGlassPlayground() {
         val updateStyle: (SeaGlassStyle) -> Unit = { style = it; preset = "" }
         val reset = { style = SeaGlassStyle(); paletteIndex = 0; preset = "Reference" }
 
+        val openPreview = {
+            previewOnly = true
+            report("Double-tap the background to return to controls")
+        }
         Box(Modifier.fillMaxSize().background(Page)) {
-            Column(Modifier.fillMaxSize().safeDrawingPadding()) {
-                Row(
-                    Modifier.fillMaxWidth().border(1.dp, Border).padding(horizontal = 24.dp, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    BrandMark()
-                    Spacer(Modifier.width(12.dp))
-                    Column {
-                        Text("sea glass", fontSize = 24.sp, fontFamily = FontFamily.Serif, color = Ink)
-                        Eyebrow("MATERIAL PLAYGROUND")
+            if (previewOnly) {
+                ShowcasePreview(scene, style, paletteIndex, showcase, onExit = { previewOnly = false })
+            } else {
+                Column(Modifier.fillMaxSize().safeDrawingPadding()) {
+                    Row(
+                        Modifier.fillMaxWidth().border(1.dp, Border).padding(horizontal = 24.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        BrandMark()
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text("sea glass", fontSize = 24.sp, fontFamily = FontFamily.Serif, color = Ink)
+                            Eyebrow("MATERIAL PLAYGROUND")
+                        }
+                        Spacer(Modifier.weight(1f))
+                        TextButton(onClick = reset) { Text("Reset") }
                     }
-                    Spacer(Modifier.weight(1f))
-                    TextButton(onClick = reset) { Text("Reset") }
-                }
-                BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
-                    // Use the available app window, including live multi-window resizing.
-                    val wide = maxWidth >= 600.dp
-                    if (wide) {
-                        val gutter = if (maxWidth >= 960.dp) 28.dp else 16.dp
-                        val controlsWidth = (maxWidth * .34f).coerceIn(240.dp, 326.dp)
-                        Row(Modifier.fillMaxSize().padding(gutter), horizontalArrangement = Arrangement.spacedBy(gutter)) {
-                            Column(Modifier.weight(1f).fillMaxHeight().testTag("playground-preview")
-                                .verticalScroll(previewScroll)) {
-                                PlaygroundPreview(style, paletteIndex, tab, { tab = it }, { paletteIndex = it },
-                                    { showComposer = true }, saved, { saved = !saved }, report, compactIntro = true)
+                    BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
+                        // Use the available app window, including live multi-window resizing.
+                        val wide = maxWidth >= 600.dp
+                        if (wide) {
+                            val gutter = if (maxWidth >= 960.dp) 28.dp else 16.dp
+                            val controlsWidth = (maxWidth * .34f).coerceIn(240.dp, 326.dp)
+                            Row(Modifier.fillMaxSize().padding(gutter), horizontalArrangement = Arrangement.spacedBy(gutter)) {
+                                Column(Modifier.weight(1f).fillMaxHeight().testTag("playground-preview")
+                                    .verticalScroll(previewScroll)) {
+                                    PlaygroundPreview(style, paletteIndex, scene, { sceneName = it.name }, { paletteIndex = it },
+                                        { showComposer = true }, saved, { saved = !saved }, report, openPreview, showcase, compactIntro = true)
+                                }
+                                Column(Modifier.width(controlsWidth).fillMaxHeight().testTag("playground-controls")
+                                    .verticalScroll(controlsScroll)) {
+                                    MaterialControls(style, updateStyle, preset, { name ->
+                                        style = presetStyle(name, style.seed); preset = name
+                                    }, paletteIndex, { paletteIndex = it })
+                                }
                             }
-                            Column(Modifier.width(controlsWidth).fillMaxHeight().testTag("playground-controls")
-                                .verticalScroll(controlsScroll)) {
+                        } else {
+                            Column(
+                                Modifier.fillMaxSize().testTag("playground-stacked")
+                                    .verticalScroll(compactScroll).padding(20.dp),
+                                verticalArrangement = Arrangement.spacedBy(28.dp),
+                            ) {
+                                PlaygroundPreview(style, paletteIndex, scene, { sceneName = it.name }, { paletteIndex = it },
+                                    { showComposer = true }, saved, { saved = !saved }, report, openPreview, showcase)
                                 MaterialControls(style, updateStyle, preset, { name ->
                                     style = presetStyle(name, style.seed); preset = name
                                 }, paletteIndex, { paletteIndex = it })
                             }
-                        }
-                    } else {
-                        Column(
-                            Modifier.fillMaxSize().testTag("playground-stacked")
-                                .verticalScroll(compactScroll).padding(20.dp),
-                            verticalArrangement = Arrangement.spacedBy(28.dp),
-                        ) {
-                            PlaygroundPreview(style, paletteIndex, tab, { tab = it }, { paletteIndex = it },
-                                { showComposer = true }, saved, { saved = !saved }, report)
-                            MaterialControls(style, updateStyle, preset, { name ->
-                                style = presetStyle(name, style.seed); preset = name
-                            }, paletteIndex, { paletteIndex = it })
                         }
                     }
                 }
@@ -161,20 +177,22 @@ fun SeaGlassPlayground() {
 private fun PlaygroundPreview(
     style: SeaGlassStyle,
     paletteIndex: Int,
-    tab: Int,
-    onTab: (Int) -> Unit,
+    scene: SeaGlassScene,
+    onScene: (SeaGlassScene) -> Unit,
     onPalette: (Int) -> Unit,
     onCompose: () -> Unit,
     saved: Boolean,
     onSave: () -> Unit,
     report: (String) -> Unit,
+    onPreviewOnly: () -> Unit,
+    showcase: @Composable (SeaGlassScene) -> Unit,
     compactIntro: Boolean = false,
 ) {
     // The controls provide subtree defaults. Individual pieces only override identity,
     // and the mixed-pigment view overrides colors where the specimen calls for it.
-    SeaGlassTheme(style = style, palette = palettes.getOrNull(paletteIndex - 1) ?: SeaGlassPalette.Lagoon) {
+    SeaGlassTheme(style = style, palette = scenePalette(scene, paletteIndex)) {
         Column(Modifier.fillMaxWidth()) {
-            if (compactIntro) {
+            if (compactIntro || scene.ordinal >= SeaGlassScene.Music.ordinal) {
                 Text("Live preview", fontSize = 26.sp, fontFamily = FontFamily.Serif, color = Ink)
                 Spacer(Modifier.height(6.dp))
                 Text("Shape the glass. See it change.", fontSize = 13.sp, color = Muted)
@@ -190,49 +208,127 @@ private fun PlaygroundPreview(
                     fontSize = 14.sp, lineHeight = 22.sp, color = Muted)
                 Spacer(Modifier.height(28.dp))
             }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                listOf("Components", "Shape study", "In context").forEachIndexed { index, title ->
-                    TextButton(onClick = { onTab(index) }, modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(horizontal = 2.dp)) {
-                        Text(title, color = if (tab == index) Ink else Muted,
-                            fontSize = 12.sp,
-                            fontWeight = if (tab == index) FontWeight.SemiBold else FontWeight.Normal)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                SceneSelector(scene, onScene, Modifier.weight(1f))
+                TextButton(onClick = onPreviewOnly, modifier = Modifier.testTag("playground-preview-toggle")) {
+                    Text("Preview only", fontSize = 12.sp)
+                }
+            }
+            Spacer(Modifier.height(14.dp))
+            if (scene.ordinal >= SeaGlassScene.Music.ordinal) {
+                Box(Modifier.widthIn(max = 440.dp).fillMaxWidth().align(Alignment.CenterHorizontally)
+                    .clip(RoundedCornerShape(24.dp)).background(Color.White)
+                    .border(1.dp, Border, RoundedCornerShape(24.dp))) {
+                    showcase(scene)
+                }
+                Spacer(Modifier.height(24.dp))
+            } else {
+                Column(
+                    Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(20.dp))
+                        .border(1.dp, Border, RoundedCornerShape(20.dp)).padding(if (compactIntro) 12.dp else 20.dp),
+                ) {
+                    Eyebrow(when (scene) {
+                        SeaGlassScene.ShapeStudy -> "02 / NO TWO ALIKE"
+                        SeaGlassScene.Fieldnotes -> "03 / A LITTLE EVERYDAY MAGIC"
+                        else -> "01 / THE ORIGINAL FEEL"
+                    })
+                    when (scene) {
+                        SeaGlassScene.ShapeStudy -> ShapeStudy(paletteIndex)
+                        SeaGlassScene.Fieldnotes -> ContextStudy(saved, onSave, onCompose)
+                        else -> ComponentStudy(paletteIndex, onPalette, onCompose, report)
                     }
+                    Text(if (scene == SeaGlassScene.ShapeStudy) "Same recipe. Different histories." else "A soft surface. A solid little object.",
+                        modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 22.dp, bottom = 8.dp),
+                        fontSize = 12.sp, color = Muted, fontFamily = FontFamily.Serif, fontStyle = FontStyle.Italic)
+                }
+                Spacer(Modifier.height(28.dp))
+                Eyebrow("SMALL, EVERYDAY OBJECTS")
+                Spacer(Modifier.height(18.dp))
+                SeaGlassButton(
+                    onClick = onSave, modifier = Modifier.height(62.dp).align(Alignment.CenterHorizontally),
+                    style = SeaGlassTheme.componentStyle.withSeed(style.seed + 144),
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
+                ) {
+                    GlassIcon(if (saved) GlassGlyph.Check else GlassGlyph.Bookmark)
+                    Spacer(Modifier.width(12.dp))
+                    Text(if (saved) "Moment saved" else "Save a moment", fontWeight = FontWeight.Medium)
+                }
+                Spacer(Modifier.height(30.dp))
+                Text("Made of curves, color, and a little imperfection.", color = Muted, fontSize = 12.sp)
+                Spacer(Modifier.height(12.dp))
+            }
+        }
+    }
+}
+
+private fun scenePalette(scene: SeaGlassScene, paletteIndex: Int): SeaGlassPalette =
+    palettes.getOrNull(paletteIndex - 1) ?: when (scene) {
+        SeaGlassScene.Music -> SeaGlassPalette.Mint
+        SeaGlassScene.Phone -> SeaGlassPalette.Rose
+        SeaGlassScene.Chat -> SeaGlassPalette.Lilac
+        else -> SeaGlassPalette.Lagoon
+    }
+
+@Composable
+private fun SceneSelector(scene: SeaGlassScene, onScene: (SeaGlassScene) -> Unit, modifier: Modifier) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier) {
+        OutlinedButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()
+            .testTag("playground-scene-selector").semantics { contentDescription = "Choose an example interface" },
+            shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp)) {
+            Text(scene.title, modifier = Modifier.weight(1f), fontSize = 13.sp, color = Ink)
+            Canvas(Modifier.size(12.dp)) {
+                val path = Path().apply {
+                    moveTo(size.width * .15f, size.height * .35f)
+                    lineTo(size.width * .5f, size.height * .7f)
+                    lineTo(size.width * .85f, size.height * .35f)
+                }
+                drawPath(path, Ink, style = Stroke(1.5.dp.toPx(), cap = StrokeCap.Round))
+            }
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            SeaGlassScene.entries.forEach { option ->
+                DropdownMenuItem(text = { Text(option.title) }, onClick = { onScene(option); expanded = false })
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShowcasePreview(scene: SeaGlassScene, style: SeaGlassStyle, paletteIndex: Int,
+    showcase: @Composable (SeaGlassScene) -> Unit, onExit: () -> Unit) {
+    Box(Modifier.fillMaxSize().safeDrawingPadding().testTag("playground-showcase")
+        .pointerInput(onExit) { detectTapGestures(onDoubleTap = { onExit() }) }
+        .semantics { customActions = listOf(CustomAccessibilityAction("Show controls") { onExit(); true }) }) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            Box(Modifier.widthIn(max = 440.dp).fillMaxWidth().clip(RoundedCornerShape(24.dp))
+                .background(Color.White)) {
+                SeaGlassTheme(style = style, palette = scenePalette(scene, paletteIndex)) {
+                    showcase(scene)
                 }
             }
-            Column(
-                Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(20.dp))
-                    .border(1.dp, Border, RoundedCornerShape(20.dp)).padding(if (compactIntro) 12.dp else 20.dp),
-            ) {
-                Eyebrow(when (tab) {
-                    1 -> "02 / NO TWO ALIKE"
-                    2 -> "03 / A LITTLE EVERYDAY MAGIC"
-                    else -> "01 / THE ORIGINAL FEEL"
-                })
-                when (tab) {
-                    1 -> ShapeStudy(paletteIndex)
-                    2 -> ContextStudy(saved, onSave, onCompose)
-                    else -> ComponentStudy(paletteIndex, onPalette, onCompose, report)
+        }
+    }
+}
+
+/** A clean, native example interface for a gallery or screenshot, using the current theme. */
+@Composable
+fun SeaGlassShowcase(scene: SeaGlassScene, modifier: Modifier = Modifier) {
+    Box(modifier.fillMaxWidth()) {
+        when (scene) {
+            SeaGlassScene.Music -> MusicPlayerScene()
+            SeaGlassScene.Phone -> PhoneCallScene()
+            SeaGlassScene.Email -> EmailScene()
+            SeaGlassScene.Chat -> AiChatScene()
+            else -> Column(Modifier.fillMaxWidth().padding(24.dp)) {
+                when (scene) {
+                    SeaGlassScene.ShapeStudy -> ShapeStudy(0)
+                    SeaGlassScene.Fieldnotes -> ContextStudy(false, {}, {})
+                    else -> ComponentStudy(0, {}, {}, {})
                 }
-                Text(if (tab == 1) "Same recipe. Different histories." else "A soft surface. A solid little object.",
-                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 22.dp, bottom = 8.dp),
-                    fontSize = 12.sp, color = Muted, fontFamily = FontFamily.Serif, fontStyle = FontStyle.Italic)
             }
-            Spacer(Modifier.height(28.dp))
-            Eyebrow("SMALL, EVERYDAY OBJECTS")
-            Spacer(Modifier.height(18.dp))
-            SeaGlassButton(
-                onClick = onSave, modifier = Modifier.height(62.dp).align(Alignment.CenterHorizontally),
-                style = SeaGlassTheme.componentStyle.withSeed(style.seed + 144),
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
-            ) {
-                GlassIcon(if (saved) GlassGlyph.Check else GlassGlyph.Bookmark)
-                Spacer(Modifier.width(12.dp))
-                Text(if (saved) "Moment saved" else "Save a moment", fontWeight = FontWeight.Medium)
-            }
-            Spacer(Modifier.height(30.dp))
-            Text("Made of curves, color, and a little imperfection.", color = Muted, fontSize = 12.sp)
-            Spacer(Modifier.height(12.dp))
         }
     }
 }
