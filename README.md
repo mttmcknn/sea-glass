@@ -70,3 +70,7 @@ implementation("dev.mttmcknn:sea-glass:0.1.0-SNAPSHOT")
 See [the usage guide](docs/usage.md) for styles, containers, custom controls, clipping, and rendering costs. [Rendering notes](docs/rendering.md) explain how the port matches the web source and where platform rasterization can differ.
 
 The build pins Kotlin 2.3.21, Compose Multiplatform 1.10.3, AGP 9.0.0, and Gradle 9.1.0. Android uses the dedicated Kotlin Multiplatform Android library plugin. iOS targets require Xcode on macOS.
+
+## Validation
+
+The initial port passes 14 Kotlin/Compose tests and all 9 original web tests. Android AAR/APK packaging and desktop compilation are verified. The [native rendering comparison](docs/rendering.md) measures a maximum difference of 3/255 per color channel against the web oracle. iOS compilation and Android/iOS device rendering remain to be verified.

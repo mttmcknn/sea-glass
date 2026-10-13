@@ -1,0 +1,11 @@
+{
+  "name": "sea-glass-reference-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate-reference": "node generate-reference.mjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100"
+  }
+}

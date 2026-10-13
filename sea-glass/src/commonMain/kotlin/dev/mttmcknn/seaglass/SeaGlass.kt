@@ -1,0 +1,201 @@
+package dev.mttmcknn.seaglass
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import dev.mttmcknn.seaglass.internal.MATERIAL_PADDING_DP
+import dev.mttmcknn.seaglass.internal.SeaGlassRenderer
+import dev.mttmcknn.seaglass.internal.buildContour
+import dev.mttmcknn.seaglass.internal.composeMaskRasterizer
+import dev.mttmcknn.seaglass.internal.contourSegments
+import dev.mttmcknn.seaglass.internal.contourToPath
+import dev.mttmcknn.seaglass.internal.toImageBitmap
+import kotlin.math.min
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+
+/**
+ * Draw a procedurally rendered sea-glass material behind any Compose content.
+ *
+ * The drawing extends up to 48.dp outside the layout bounds for transmitted
+ * light and shadow. A clipping ancestor can crop it. Rendering runs off the UI
+ * thread and is cached until the size, recipe, color, or density changes.
+ * This modifier adds no layout padding, input handling, or semantics.
+ */
+@Composable
+public fun Modifier.seaGlass(
+    style: SeaGlassStyle = SeaGlassStyle.Reference,
+    palette: SeaGlassPalette = SeaGlassPalette.Lagoon,
+    shape: SeaGlassShape = SeaGlassShape.Rounded,
+): Modifier {
+    val density = LocalDensity.current.density
+    var dimensions by remember { mutableStateOf(IntSize.Zero) }
+    val renderer = remember { SeaGlassRenderer(composeMaskRasterizer) }
+    val renderLock = remember { Mutex() }
+    val settings = remember(style) { style.renderSettings() }
+    val colors = remember(palette) { palette.renderPalette() }
+    val request = remember(dimensions, density, settings, colors, shape) {
+        RenderRequest(dimensions, density, style, palette, shape)
+    }
+    val image by produceState<ImageBitmap?>(initialValue = null, request) {
+        if (dimensions.width <= 0 || dimensions.height <= 0 || density <= 0f) return@produceState
+        val widthDp = dimensions.width / density.toDouble()
+        val heightDp = dimensions.height / density.toDouble()
+        if (widthDp < 1.0 || heightDp < 1.0) return@produceState
+        // Bound bitmap/working-memory growth for large containers. At normal
+        // control sizes this is exactly the web renderer's 2x texture limit.
+        val area = (widthDp + MATERIAL_PADDING_DP * 2) * (heightDp + MATERIAL_PADDING_DP * 2)
+        val scale = min(min(density.toDouble(), 2.0), sqrt(1_048_576.0 / area))
+        value = renderLock.withLock {
+            withContext(Dispatchers.Default) {
+                val context = currentCoroutineContext()
+                renderer.render(widthDp, heightDp, scale, shape.renderShape(), settings, colors) {
+                    context.ensureActive()
+                }
+                    .toImageBitmap()
+            }
+        }
+    }
+    val outline = remember(style.tumble, style.seed, shape) { TumbledOutline(shape, style) }
+    return this.onSizeChanged { dimensions = it }.drawBehind {
+        val ready = image
+        if (ready != null) {
+            val padding = (MATERIAL_PADDING_DP * density).roundToInt()
+            drawImage(
+                image = ready,
+                dstOffset = IntOffset(-padding, -padding),
+                dstSize = IntSize(size.width.roundToInt() + padding * 2, size.height.roundToInt() + padding * 2),
+                filterQuality = FilterQuality.Low,
+            )
+        } else {
+            // First paint stays readable while the cached material is prepared.
+            val path = (outline.createOutline(size, layoutDirection, this) as Outline.Generic).path
+            drawPath(path, palette.body.copy(alpha = 1f))
+        }
+    }
+}
+
+private data class RenderRequest(
+    val size: IntSize,
+    val density: Float,
+    val style: SeaGlassStyle,
+    val palette: SeaGlassPalette,
+    val shape: SeaGlassShape,
+)
+
+private data class TumbledOutline(val shape: SeaGlassShape, val style: SeaGlassStyle) : Shape {
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        val points = buildContour(
+            size.width / density.density.toDouble(), size.height / density.density.toDouble(),
+            shape.renderShape(), style.renderSettings().tumble, style.seed,
+        )
+        return Outline.Generic(contourToPath(contourSegments(points), density.density.toDouble()))
+    }
+}
+
+/** A content container with sea-glass material and palette foreground color. */
+@Composable
+public fun SeaGlassSurface(
+    modifier: Modifier = Modifier,
+    style: SeaGlassStyle = SeaGlassStyle.Reference,
+    palette: SeaGlassPalette = SeaGlassPalette.Lagoon,
+    shape: SeaGlassShape = SeaGlassShape.Rounded,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    val outline = remember(style.tumble, style.seed, shape) { TumbledOutline(shape, style) }
+    CompositionLocalProvider(LocalContentColor provides palette.ink) {
+        // The drawing modifier is outside the content clip, keeping light visible.
+        Box(modifier.seaGlass(style, palette, shape).clip(outline), contentAlignment = Alignment.Center, content = content)
+    }
+}
+
+/** Accessible button with a stable material and a small physical press offset. */
+@Composable
+public fun SeaGlassButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    style: SeaGlassStyle = SeaGlassStyle.Reference,
+    palette: SeaGlassPalette = SeaGlassPalette.Lagoon,
+    shape: SeaGlassShape = SeaGlassShape.Rounded,
+    enabled: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
+    content: @Composable RowScope.() -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val focused by interactionSource.collectIsFocusedAsState()
+    val density = LocalDensity.current
+    val outline = remember(style.tumble, style.seed, shape) { TumbledOutline(shape, style) }
+    CompositionLocalProvider(LocalContentColor provides palette.ink) {
+        Box(
+            modifier
+                .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+                .graphicsLayer {
+                    translationY = if (pressed) with(density) { 2.dp.toPx() } else 0f
+                    alpha = if (enabled) 1f else .45f
+                    compositingStrategy = CompositingStrategy.ModulateAlpha
+                }
+                .seaGlass(style, palette, shape)
+                .clip(outline)
+                .then(if (focused) Modifier.border(2.dp, palette.ink.copy(alpha = .65f), outline) else Modifier)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    enabled = enabled,
+                    role = Role.Button,
+                    onClick = onClick,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Row(
+                modifier = Modifier.padding(contentPadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                content = content,
+            )
+        }
+    }
+}
