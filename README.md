@@ -14,6 +14,19 @@ SeaGlassButton(
 
 Use `SeaGlassSurface` for containers or `Modifier.seaGlass()` behind your existing controls. Text, icons, semantics, and click handling stay native Compose content. Material generation runs off the main thread and is cached per surface.
 
+Set app-wide defaults with a theme, then override only what a particular piece needs:
+
+```kotlin
+SeaGlassTheme(style = SeaGlassStyle.Tumbled, palette = SeaGlassPalette.Mint) {
+    SeaGlassButton(onClick = { composeMessage() }) { Text("Compose") }
+    SeaGlassTheme(palette = SeaGlassPalette.Rose) {
+        SeaGlassButton(onClick = { addMoment() }) { Text("Add") }
+    }
+}
+```
+
+`SeaGlassComponentStyle` bundles a recipe, palette, and shape into a reusable design-system value. Pass it to the theme, components, or modifier. [Themes and styles](docs/usage.md#themes) cover inheritance, per-piece seeds, and explicit overrides.
+
 ## Project
 
 | Directory | Purpose |
@@ -75,4 +88,4 @@ The build pins Kotlin 2.3.21, Compose Multiplatform 1.10.3, AGP 9.0.0, and Gradl
 
 ## Validation
 
-The initial port passes 14 Kotlin/Compose tests and all 9 original web tests. Android AAR/APK packaging and desktop compilation are verified. The [native rendering comparison](docs/rendering.md) measures a maximum difference of 3/255 per color channel against the web oracle. iOS compilation and Android/iOS device rendering remain to be verified.
+The library passes 19 Kotlin/Compose tests, including native theme inheritance, live updates, and explicit-style rendering checks. All 9 original web tests pass. Android AAR/APK packaging and desktop compilation are verified. The [native rendering comparison](docs/rendering.md) measures a maximum difference of 3/255 per color channel against the web oracle. iOS compilation and Android/iOS device rendering remain to be verified.

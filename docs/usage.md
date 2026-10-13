@@ -1,6 +1,6 @@
 # Using Sea Glass
 
-Import `dev.mttmcknn.seaglass.*`. The library exposes a material modifier and two small wrappers. All three are composable APIs.
+Import `dev.mttmcknn.seaglass.*`. The library exposes immutable material/component styles, an inheritable theme, a material modifier, and two small component wrappers.
 
 ## Buttons
 
@@ -88,26 +88,68 @@ Android's adapter uses `Bitmap`, while desktop and iOS use Skia. No WebView, bun
 
 See the [native screenshot gallery](rendering.md#native-compose-screenshots) for controlled comparisons. The material is an art-directed optical approximation; it does not sample or distort the app content behind it.
 
-## Design-system direction
+## Themes
 
-The shipped API has three layers: immutable material recipes (`SeaGlassStyle`, `SeaGlassPalette`, `SeaGlassShape`), a drawing modifier, and ready-made components. This lets an application reuse the material without adopting the entire playground UI.
-
-The recommended next layer is an app- or screen-level `SeaGlassTheme` backed by `CompositionLocal`. **This theme API is a proposal, not implemented in the current library.** It would provide material and palette defaults to the modifier and components while keeping typography, normal controls, and application layout under the existing `MaterialTheme`.
+`SeaGlassTheme` supplies defaults to `SeaGlassButton`, `SeaGlassSurface`, and `Modifier.seaGlass()` throughout a Compose subtree. It works alongside `MaterialTheme`, leaving typography, ordinary control colors, layout, and spacing to the application.
 
 ```kotlin
-// Proposed API; not yet part of the library.
 MaterialTheme {
     SeaGlassTheme(
         style = SeaGlassStyle.Tumbled,
         palette = SeaGlassPalette.Mint,
     ) {
         SeaGlassButton(onClick = onCompose) { Text("Compose") }
-        SeaGlassSurface { /* Your native Compose content */ }
+        SeaGlassSurface(Modifier.size(120.dp, 72.dp)) { Text("Surface") }
+        Box(Modifier.size(120.dp, 72.dp).seaGlass())
+
+        SeaGlassTheme(palette = SeaGlassPalette.Rose) {
+            // Keeps the parent's Tumbled recipe and shape, changes the pigment.
+            SeaGlassButton(onClick = onAdd) { Text("Add") }
+        }
     }
 }
 ```
 
-Future semantic roles could select quiet, action, raised, and selected recipes without asking application code to tune every material property. A public tumbled `Shape` helper would let custom components match the material's content clip. Piece identity should stay explicit and stable per item.
+Read the current values through `SeaGlassTheme.style` (the material recipe), `.palette`, `.shape`, or `.componentStyle` (all three). A nested theme inherits every omitted field. Changing a provided value updates its consumers. Outside any provider, the original Reference recipe, Lagoon palette, and Rounded shape apply.
+
+The provider itself adds no drawing, spacing, semantics, or foreground-color override. `SeaGlassSurface` and `SeaGlassButton` provide ink to their content as before. A material modifier is composable and reads its theme where it is created; create it inside the intended theme scope rather than caching it outside that scope.
+
+## Reusable component styles
+
+`SeaGlassStyle` describes the optical recipe. `SeaGlassComponentStyle` combines that recipe with a palette and shape, so a design-system role can be declared once:
+
+```kotlin
+val PrimaryGlass = SeaGlassComponentStyle(
+    material = SeaGlassStyle.Tumbled,
+    palette = SeaGlassPalette.Mint,
+    shape = SeaGlassShape.Rounded,
+)
+
+SeaGlassTheme(style = PrimaryGlass) {
+    SeaGlassButton(onClick = onCompose) { Text("Compose") }
+}
+
+// The same style also works directly on components and the drawing modifier.
+SeaGlassButton(onClick = onSave, style = PrimaryGlass.withSeed(73)) {
+    Text("Save")
+}
+SeaGlassSurface(Modifier.size(96.dp), style = PrimaryGlass, shape = SeaGlassShape.Disc) {}
+Box(Modifier.size(240.dp, 88.dp).seaGlass(PrimaryGlass))
+```
+
+A complete component style replaces all three defaults; it is not a sparse merge with its enclosing theme. Component calls can still override its `palette` or `shape` explicitly. To vary the recipe, copy `material`; `withSeed()` is a convenience for changing only the stable piece identity.
+
+| Setting source | Resolution |
+| --- | --- |
+| Explicit component recipe/palette/shape | Wins for the specified field; omitted fields read the nearest theme |
+| Complete component style | Supplies its material, palette, and shape; explicit palette/shape arguments still win |
+| Nested theme with individual fields | Inherits omitted fields from the parent |
+| Theme with a complete component style | Replaces the material, palette, and shape together |
+| No theme | Reference / Lagoon / Rounded, with the existing seed 42 |
+
+The original recipe-based component and modifier signatures remain available. No automatic seed generation is introduced: keep a seed stable for each item, including in lazy lists. Sharing a style without changing its seed intentionally produces repeated pieces. Styles use normal immutable data-class `copy()` operations rather than an implicit cascade of nullable fields.
+
+See the [theme/style screenshot](screenshots/theme-styles.png) for inherited defaults, a nested recipe/palette override, and a complete component-style override rendered by the library.
 
 An ordinary opaque Material button does not automatically adopt the material just by receiving `Modifier.seaGlass()`: its own fill can cover the material and its clip can crop the transmitted light. The provided foundation-based `SeaGlassButton` coordinates drawing, content clipping, and interaction behavior.
 

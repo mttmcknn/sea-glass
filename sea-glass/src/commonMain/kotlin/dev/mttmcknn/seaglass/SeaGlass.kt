@@ -67,9 +67,9 @@ import kotlinx.coroutines.withContext
  */
 @Composable
 public fun Modifier.seaGlass(
-    style: SeaGlassStyle = SeaGlassStyle.Reference,
-    palette: SeaGlassPalette = SeaGlassPalette.Lagoon,
-    shape: SeaGlassShape = SeaGlassShape.Rounded,
+    style: SeaGlassStyle = SeaGlassTheme.style,
+    palette: SeaGlassPalette = SeaGlassTheme.palette,
+    shape: SeaGlassShape = SeaGlassTheme.shape,
 ): Modifier {
     val density = LocalDensity.current.density
     var dimensions by remember { mutableStateOf(IntSize.Zero) }
@@ -118,6 +118,14 @@ public fun Modifier.seaGlass(
     }
 }
 
+/** Draw a complete reusable [style], with optional explicit pigment/shape overrides. */
+@Composable
+public fun Modifier.seaGlass(
+    style: SeaGlassComponentStyle,
+    palette: SeaGlassPalette = style.palette,
+    shape: SeaGlassShape = style.shape,
+): Modifier = seaGlass(style.material, palette, shape)
+
 private data class RenderRequest(
     val size: IntSize,
     val density: Float,
@@ -140,9 +148,9 @@ private data class TumbledOutline(val shape: SeaGlassShape, val style: SeaGlassS
 @Composable
 public fun SeaGlassSurface(
     modifier: Modifier = Modifier,
-    style: SeaGlassStyle = SeaGlassStyle.Reference,
-    palette: SeaGlassPalette = SeaGlassPalette.Lagoon,
-    shape: SeaGlassShape = SeaGlassShape.Rounded,
+    style: SeaGlassStyle = SeaGlassTheme.style,
+    palette: SeaGlassPalette = SeaGlassTheme.palette,
+    shape: SeaGlassShape = SeaGlassTheme.shape,
     content: @Composable BoxScope.() -> Unit,
 ) {
     val outline = remember(style.tumble, style.seed, shape) { TumbledOutline(shape, style) }
@@ -152,14 +160,26 @@ public fun SeaGlassSurface(
     }
 }
 
+/** A content container using a complete reusable component [style]. */
+@Composable
+public fun SeaGlassSurface(
+    modifier: Modifier = Modifier,
+    style: SeaGlassComponentStyle,
+    palette: SeaGlassPalette = style.palette,
+    shape: SeaGlassShape = style.shape,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    SeaGlassSurface(modifier, style.material, palette, shape, content)
+}
+
 /** Accessible button with a stable material and a small physical press offset. */
 @Composable
 public fun SeaGlassButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    style: SeaGlassStyle = SeaGlassStyle.Reference,
-    palette: SeaGlassPalette = SeaGlassPalette.Lagoon,
-    shape: SeaGlassShape = SeaGlassShape.Rounded,
+    style: SeaGlassStyle = SeaGlassTheme.style,
+    palette: SeaGlassPalette = SeaGlassTheme.palette,
+    shape: SeaGlassShape = SeaGlassTheme.shape,
     enabled: Boolean = true,
     contentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
     content: @Composable RowScope.() -> Unit,
@@ -198,4 +218,19 @@ public fun SeaGlassButton(
             )
         }
     }
+}
+
+/** A button using a complete reusable component [style]. Explicit colors/shapes win. */
+@Composable
+public fun SeaGlassButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    style: SeaGlassComponentStyle,
+    palette: SeaGlassPalette = style.palette,
+    shape: SeaGlassShape = style.shape,
+    enabled: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
+    content: @Composable RowScope.() -> Unit,
+) {
+    SeaGlassButton(onClick, modifier, style.material, palette, shape, enabled, contentPadding, content)
 }

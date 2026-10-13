@@ -23,6 +23,7 @@ fun main(args: Array<String>) = runBlocking {
         Capture("composable-specimens", 1400, 1000) { SpecimenGallery() },
         Capture("tumble-bulge", 1400, 1000) { TumbleBulgeGallery() },
         Capture("material-recipes", 1400, 1000) { MaterialRecipesGallery() },
+        Capture("theme-styles", 1400, 1000) { ThemeStylesGallery() },
     )
     val selected = args.getOrNull(1)?.let { name -> captures.filter { it.name == name } } ?: captures
     require(selected.isNotEmpty()) { "Unknown screenshot: ${args.getOrNull(1)}" }

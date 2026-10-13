@@ -54,7 +54,9 @@ These images capture the actual Compose hierarchy with the desktop Skia renderer
 
 ![Material recipes and moving reflections](screenshots/material-recipes.png)
 
-Recreate all five images with JDK 17:
+![Theme inheritance and reusable component styles](screenshots/theme-styles.png)
+
+Recreate all six images with JDK 17:
 
 ```sh
 ./gradlew -PseaGlass.android=false :desktopApp:captureScreenshots

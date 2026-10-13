@@ -31,6 +31,7 @@ import dev.mttmcknn.seaglass.SeaGlassPalette
 import dev.mttmcknn.seaglass.SeaGlassShape
 import dev.mttmcknn.seaglass.SeaGlassStyle
 import dev.mttmcknn.seaglass.SeaGlassSurface
+import dev.mttmcknn.seaglass.SeaGlassTheme
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -146,65 +147,70 @@ private fun PlaygroundPreview(
     onSave: () -> Unit,
     report: (String) -> Unit,
 ) {
-    Column(Modifier.fillMaxWidth()) {
-        Eyebrow("SMOOTHED BY THE SEA. SHAPED BY YOU.")
-        Spacer(Modifier.height(14.dp))
-        Text("A little less perfect.", fontSize = 34.sp, lineHeight = 40.sp, fontFamily = FontFamily.Serif, color = Ink)
-        Text("A little more character.", fontSize = 34.sp, lineHeight = 40.sp, fontFamily = FontFamily.Serif,
-            fontStyle = FontStyle.Italic, color = Color(0xff728879))
-        Spacer(Modifier.height(14.dp))
-        Text("Frosted color, softened edges, a little weight.\nFind the feel of your next interface.",
-            fontSize = 14.sp, lineHeight = 22.sp, color = Muted)
-        Spacer(Modifier.height(28.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-            listOf("Components", "Shape study", "In context").forEachIndexed { index, title ->
-                TextButton(onClick = { onTab(index) }, contentPadding = PaddingValues(horizontal = 10.dp)) {
-                    Text(title, color = if (tab == index) Ink else Muted,
-                        fontWeight = if (tab == index) FontWeight.SemiBold else FontWeight.Normal)
+    // The controls provide subtree defaults. Individual pieces only override identity,
+    // and the mixed-pigment view overrides colors where the specimen calls for it.
+    SeaGlassTheme(style = style, palette = palettes.getOrNull(paletteIndex - 1) ?: SeaGlassPalette.Lagoon) {
+        Column(Modifier.fillMaxWidth()) {
+            Eyebrow("SMOOTHED BY THE SEA. SHAPED BY YOU.")
+            Spacer(Modifier.height(14.dp))
+            Text("A little less perfect.", fontSize = 34.sp, lineHeight = 40.sp, fontFamily = FontFamily.Serif, color = Ink)
+            Text("A little more character.", fontSize = 34.sp, lineHeight = 40.sp, fontFamily = FontFamily.Serif,
+                fontStyle = FontStyle.Italic, color = Color(0xff728879))
+            Spacer(Modifier.height(14.dp))
+            Text("Frosted color, softened edges, a little weight.\nFind the feel of your next interface.",
+                fontSize = 14.sp, lineHeight = 22.sp, color = Muted)
+            Spacer(Modifier.height(28.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                listOf("Components", "Shape study", "In context").forEachIndexed { index, title ->
+                    TextButton(onClick = { onTab(index) }, contentPadding = PaddingValues(horizontal = 10.dp)) {
+                        Text(title, color = if (tab == index) Ink else Muted,
+                            fontWeight = if (tab == index) FontWeight.SemiBold else FontWeight.Normal)
+                    }
                 }
             }
-        }
-        Column(
-            Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(20.dp))
-                .border(1.dp, Border, RoundedCornerShape(20.dp)).padding(20.dp),
-        ) {
-            Eyebrow(when (tab) {
-                1 -> "02 / NO TWO ALIKE"
-                2 -> "03 / A LITTLE EVERYDAY MAGIC"
-                else -> "01 / THE ORIGINAL FEEL"
-            })
-            when (tab) {
-                1 -> ShapeStudy(style, paletteIndex)
-                2 -> ContextStudy(style, paletteIndex, saved, onSave, onCompose)
-                else -> ComponentStudy(style, paletteIndex, onPalette, onCompose, report)
+            Column(
+                Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(20.dp))
+                    .border(1.dp, Border, RoundedCornerShape(20.dp)).padding(20.dp),
+            ) {
+                Eyebrow(when (tab) {
+                    1 -> "02 / NO TWO ALIKE"
+                    2 -> "03 / A LITTLE EVERYDAY MAGIC"
+                    else -> "01 / THE ORIGINAL FEEL"
+                })
+                when (tab) {
+                    1 -> ShapeStudy(paletteIndex)
+                    2 -> ContextStudy(saved, onSave, onCompose)
+                    else -> ComponentStudy(paletteIndex, onPalette, onCompose, report)
+                }
+                Text(if (tab == 1) "Same recipe. Different histories." else "A soft surface. A solid little object.",
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 22.dp, bottom = 8.dp),
+                    fontSize = 12.sp, color = Muted, fontFamily = FontFamily.Serif, fontStyle = FontStyle.Italic)
             }
-            Text(if (tab == 1) "Same recipe. Different histories." else "A soft surface. A solid little object.",
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 22.dp, bottom = 8.dp),
-                fontSize = 12.sp, color = Muted, fontFamily = FontFamily.Serif, fontStyle = FontStyle.Italic)
+            Spacer(Modifier.height(28.dp))
+            Eyebrow("SMALL, EVERYDAY OBJECTS")
+            Spacer(Modifier.height(18.dp))
+            SeaGlassButton(
+                onClick = onSave, modifier = Modifier.height(62.dp).align(Alignment.CenterHorizontally),
+                style = SeaGlassTheme.componentStyle.withSeed(style.seed + 144),
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
+            ) {
+                GlassIcon(if (saved) GlassGlyph.Check else GlassGlyph.Bookmark)
+                Spacer(Modifier.width(12.dp))
+                Text(if (saved) "Moment saved" else "Save a moment", fontWeight = FontWeight.Medium)
+            }
+            Spacer(Modifier.height(30.dp))
+            Text("Made of curves, color, and a little imperfection.", color = Muted, fontSize = 12.sp)
+            Spacer(Modifier.height(12.dp))
         }
-        Spacer(Modifier.height(28.dp))
-        Eyebrow("SMALL, EVERYDAY OBJECTS")
-        Spacer(Modifier.height(18.dp))
-        SeaGlassButton(
-            onClick = onSave, modifier = Modifier.height(62.dp).align(Alignment.CenterHorizontally),
-            style = style.copy(seed = style.seed + 144), palette = selectedPalette(paletteIndex, SeaGlassPalette.Lagoon),
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
-        ) {
-            GlassIcon(if (saved) GlassGlyph.Check else GlassGlyph.Bookmark)
-            Spacer(Modifier.width(12.dp))
-            Text(if (saved) "Moment saved" else "Save a moment", fontWeight = FontWeight.Medium)
-        }
-        Spacer(Modifier.height(30.dp))
-        Text("Made of curves, color, and a little imperfection.", color = Muted, fontSize = 12.sp)
-        Spacer(Modifier.height(12.dp))
     }
 }
 
 @Composable
 private fun ComponentStudy(
-    style: SeaGlassStyle, paletteIndex: Int, onPalette: (Int) -> Unit,
+    paletteIndex: Int, onPalette: (Int) -> Unit,
     onCompose: () -> Unit, report: (String) -> Unit,
 ) {
+    val style = SeaGlassTheme.style
     var showMenu by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(Modifier.height(42.dp))
@@ -241,7 +247,7 @@ private fun ComponentStudy(
         Spacer(Modifier.height(48.dp))
         SeaGlassButton(
             onClick = onCompose, modifier = Modifier.widthIn(max = 280.dp).fillMaxWidth().height(86.dp),
-            style = style.copy(seed = style.seed + 33), palette = selectedPalette(paletteIndex, SeaGlassPalette.Lagoon),
+            style = SeaGlassTheme.componentStyle.withSeed(style.seed + 33),
             contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp),
         ) {
             GlassIcon(GlassGlyph.Edit, modifier = Modifier.size(30.dp))
@@ -264,7 +270,8 @@ private fun ComponentStudy(
 }
 
 @Composable
-private fun ShapeStudy(style: SeaGlassStyle, paletteIndex: Int) {
+private fun ShapeStudy(paletteIndex: Int) {
+    val style = SeaGlassTheme.style
     Column(Modifier.fillMaxWidth().padding(top = 34.dp), verticalArrangement = Arrangement.spacedBy(30.dp)) {
         listOf(SeaGlassShape.Rounded, SeaGlassShape.Capsule, SeaGlassShape.Disc).forEachIndexed { row, shape ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -286,7 +293,7 @@ private fun ShapeStudy(style: SeaGlassStyle, paletteIndex: Int) {
 }
 
 @Composable
-private fun ContextStudy(style: SeaGlassStyle, paletteIndex: Int, saved: Boolean, onSave: () -> Unit, onCompose: () -> Unit) {
+private fun ContextStudy(saved: Boolean, onSave: () -> Unit, onCompose: () -> Unit) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 28.dp)) {
         Text("fieldnotes", fontFamily = FontFamily.Serif, fontStyle = FontStyle.Italic, fontSize = 22.sp, color = Ink)
         Spacer(Modifier.height(34.dp))
@@ -298,8 +305,7 @@ private fun ContextStudy(style: SeaGlassStyle, paletteIndex: Int, saved: Boolean
             fontSize = 14.sp, lineHeight = 24.sp, color = Muted)
         Spacer(Modifier.height(28.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(18.dp), verticalAlignment = Alignment.CenterVertically) {
-            SeaGlassButton(onClick = onSave, style = style.copy(seed = style.seed + 130),
-                palette = selectedPalette(paletteIndex, SeaGlassPalette.Lagoon),
+            SeaGlassButton(onClick = onSave, style = SeaGlassTheme.componentStyle.withSeed(SeaGlassTheme.style.seed + 130),
                 contentPadding = PaddingValues(horizontal = 18.dp, vertical = 16.dp)) {
                 GlassIcon(if (saved) GlassGlyph.Check else GlassGlyph.Bookmark)
                 Spacer(Modifier.width(8.dp))
@@ -312,14 +318,14 @@ private fun ContextStudy(style: SeaGlassStyle, paletteIndex: Int, saved: Boolean
 
 private val palettes = listOf(SeaGlassPalette.Lagoon, SeaGlassPalette.Lilac, SeaGlassPalette.Rose, SeaGlassPalette.Amber, SeaGlassPalette.Mint)
 private val paletteNames = listOf("Mix", "Lagoon", "Lilac", "Rose", "Amber", "Mint")
-private fun selectedPalette(index: Int, fallback: SeaGlassPalette): SeaGlassPalette = palettes.getOrNull(index - 1) ?: fallback
+@Composable
+private fun selectedPalette(index: Int, fallback: SeaGlassPalette): SeaGlassPalette =
+    if (index == 0) fallback else SeaGlassTheme.palette
 
 private fun presetStyle(name: String, seed: Int): SeaGlassStyle = when (name) {
-    "Tumbled" -> SeaGlassStyle(frost = .72f, grain = .68f, tumble = .055f, thickness = 9.dp, bulge = .80f,
-        elevation = 7.dp, lightDegrees = 315f, transmission = .48f, seed = seed)
-    "Quiet" -> SeaGlassStyle(frost = .38f, grain = .23f, tumble = .012f, thickness = 3.dp, bulge = .38f,
-        elevation = 4.dp, lightDegrees = 315f, transmission = .66f, seed = seed)
-    else -> SeaGlassStyle(seed = seed)
+    "Tumbled" -> SeaGlassStyle.Tumbled.copy(seed = seed)
+    "Quiet" -> SeaGlassStyle.Quiet.copy(seed = seed)
+    else -> SeaGlassStyle.Reference.copy(seed = seed)
 }
 
 @Composable
