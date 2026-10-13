@@ -69,6 +69,8 @@ implementation("dev.mttmcknn:sea-glass:0.1.0-SNAPSHOT")
 
 See [the usage guide](docs/usage.md) for styles, containers, custom controls, clipping, and rendering costs. [Rendering notes](docs/rendering.md) explain how the port matches the web source and where platform rasterization can differ.
 
+The [native Compose screenshot gallery](docs/rendering.md#native-compose-screenshots) shows the playground, component specimens, tumble/bulge combinations, and material recipes. Regenerate it with `./gradlew -PseaGlass.android=false :desktopApp:captureScreenshots`.
+
 The build pins Kotlin 2.3.21, Compose Multiplatform 1.10.3, AGP 9.0.0, and Gradle 9.1.0. Android uses the dedicated Kotlin Multiplatform Android library plugin. iOS targets require Xcode on macOS.
 
 ## Validation

@@ -39,3 +39,25 @@ The oracle appends a temporary debug export to an in-memory copy of the JavaScri
 Android library and sample builds are verified, including AAR and debug APK packaging. iOS targets and a sample view controller are included, but an Xcode build and device screenshot comparison have not been run. JVM image parity does not establish Android/iOS pixel identity or device performance.
 
 Pinned version references: [Compose compatibility](https://kotlinlang.org/docs/multiplatform/compose-compatibility-and-versioning.html), [KMP Android library plugin](https://developer.android.com/kotlin/multiplatform/plugin), and [Compose graphics](https://developer.android.com/develop/ui/compose/graphics/draw/overview).
+
+## Native Compose screenshots
+
+These images capture the actual Compose hierarchy with the desktop Skia renderer at 2x density, including native text and icons. They are not HTML recreations or Android emulator captures. The narrow capture shows the same responsive shared playground at a phone-like width. Capture waits for asynchronous material jobs to settle before writing an image.
+
+![Native Compose playground](screenshots/playground-desktop.png)
+
+[Narrow playground layout](screenshots/playground-narrow.png)
+
+![Composable specimens](screenshots/composable-specimens.png)
+
+![Tumble and bulge comparison](screenshots/tumble-bulge.png)
+
+![Material recipes and moving reflections](screenshots/material-recipes.png)
+
+Recreate all five images with JDK 17:
+
+```sh
+./gradlew -PseaGlass.android=false :desktopApp:captureScreenshots
+```
+
+The capture entry point and galleries are in `desktopApp/src/main/kotlin/dev/mttmcknn/seaglass/desktop/`. Output is written to `docs/screenshots/`. The public recipe/component APIs used by these galleries are the same APIs used by the app.
