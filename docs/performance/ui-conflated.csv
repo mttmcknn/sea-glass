@@ -1,0 +1,25 @@
+case,round,kind,latency_ms,burst_ms,pump_p95_ms,distinct_preview_frames
+Tumble,1,last-update-to-final,41.61,448.54,23.15,23
+Tumble,2,last-update-to-final,54.98,380.82,18.06,23
+Tumble,3,last-update-to-final,64.91,367.93,15.75,24
+Frost,1,last-update-to-final,34.15,367.51,11.03,23
+Frost,2,last-update-to-final,35.06,367.69,12.11,24
+Frost,3,last-update-to-final,36.82,367.12,10.29,24
+Surface light angle,1,last-update-to-final,24.30,367.67,8.91,24
+Surface light angle,2,last-update-to-final,24.63,367.74,11.36,24
+Surface light angle,3,last-update-to-final,24.26,367.61,9.18,24
+Lift,1,last-update-to-final,25.00,367.77,9.23,24
+Lift,2,last-update-to-final,23.49,367.54,9.25,24
+Lift,3,last-update-to-final,26.64,368.08,9.38,24
+Music player,1,cold-composition-to-final,69.75,,,
+Music player,2,cold-composition-to-final,64.79,,,
+Music player,3,cold-composition-to-final,66.65,,,
+Phone call,1,cold-composition-to-final,64.15,,,
+Phone call,2,cold-composition-to-final,60.90,,,
+Phone call,3,cold-composition-to-final,60.60,,,
+Email,1,cold-composition-to-final,75.05,,,
+Email,2,cold-composition-to-final,73.46,,,
+Email,3,cold-composition-to-final,75.93,,,
+AI chat,1,cold-composition-to-final,80.58,,,
+AI chat,2,cold-composition-to-final,92.03,,,
+AI chat,3,cold-composition-to-final,85.09,,,

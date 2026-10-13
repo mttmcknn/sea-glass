@@ -92,15 +92,24 @@ internal fun makeTexture(w: Double, h: Double, ratio: Double, seed: Int, cancell
     val clouds = FloatArray(count)
     val roughX = FloatArray(count)
     val roughY = FloatArray(count)
-    for (y in 0 until height) for (x in 0 until width) {
-        if (x == 0 && y % 32 == 0) cancellationProbe()
-        val i = y * width + x
-        val cx = (x + 0.5) / scale
+    // Axis coordinates stay Double, matching the original sampling arithmetic.
+    // One column-sized array avoids repeating division without an area-sized cache.
+    val sampleX = DoubleArray(width) { x -> (x + 0.5) / scale }
+    for (y in 0 until height) {
+        if (y % 32 == 0) cancellationProbe()
+        val row = y * width
         val cy = (y + 0.5) / scale
-        noise[i] = (fine(cx, cy) * 0.54 + micro(cx, cy) * 0.32 + worn(cx, cy) * 0.14).toFloat()
-        clouds[i] = (cloud(cx, cy) * 0.75 + worn(cx, cy) * 0.25).toFloat()
-        roughX[i] = (micro(cx + 0.32, cy) - micro(max(0.0, cx - 0.32), cy)).toFloat()
-        roughY[i] = (micro(cx, cy + 0.32) - micro(cx, max(0.0, cy - 0.32))).toFloat()
+        val cyPlus = cy + 0.32
+        val cyMinus = max(0.0, cy - 0.32)
+        for (x in 0 until width) {
+            val i = row + x
+            val cx = sampleX[x]
+            val wornSample = worn(cx, cy)
+            noise[i] = (fine(cx, cy) * 0.54 + micro(cx, cy) * 0.32 + wornSample * 0.14).toFloat()
+            clouds[i] = (cloud(cx, cy) * 0.75 + wornSample * 0.25).toFloat()
+            roughX[i] = (micro(cx + 0.32, cy) - micro(max(0.0, cx - 0.32), cy)).toFloat()
+            roughY[i] = (micro(cx, cyPlus) - micro(cx, cyMinus)).toFloat()
+        }
     }
     return TextureField(scale, width, height, noise, clouds, roughX, roughY)
 }
@@ -203,6 +212,16 @@ internal fun makeGeometryField(
     val short = min(w, h)
     val maxDistance = max(1.0, distances.maxOrNull()?.toDouble() ?: 0.0)
     fun at(x: Int, y: Int) = distances[y.coerceIn(0, rows - 1) * columns + x.coerceIn(0, columns - 1)].toDouble()
+    // These longitudinal terms depend only on the column. Preserve Double
+    // intermediates and operation order; quantize only at the existing stores.
+    val columnLengthArch = DoubleArray(width)
+    val columnLengthSlope = DoubleArray(width)
+    for (x in 0 until width) {
+        val u = (x + 0.5) / width
+        val sine = sin(u * PI)
+        columnLengthArch[x] = 0.86 + 0.14 * sine * sine
+        columnLengthSlope[x] = 0.14 * PI / w * sin(u * PI * 2.0)
+    }
     for (y in 0 until height) for (x in 0 until width) {
         if (x == 0 && y % 32 == 0) cancellationProbe()
         val i = y * width + x
@@ -221,10 +240,8 @@ internal fun makeGeometryField(
         val q = clamp(at(mx, my) / maxDistance, 0.0, 1.0)
         val arch = sqrt(q * (2.0 - q))
         val roundSlope = (1.0 - q) / (maxDistance * max(arch, 0.035))
-        val u = (x + 0.5) / width
-        val sine = sin(u * PI)
-        val lengthArch = 0.86 + 0.14 * sine * sine
-        val lengthSlope = 0.14 * PI / w * sin(u * PI * 2.0)
+        val lengthArch = columnLengthArch[x]
+        val lengthSlope = columnLengthSlope[x]
         roundProfile[i] = (arch * lengthArch).toFloat()
         roundGradX[i] = ((if (direction > 0.001) dx / direction * roundSlope * lengthArch else 0.0) + arch * lengthSlope).toFloat()
         roundGradY[i] = (if (direction > 0.001) dy / direction * roundSlope * lengthArch else 0.0).toFloat()

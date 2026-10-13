@@ -20,7 +20,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
@@ -42,6 +45,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import dev.mttmcknn.seaglass.internal.MATERIAL_PADDING_DP
 import dev.mttmcknn.seaglass.internal.SeaGlassRenderer
+import dev.mttmcknn.seaglass.internal.LiveMaterialRenderer
+import dev.mttmcknn.seaglass.internal.RealtimeGround
 import dev.mttmcknn.seaglass.internal.buildContour
 import dev.mttmcknn.seaglass.internal.composeMaskRasterizer
 import dev.mttmcknn.seaglass.internal.contourSegments
@@ -53,17 +58,22 @@ import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.withContext
 
 /**
  * Draw a procedurally rendered sea-glass material behind any Compose content.
  *
  * The drawing extends up to 48.dp outside the layout bounds for transmitted
- * light and shadow. A clipping ancestor can crop it. Rendering runs off the UI
- * thread and is cached until the size, recipe, color, or density changes.
+ * light and shadow. A clipping ancestor can crop it. Android 13+ and Skia draw
+ * the complete material during the first draw, with no asynchronous placeholder.
+ * Geometry is cached per surface; lighting and color changes update the shader.
+ * Older Android versions use an asynchronous CPU compatibility path that keeps
+ * one active render and the newest pending recipe, coalescing intermediate edits.
  * This modifier adds no layout padding, input handling, or semantics.
+ * Reuse immutable styles between components, but call this modifier separately
+ * for each layout: its remembered renderer and ground layers belong to one piece.
  */
 @Composable
 public fun Modifier.seaGlass(
@@ -71,31 +81,56 @@ public fun Modifier.seaGlass(
     palette: SeaGlassPalette = SeaGlassTheme.palette,
     shape: SeaGlassShape = SeaGlassTheme.shape,
 ): Modifier {
+    val live = remember { LiveMaterialRenderer.create() }
+    if (live != null) {
+        val cast = rememberGraphicsLayer()
+        val contact = rememberGraphicsLayer()
+        val transmission = rememberGraphicsLayer()
+        val ground = remember(cast, contact, transmission) { RealtimeGround(cast, contact, transmission) }
+        val settings = remember(style) { style.renderSettings() }
+        val colors = remember(palette) { palette.renderPalette() }
+        // DrawScope already has the measured size on its first draw. Rendering
+        // the material here avoids the post-layout state/bitmap delivery cycle.
+        return this.drawBehind { live.draw(this, ground, settings, colors, shape.renderShape()) }
+    }
+    return cpuSeaGlass(style, palette, shape)
+}
+
+/** Compatibility path for Android versions without runtime shader support. */
+@Composable
+private fun Modifier.cpuSeaGlass(style: SeaGlassStyle, palette: SeaGlassPalette, shape: SeaGlassShape): Modifier {
     val density = LocalDensity.current.density
     var dimensions by remember { mutableStateOf(IntSize.Zero) }
-    val renderer = remember { SeaGlassRenderer(composeMaskRasterizer) }
-    val renderLock = remember { Mutex() }
+    val renderer = remember { SeaGlassRenderer(composeMaskRasterizer, fastGround = true) }
     val settings = remember(style) { style.renderSettings() }
     val colors = remember(palette) { palette.renderPalette() }
     val request = remember(dimensions, density, settings, colors, shape) {
         RenderRequest(dimensions, density, style, palette, shape)
     }
-    val image by produceState<ImageBitmap?>(initialValue = null, request) {
-        if (dimensions.width <= 0 || dimensions.height <= 0 || density <= 0f) return@produceState
-        val widthDp = dimensions.width / density.toDouble()
-        val heightDp = dimensions.height / density.toDouble()
-        if (widthDp < 1.0 || heightDp < 1.0) return@produceState
-        // Bound bitmap/working-memory growth for large containers. At normal
-        // control sizes this is exactly the web renderer's 2x texture limit.
-        val area = (widthDp + MATERIAL_PADDING_DP * 2) * (heightDp + MATERIAL_PADDING_DP * 2)
-        val scale = min(min(density.toDouble(), 2.0), sqrt(1_048_576.0 / area))
-        value = renderLock.withLock {
-            withContext(Dispatchers.Default) {
+    val latestRequest by rememberUpdatedState(request)
+    val image by produceState<ImageBitmap?>(initialValue = null, renderer) {
+        // One sequential worker owns the renderer caches. Keep at most the active
+        // request and the latest pending request: slider updates cannot cancel
+        // every render before it reaches the screen, and cannot build a backlog.
+        // Leaving composition still cancels this producer and its active worker.
+        snapshotFlow { latestRequest }.conflate().collect { activeRequest ->
+            val size = activeRequest.size
+            val requestDensity = activeRequest.density
+            if (size.width <= 0 || size.height <= 0 || requestDensity <= 0f) return@collect
+            val widthDp = size.width / requestDensity.toDouble()
+            val heightDp = size.height / requestDensity.toDouble()
+            if (widthDp < 1.0 || heightDp < 1.0) return@collect
+            // Preserve the same full-quality texture scale and working-memory cap.
+            val area = (widthDp + MATERIAL_PADDING_DP * 2) * (heightDp + MATERIAL_PADDING_DP * 2)
+            val scale = min(min(requestDensity.toDouble(), 2.0), sqrt(1_048_576.0 / area))
+            value = withContext(Dispatchers.Default) {
                 val context = currentCoroutineContext()
-                renderer.render(widthDp, heightDp, scale, shape.renderShape(), settings, colors) {
+                renderer.render(
+                    widthDp, heightDp, scale, activeRequest.shape.renderShape(),
+                    activeRequest.style.renderSettings(), activeRequest.palette.renderPalette(),
+                ) {
                     context.ensureActive()
-                }
-                    .toImageBitmap()
+                }.toImageBitmap()
             }
         }
     }

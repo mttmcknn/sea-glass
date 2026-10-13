@@ -32,6 +32,7 @@ internal fun renderGroundLayers(
     bodyWidth: Int,
     bodyHeight: Int,
     cancellationProbe: () -> Unit = {},
+    approximateBlur: Boolean = false,
 ): PixelBuffer {
     require(widthDp > 0.0 && heightDp > 0.0 && scale > 0.0)
     require(bodyWidth > 0 && bodyHeight > 0 && bodyAlpha.size == bodyWidth * bodyHeight)
@@ -42,12 +43,22 @@ internal fun renderGroundLayers(
     val red = DoubleArray(size)
     val green = DoubleArray(size)
     val blue = DoubleArray(size)
+    // These scratch buffers serve all three layers. Once the horizontal pass
+    // finishes, its source mask is no longer needed and becomes the output.
+    val mask = DoubleArray(size)
+    val horizontal = DoubleArray(size)
     val short = min(widthDp, heightDp)
     val transmission = settings.transmission
     val pad = MATERIAL_PADDING_DP * scale
 
     fun layer(offsetDp: Double, blurDp: Double, color: Int, opacity: (Double) -> Double) {
-        val mask = DoubleArray(size)
+        mask.fill(0.0)
+        var maskLeft = width
+        var maskTop = height
+        var maskRight = 0
+        var maskBottom = 0
+        val firstX = max(0, floor(pad).toInt())
+        val lastX = min(width, ceil(pad + bodyWidth).toInt())
         // The mask already uses this physical scale. Unlike drawImage for the
         // body, the reference's ground path is not shrunk from a ceil-sized
         // texture to layout bounds. Retain the original scale when translating.
@@ -58,24 +69,39 @@ internal fun renderGroundLayers(
             if (sourceY <= -1.0 || sourceY >= bodyHeight) continue
             val opacityAtY = opacity(relativeY.coerceIn(0.0, 1.0))
             if (opacityAtY <= 0.0) continue
-            for (x in 0 until width) {
+            for (x in firstX until lastX) {
                 val sourceX = x - pad
-                mask[y * width + x] = sampleAlpha(bodyAlpha, bodyWidth, bodyHeight, sourceX, sourceY) * opacityAtY
+                val coverage = sampleAlpha(bodyAlpha, bodyWidth, bodyHeight, sourceX, sourceY) * opacityAtY
+                if (coverage <= 0.0) continue
+                mask[y * width + x] = coverage
+                maskLeft = min(maskLeft, x)
+                maskTop = min(maskTop, y)
+                maskRight = max(maskRight, x + 1)
+                maskBottom = max(maskBottom, y + 1)
             }
         }
-        val blurred = gaussianBlur(mask, width, height, blurDp * scale, cancellationProbe)
+        if (maskLeft >= maskRight) return
+        val maskBounds = PixelBounds(maskLeft, maskTop, maskRight, maskBottom)
+        val bounds = if (approximateBlur) {
+            fastGaussianBlur(mask, horizontal, width, height, blurDp * scale, maskBounds, cancellationProbe)
+        } else {
+            gaussianBlur(mask, horizontal, width, height, blurDp * scale, maskBounds, cancellationProbe)
+        }
         val r = ((color ushr 16) and 255).toDouble()
         val g = ((color ushr 8) and 255).toDouble()
         val b = (color and 255).toDouble()
-        val cancellationStride = width * 32
-        for (index in 0 until size) {
-            if (index % cancellationStride == 0) cancellationProbe()
-            val sourceAlpha = blurred[index].coerceIn(0.0, 1.0)
-            val destinationWeight = 1.0 - sourceAlpha
-            red[index] = r * sourceAlpha + red[index] * destinationWeight
-            green[index] = g * sourceAlpha + green[index] * destinationWeight
-            blue[index] = b * sourceAlpha + blue[index] * destinationWeight
-            alpha[index] = sourceAlpha + alpha[index] * destinationWeight
+        for (y in bounds.top until bounds.bottom) {
+            if (((y - bounds.top) and 31) == 0) cancellationProbe()
+            val row = y * width
+            for (x in bounds.left until bounds.right) {
+                val index = row + x
+                val sourceAlpha = mask[index].coerceIn(0.0, 1.0)
+                val destinationWeight = 1.0 - sourceAlpha
+                red[index] = r * sourceAlpha + red[index] * destinationWeight
+                green[index] = g * sourceAlpha + green[index] * destinationWeight
+                blue[index] = b * sourceAlpha + blue[index] * destinationWeight
+                alpha[index] = sourceAlpha + alpha[index] * destinationWeight
+            }
         }
     }
 
@@ -139,33 +165,53 @@ internal fun compositeBody(
     val top = max(0, floor(pad - 1.0).toInt())
     val right = min(ground.width, ceil(pad + destinationWidth + 1.0).toInt())
     val bottom = min(ground.height, ceil(pad + destinationHeight + 1.0).toInt())
+    if (left >= right || top >= bottom) return PixelBuffer(ground.width, ground.height, pixels)
+    // X sampling coordinates are identical on every row. Keep the original
+    // expression (including fractional-size shrink) and calculate it once.
+    val columns = IntArray(right - left)
+    val fractions = DoubleArray(right - left)
+    for (x in left until right) {
+        val sourceX = (x + 0.5 - pad) / destinationWidth * body.width - 0.5
+        val x0 = floor(sourceX).toInt()
+        columns[x - left] = x0
+        fractions[x - left] = sourceX - x0
+    }
     for (y in top until bottom) {
         if (((y - top) and 31) == 0) cancellationProbe()
         val sourceY = (y + 0.5 - pad) / destinationHeight * body.height - 0.5
         val y0 = floor(sourceY).toInt()
         val fy = sourceY - y0
         for (x in left until right) {
-            val sourceX = (x + 0.5 - pad) / destinationWidth * body.width - 0.5
-            val x0 = floor(sourceX).toInt()
-            val fx = sourceX - x0
+            val x0 = columns[x - left]
+            val fx = fractions[x - left]
             var alpha = 0.0
             var red = 0.0
             var green = 0.0
             var blue = 0.0
-            for (dy in 0..1) {
-                val sy = y0 + dy
-                if (sy !in 0 until body.height) continue
-                val wy = if (dy == 0) 1.0 - fy else fy
-                for (dx in 0..1) {
-                    val sx = x0 + dx
-                    if (sx !in 0 until body.width) continue
-                    val wx = if (dx == 0) 1.0 - fx else fx
-                    val color = body.pixels[sy * body.width + sx]
-                    val weightedAlpha = ((color ushr 24) and 255) / 255.0 * wx * wy
-                    alpha += weightedAlpha
-                    red += ((color ushr 16) and 255) * weightedAlpha
-                    green += ((color ushr 8) and 255) * weightedAlpha
-                    blue += (color and 255) * weightedAlpha
+            if (fx == 0.0 && fy == 0.0 && x0 in 0 until body.width && y0 in 0 until body.height) {
+                // Do not infer alignment from integer dimensions: the computed
+                // coordinates can still have a floating-point fractional part.
+                val color = body.pixels[y0 * body.width + x0]
+                alpha = ((color ushr 24) and 255) / 255.0
+                red = ((color ushr 16) and 255) * alpha
+                green = ((color ushr 8) and 255) * alpha
+                blue = (color and 255) * alpha
+            } else {
+                for (dy in 0..1) {
+                    val sy = y0 + dy
+                    if (sy !in 0 until body.height) continue
+                    val wy = if (dy == 0) 1.0 - fy else fy
+                    for (dx in 0..1) {
+                        val sx = x0 + dx
+                        if (sx !in 0 until body.width) continue
+                        val wx = if (dx == 0) 1.0 - fx else fx
+                        val color = body.pixels[sy * body.width + sx]
+                        val weightedAlpha = ((color ushr 24) and 255) / 255.0 * wx * wy
+                        alpha += weightedAlpha
+                        red += ((color ushr 16) and 255) * weightedAlpha
+                        green += ((color ushr 8) and 255) * weightedAlpha
+                        blue += (color and 255) * weightedAlpha
+                    }
                 }
             }
             if (alpha <= 0.0) continue
@@ -214,14 +260,22 @@ private fun sampleAlpha(alpha: ByteArray, width: Int, height: Int, x: Double, y:
     return result
 }
 
+private data class PixelBounds(val left: Int, val top: Int, val right: Int, val bottom: Int)
+
+/**
+ * Exact separable convolution restricted to nonzero support. Skipping zero
+ * padding retains the original per-pixel tap order and Double precision.
+ */
 private fun gaussianBlur(
     source: DoubleArray,
+    horizontal: DoubleArray,
     width: Int,
     height: Int,
     sigma: Double,
+    bounds: PixelBounds,
     cancellationProbe: () -> Unit,
-): DoubleArray {
-    if (sigma <= 0.01) return source
+): PixelBounds {
+    if (sigma <= 0.01) return bounds
     val radius = ceil(sigma * 3.0).toInt()
     val kernel = DoubleArray(radius * 2 + 1)
     var sum = 0.0
@@ -231,29 +285,119 @@ private fun gaussianBlur(
         sum += kernel[i]
     }
     for (i in kernel.indices) kernel[i] /= sum
-    val horizontal = DoubleArray(source.size)
-    val output = DoubleArray(source.size)
+    val blurred = PixelBounds(
+        max(0, bounds.left - radius), max(0, bounds.top - radius),
+        min(width, bounds.right + radius), min(height, bounds.bottom + radius),
+    )
     // Transparent outside the image; do not renormalize the kernel at bounds.
-    for (y in 0 until height) {
-        if ((y and 31) == 0) cancellationProbe()
+    for (y in bounds.top until bounds.bottom) {
+        if (((y - bounds.top) and 31) == 0) cancellationProbe()
         val row = y * width
-        for (x in 0 until width) {
-            var value = 0.0
-            for (dx in max(-radius, -x)..min(radius, width - x - 1)) {
-                value += source[row + x + dx] * kernel[dx + radius]
+        horizontal.fill(0.0, row + blurred.left, row + blurred.right)
+        for (dx in -radius..radius) {
+            val firstX = max(blurred.left, bounds.left - dx)
+            val lastX = min(blurred.right, bounds.right - dx)
+            val sampleRow = row + dx
+            val weight = kernel[dx + radius]
+            for (x in firstX until lastX) {
+                horizontal[row + x] += source[sampleRow + x] * weight
             }
-            horizontal[row + x] = value
         }
     }
-    for (y in 0 until height) {
-        if ((y and 31) == 0) cancellationProbe()
-        for (x in 0 until width) {
-            var value = 0.0
-            for (dy in max(-radius, -y)..min(radius, height - y - 1)) {
-                value += horizontal[(y + dy) * width + x] * kernel[dy + radius]
+    for (y in blurred.top until blurred.bottom) {
+        if (((y - blurred.top) and 31) == 0) cancellationProbe()
+        val row = y * width
+        source.fill(0.0, row + blurred.left, row + blurred.right)
+        // Contiguous inner loops avoid strided reads, and allow vectorization.
+        // Every output pixel still adds its vertical taps in ascending order.
+        for (dy in max(-radius, bounds.top - y)..min(radius, bounds.bottom - y - 1)) {
+            val sampleRow = (y + dy) * width
+            val weight = kernel[dy + radius]
+            for (x in blurred.left until blurred.right) {
+                source[row + x] += horizontal[sampleRow + x] * weight
             }
-            output[y * width + x] = value
         }
     }
-    return output
+    return blurred
+}
+
+/** Four running-sum box filters approximate a Gaussian at constant work per pixel. */
+private fun fastGaussianBlur(
+    source: DoubleArray,
+    horizontal: DoubleArray,
+    width: Int,
+    height: Int,
+    sigma: Double,
+    bounds: PixelBounds,
+    cancellationProbe: () -> Unit,
+): PixelBounds {
+    if (sigma <= 0.01) return bounds
+    val passes = 4
+    val idealWidth = kotlin.math.sqrt(12.0 * sigma * sigma / passes + 1.0)
+    var lowerWidth = floor(idealWidth).toInt()
+    if (lowerWidth % 2 == 0) lowerWidth--
+    lowerWidth = max(1, lowerWidth)
+    val upperWidth = lowerWidth + 2
+    val lowerCount = ((12.0 * sigma * sigma - passes * lowerWidth * lowerWidth -
+        4.0 * passes * lowerWidth - 3.0 * passes) / (-4.0 * lowerWidth - 4.0))
+        .roundToInt().coerceIn(0, passes)
+    var resultBounds = bounds
+    val columnSums = DoubleArray(width)
+    for (pass in 0 until passes) {
+        val radius = ((if (pass < lowerCount) lowerWidth else upperWidth) - 1) / 2
+        if (radius == 0) continue
+        resultBounds = boxBlur(source, horizontal, columnSums, width, height, radius, resultBounds, cancellationProbe)
+    }
+    return resultBounds
+}
+
+private fun boxBlur(
+    source: DoubleArray,
+    horizontal: DoubleArray,
+    columnSums: DoubleArray,
+    width: Int,
+    height: Int,
+    radius: Int,
+    bounds: PixelBounds,
+    cancellationProbe: () -> Unit,
+): PixelBounds {
+    val outputBounds = PixelBounds(
+        max(0, bounds.left - radius), max(0, bounds.top - radius),
+        min(width, bounds.right + radius), min(height, bounds.bottom + radius),
+    )
+    val inverseWidth = 1.0 / (radius * 2 + 1)
+    for (y in bounds.top until bounds.bottom) {
+        if (((y - bounds.top) and 31) == 0) cancellationProbe()
+        val row = y * width
+        var sum = 0.0
+        for (x in max(bounds.left, outputBounds.left - radius)..min(bounds.right - 1, outputBounds.left + radius)) {
+            sum += source[row + x]
+        }
+        for (x in outputBounds.left until outputBounds.right) {
+            horizontal[row + x] = sum * inverseWidth
+            val outgoing = x - radius
+            val incoming = x + radius + 1
+            if (outgoing >= bounds.left && outgoing < bounds.right) sum -= source[row + outgoing]
+            if (incoming >= bounds.left && incoming < bounds.right) sum += source[row + incoming]
+        }
+    }
+    columnSums.fill(0.0, outputBounds.left, outputBounds.right)
+    for (y in max(bounds.top, outputBounds.top - radius)..min(bounds.bottom - 1, outputBounds.top + radius)) {
+        val row = y * width
+        for (x in outputBounds.left until outputBounds.right) columnSums[x] += horizontal[row + x]
+    }
+    for (y in outputBounds.top until outputBounds.bottom) {
+        if (((y - outputBounds.top) and 31) == 0) cancellationProbe()
+        val row = y * width
+        val outgoing = y - radius
+        val incoming = y + radius + 1
+        val outgoingRow = if (outgoing >= bounds.top && outgoing < bounds.bottom) outgoing * width else -1
+        val incomingRow = if (incoming >= bounds.top && incoming < bounds.bottom) incoming * width else -1
+        for (x in outputBounds.left until outputBounds.right) {
+            source[row + x] = columnSums[x] * inverseWidth
+            if (outgoingRow >= 0) columnSums[x] -= horizontal[outgoingRow + x]
+            if (incomingRow >= 0) columnSums[x] += horizontal[incomingRow + x]
+        }
+    }
+    return outputBounds
 }

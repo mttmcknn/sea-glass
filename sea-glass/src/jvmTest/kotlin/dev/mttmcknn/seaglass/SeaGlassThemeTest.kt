@@ -156,33 +156,41 @@ class SeaGlassThemeTest {
     }
 
     @Test
-    fun themedDefaultsRenderLikeExplicitReusableStylesForEveryEntryPoint() = withScene(width = 584, height = 540) {
+    fun themedDefaultsRenderLikeExplicitReusableStylesForEveryEntryPoint() = withScene(width = 304, height = 540) {
         val selected = SeaGlassComponentStyle(
             material = SeaGlassStyle.Tumbled.copy(seed = 73, grain = .32f),
             palette = SeaGlassPalette.Mint,
             shape = SeaGlassShape.Capsule,
         )
+        val useTheme = mutableStateOf(true)
+        var showingTheme: Boolean? = null
         setContent {
-            Box(Modifier.size(584.dp, 540.dp).background(Color.White)) {
-                SeaGlassTheme(style = selected) {
-                    SeaGlassButton(onClick = {}, modifier = specimen(72, 72)) {}
-                    SeaGlassSurface(modifier = specimen(72, 236)) {}
-                    Box(specimen(72, 400).seaGlass())
+            val themed = useTheme.value
+            SideEffect { showingTheme = themed }
+            Box(Modifier.size(304.dp, 540.dp).background(Color.White)) {
+                if (themed) {
+                    SeaGlassTheme(style = selected) {
+                        SeaGlassButton(onClick = {}, modifier = specimen(72, 72)) {}
+                        SeaGlassSurface(modifier = specimen(72, 236)) {}
+                        Box(specimen(72, 400).seaGlass())
+                    }
+                } else {
+                    // Use exactly the same raster coordinates. Translating a
+                    // native antialiased path can round a boundary channel by
+                    // one level; that is independent of theme resolution.
+                    SeaGlassButton(onClick = {}, modifier = specimen(72, 72), style = selected) {}
+                    SeaGlassSurface(modifier = specimen(72, 236), style = selected) {}
+                    Box(specimen(72, 400).seaGlass(style = selected))
                 }
-                // This column is outside the theme. It exercises the explicit style overloads.
-                SeaGlassButton(onClick = {}, modifier = specimen(352, 72), style = selected) {}
-                SeaGlassSurface(modifier = specimen(352, 236), style = selected) {}
-                Box(specimen(352, 400).seaGlass(style = selected))
             }
         }
-        val ready = awaitFrame { image ->
-            listOf(72, 236, 400).all { y ->
-                image.getRGB(150, y + 78) != WHITE && image.getRGB(430, y + 78) != WHITE
-            }
-        }
+        fun complete(image: BufferedImage): Boolean = listOf(72, 236, 400).all { y -> image.getRGB(150, y + 78) != WHITE }
+        val inheritedFrame = awaitFrame { showingTheme == true && complete(it) }
+        useTheme.value = false
+        val explicitFrame = awaitFrame { showingTheme == false && complete(it) }
         for ((entryPoint, y) in listOf("button" to 72, "surface" to 236, "modifier" to 400)) {
-            val inherited = ready.getRGB(24, y - 48, 252, 164, null, 0, 252)
-            val explicit = ready.getRGB(304, y - 48, 252, 164, null, 0, 252)
+            val inherited = inheritedFrame.getRGB(24, y - 48, 252, 164, null, 0, 252)
+            val explicit = explicitFrame.getRGB(24, y - 48, 252, 164, null, 0, 252)
             assertTrue(inherited.contentEquals(explicit), "$entryPoint: inherited and explicit styles must render identically")
         }
     }

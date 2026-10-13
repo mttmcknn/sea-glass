@@ -12,7 +12,7 @@ SeaGlassButton(
 }
 ```
 
-Use `SeaGlassSurface` for containers or `Modifier.seaGlass()` behind your existing controls. Text, icons, semantics, and click handling stay native Compose content. Material generation runs off the main thread and is cached per surface.
+Use `SeaGlassSurface` for containers or `Modifier.seaGlass()` behind your existing controls. Text, icons, semantics, and click handling stay native Compose content. Android 13+ and Skia use a runtime shader and native ground blur: the complete material draws in the component's first draw pass, and most recipe changes update shader uniforms. Older Android versions use a cached asynchronous CPU fallback.
 
 Set app-wide defaults with a theme, then override only what a particular piece needs:
 
@@ -66,6 +66,10 @@ Check slider updates, independent scrolling, and the resize boundary with:
 ./gradlew -PseaGlass.android=false :desktopApp:verifyPlayground
 ```
 
+For an installable, non-debuggable performance build, run `./gradlew :androidApp:assembleDemoRelease`. It uses R8 optimization and resource shrinking, signed with the sample debug key so local demo builds can update each other. Store-distributed apps need their own release signing configuration.
+
+The [rendering guide](docs/rendering.md) explains the live shader, its visual differences from the original CPU renderer, and the Android compatibility path. The [performance report](docs/performance/README.md) retains the CPU hill-climb measurements; its 336 exact pixel checks apply to the reference CPU implementation, not the default live shader.
+
 The web demo is buildless:
 
 ```sh
@@ -100,4 +104,4 @@ The build pins Kotlin 2.3.21, Compose Multiplatform 1.10.3, AGP 9.0.0, and Gradl
 
 ## Validation
 
-The library passes 19 Kotlin/Compose tests, including native theme inheritance, live updates, and explicit-style rendering checks. All 9 original web tests pass. Android AAR/APK packaging and desktop compilation are verified. The [native rendering comparison](docs/rendering.md) measures a maximum difference of 3/255 per color channel against the web oracle. iOS compilation and Android/iOS device rendering remain to be verified.
+All 28 Kotlin/Compose tests pass, covering the CPU reference, shader inputs and body quality, ground blur, themes, cache transitions, cancellation and first material draw. All 9 original web tests pass. Playground interaction checks and the Android `demoRelease` build, including R8 and vital lint, also pass. The live shader retains the material's form and lighting with a new procedural grain pattern; measured body mean absolute RGB differences are about 0.68–2.00/255 against the CPU reference. The older comparison's 3/255 maximum applies only to the exact CPU reference path. See [rendering validation](docs/rendering.md#exactness-and-platform-differences) for the scope of each measurement. iOS compilation and Android/iOS device rendering remain to be verified.

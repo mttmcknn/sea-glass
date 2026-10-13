@@ -41,6 +41,8 @@ Box(
 
 `SeaGlassSurface` is a non-interactive container. The modifier adds only drawing; it does not set content color, semantics, padding, or interaction behavior.
 
+Reuse `SeaGlassStyle` and `SeaGlassComponentStyle` values across controls, but call `Modifier.seaGlass()` separately for each layout. Each call owns the renderer and ground-light layers for one piece; sharing the resulting modifier instance across multiple layouts would also share those mutable drawing resources.
+
 ## Recipes
 
 `SeaGlassStyle.Reference`, `.Tumbled`, and `.Quiet` match the web presets. Copy a recipe to adjust it:
@@ -69,11 +71,17 @@ Lengths map one web CSS pixel to one dp. `tumble` is a fraction of the shorter d
 
 Leave space beneath the control for its glow. The material draws into a transparent 48.dp gutter outside its layout size. A clipping parent, including some scrolling containers, can crop that gutter. Put layout padding around a control when needed; do not add a shadow modifier to simulate the material's existing shadow.
 
-Each surface caches texture, geometry, optical depth, ground light, and the final raster. Static controls draw a cached image after the first render. Material work runs on a background dispatcher. Rapid parameter changes cancel obsolete jobs; the previous completed image remains visible while the next one is prepared.
+On **Android 13+ and Skia**, `LiveMaterialRenderer` draws the complete material during the first draw. The body uses a runtime shader; the three ground-light layers use native blur. There is no asynchronous flat-color placeholder or later completed-image swap on this path.
 
-This initial implementation uses a portable CPU material renderer and platform bitmap upload. It is suitable for mostly static controls and occasional recipe changes. Continuous full-screen material animation needs profiling on the target device; this version does not promise 60 fps shader updates. The sample renders at at most two material pixels per dp, with a one-megapixel safety budget for oversized surfaces. Text and icons still render at the display's native resolution.
+Each surface caches a small smooth geometry field and its tumbled vector contour. Only changes to size, density, shape, tumble, or seed rebuild that geometry. Frost, grain, bulge, thickness, transmission, light angle and pigment changes update shader uniforms; affected ground-light layers are re-recorded separately. Elevation changes the ground light without rebuilding the body geometry. Changing foreground ink does not change the material.
 
-Android's adapter uses `Bitmap`, while desktop and iOS use Skia. No WebView, bundled screenshot, network service, or Android 13 runtime-shader requirement is involved.
+The smooth field is sampled at up to one sample per dp and reduced toward a 262,144-sample budget for oversized surfaces. This is a geometry cache, not the final rendered image: the silhouette and procedural grain draw at display resolution. The shader's grain pattern differs from the CPU reference, with measured mean body color differences around 0.68–2.00/255 across four fixtures. See [rendering notes](rendering.md) for the visual comparison and its limits.
+
+On **Android 7–12L**, the compatibility path renders on a background dispatcher and uploads a bitmap. It retains one cached texture, geometry field, optical field, shaded body, ground-light image and final raster, using four running-sum box filters to approximate the ground Gaussian. During rapid changes it finishes the active render, then takes the latest pending recipe. Intermediate requests are coalesced and the previous image stays visible; leaving composition cancels the worker. This path is capped at two material pixels per dp and a one-megapixel material budget. Native text and icons remain independent of that cap.
+
+The backend is selected automatically; the component, modifier and theme APIs are identical. Android 13 is required only for the live shader path, not for using the library. The implementation uses native graphics, with no WebView, bundled screenshot or network service.
+
+The [performance report](performance/README.md) retains CPU reference benchmarks and interaction measurements. Exact CPU pixel checks do not establish exact shader parity or Android frame rates. The playground's `demoRelease` build enables R8 and resource shrinking for device testing. Large surfaces and continuous animation still need measurement on the intended device.
 
 ## How the controls interact
 
