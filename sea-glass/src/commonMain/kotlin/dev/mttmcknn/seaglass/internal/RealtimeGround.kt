@@ -32,6 +32,16 @@ internal class RealtimeGround(
     private val transmissionLayer: GraphicsLayer,
 ) {
     private var recordedKey: GroundRecordKey? = null
+    private var castKey: ShadowKey? = null
+    private var contactKey: ShadowKey? = null
+    private var transmissionKey: TransmissionKey? = null
+    // Count actual layer recordings independently of platform effect caching.
+    internal var castRecordCount: Int = 0
+        private set
+    internal var contactRecordCount: Int = 0
+        private set
+    internal var transmissionRecordCount: Int = 0
+        private set
 
     fun draw(
         scope: DrawScope,
@@ -49,7 +59,7 @@ internal class RealtimeGround(
         val key = GroundRecordKey(
             path, widthDp, heightDp, density, scope.layoutDirection,
             bounded.tumble, bounded.seed, bounded.thickness, bounded.bulge,
-            bounded.frost, bounded.elevation, bounded.transmission, palette.body,
+            bounded.frost, bounded.elevation, bounded.transmission, palette.body and 0xFFFFFF,
         )
         if (recordedKey != key) {
             record(scope, path, widthDp, heightDp, density, bounded, palette)
@@ -81,6 +91,7 @@ internal class RealtimeGround(
         )
         val short = min(widthDp, heightDp)
         val transmission = settings.transmission
+        val geometry = LayerGeometryKey(path, widthDp, heightDp, density, scope.layoutDirection)
 
         fun recordLayer(
             layer: GraphicsLayer,
@@ -99,21 +110,42 @@ internal class RealtimeGround(
             }
         }
 
-        recordLayer(
-            castLayer,
+        val nextCastKey = ShadowKey(
+            geometry,
             offsetDp = min(16.0, settings.thickness * 0.40 + settings.elevation * 0.72 + settings.bulge * short * 0.03),
             sigmaDp = min(6.0, 2.5 + settings.elevation * 0.18 + settings.frost * 0.7 + settings.bulge * short * 0.018),
-        ) {
-            drawPath(path, Color(0xFF3F4342), alpha = ((0.18 + settings.elevation * 0.001) * (1.0 - transmission * 0.82)).toFloat())
+            alpha = ((0.18 + settings.elevation * 0.001) * (1.0 - transmission * 0.82)).toFloat(),
+        )
+        if (nextCastKey != castKey) {
+            recordLayer(castLayer, nextCastKey.offsetDp, nextCastKey.sigmaDp) {
+                drawPath(path, Color(0xFF3F4342), alpha = nextCastKey.alpha)
+            }
+            castRecordCount++
+            castKey = nextCastKey
         }
-        recordLayer(
-            contactLayer,
+        val nextContactKey = ShadowKey(
+            geometry,
             offsetDp = min(8.0, settings.thickness * 0.32 + 0.8),
             sigmaDp = 1.4 + settings.elevation * 0.065,
-        ) {
-            drawPath(path, Color(0xFF3D413F), alpha = (0.10 * (1.0 - transmission * 0.70)).toFloat())
+            alpha = (0.10 * (1.0 - transmission * 0.70)).toFloat(),
+        )
+        if (nextContactKey != contactKey) {
+            recordLayer(contactLayer, nextContactKey.offsetDp, nextContactKey.sigmaDp) {
+                drawPath(path, Color(0xFF3D413F), alpha = nextContactKey.alpha)
+            }
+            contactRecordCount++
+            contactKey = nextContactKey
         }
         if (transmission > 0.001) {
+            val travel = 4.0 + settings.elevation * 0.56 + short * 0.055
+            val nextTransmissionKey = TransmissionKey(
+                geometry,
+                offsetDp = min(22.0, settings.thickness * 0.42 + travel),
+                sigmaDp = min(8.0, 2.8 + short * 0.033 + settings.frost * 1.6),
+                transmission = transmission,
+                bodyColor = palette.body and 0xFFFFFF,
+            )
+            if (nextTransmissionKey == transmissionKey) return
             fun tint(channel: Int): Int = (255.0 - (255 - channel) * 1.35).roundToInt().coerceIn(0, 255)
             val tintColor = Color(
                 (255 shl 24) or (tint((palette.body ushr 16) and 255) shl 16) or
@@ -128,16 +160,42 @@ internal class RealtimeGround(
                 endY = (heightDp * density).toFloat(),
                 tileMode = TileMode.Clamp,
             )
-            val travel = 4.0 + settings.elevation * 0.56 + short * 0.055
             recordLayer(
                 transmissionLayer,
-                offsetDp = min(22.0, settings.thickness * 0.42 + travel),
-                sigmaDp = min(8.0, 2.8 + short * 0.033 + settings.frost * 1.6),
+                offsetDp = nextTransmissionKey.offsetDp,
+                sigmaDp = nextTransmissionKey.sigmaDp,
             ) {
                 drawPath(path, gradient)
             }
+            transmissionRecordCount++
+            transmissionKey = nextTransmissionKey
         }
     }
+
+    // Cache each layer by its actual paint inputs. A palette edit changes the
+    // transmitted light, while the two neutral shadows remain recorded.
+    private data class LayerGeometryKey(
+        val path: Path,
+        val widthDp: Double,
+        val heightDp: Double,
+        val density: Float,
+        val layoutDirection: LayoutDirection,
+    )
+
+    private data class ShadowKey(
+        val geometry: LayerGeometryKey,
+        val offsetDp: Double,
+        val sigmaDp: Double,
+        val alpha: Float,
+    )
+
+    private data class TransmissionKey(
+        val geometry: LayerGeometryKey,
+        val offsetDp: Double,
+        val sigmaDp: Double,
+        val transmission: Double,
+        val bodyColor: Int,
+    )
 
     private data class GroundRecordKey(
         val path: Path,

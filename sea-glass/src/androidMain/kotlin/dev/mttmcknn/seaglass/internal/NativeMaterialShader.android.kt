@@ -1,18 +1,14 @@
 package dev.mttmcknn.seaglass.internal
 
 import android.annotation.TargetApi
-import android.graphics.Bitmap
 import android.graphics.BitmapShader
 import android.graphics.RuntimeShader
 import android.graphics.Shader
 import android.os.Build
-import android.util.Half
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 internal actual class NativeMaterialProgram actual constructor(private val source: String) {
     actual fun createInstance(): NativeMaterialShader? =
@@ -24,12 +20,13 @@ internal actual class NativeMaterialProgram actual constructor(private val sourc
 
 @TargetApi(33)
 private class AndroidMaterialShader(source: String) : NativeMaterialShader {
-    private val shader = RuntimeShader(source)
+    private val shader = traceMaterial("SeaGlass.ProgramCreate") { RuntimeShader(source) }
     private val paint = Paint().apply {
         isAntiAlias = true
         this.shader = this@AndroidMaterialShader.shader
     }
     private val inputs = mutableMapOf<String, BitmapShader>()
+    private val uploader = AndroidFloatTextureUploader()
     private var closed = false
 
     override fun setFloatUniform(name: String, values: FloatArray) {
@@ -44,22 +41,7 @@ private class AndroidMaterialShader(source: String) : NativeMaterialShader {
 
     override fun setInputTexture(name: String, texture: NativeFloatTexture) {
         check(!closed)
-        val bitmap = Bitmap.createBitmap(texture.width, texture.height, Bitmap.Config.RGBA_F16)
-        bitmap.setPremultiplied(false)
-        // copyPixelsFromBuffer preserves the numeric F16 channel values. The
-        // input-buffer API skips both color conversion and alpha premultiplication.
-        val buffer = ByteBuffer.allocateDirect(bitmap.byteCount).order(ByteOrder.nativeOrder())
-        val channelsPerRow = texture.width * 4
-        for (row in 0 until texture.height) {
-            // Respect the bitmap allocator's native stride, including padding.
-            buffer.position(row * bitmap.rowBytes)
-            val start = row * channelsPerRow
-            for (channel in 0 until channelsPerRow) {
-                buffer.putShort(Half.toHalf(texture.rgba[start + channel]))
-            }
-        }
-        buffer.rewind()
-        bitmap.copyPixelsFromBuffer(buffer)
+        val bitmap = uploader.upload(texture)
         val input = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP).apply {
             setFilterMode(BitmapShader.FILTER_MODE_LINEAR)
         }
@@ -79,6 +61,7 @@ private class AndroidMaterialShader(source: String) : NativeMaterialShader {
         closed = true
         paint.shader = null
         inputs.clear()
+        uploader.clear()
         // Dropping this instance releases RuntimeShader and its remaining child
         // textures through the framework's native allocation ownership.
     }

@@ -150,17 +150,33 @@ private fun smoothHeight(values: FloatArray, width: Int, height: Int, scale: Dou
     val sum = weights.sum()
     val horizontal = FloatArray(values.size)
     val result = FloatArray(values.size)
-    for (y in 0 until height) for (x in 0 until width) {
-        if (x == 0 && y % 32 == 0) cancellationProbe()
-        var value = 0.0
-        for (k in -reach..reach) value += values[y * width + (x + k).coerceIn(0, width - 1)] * weights[k + reach]
-        horizontal[y * width + x] = (value / sum).toFloat()
+    for (y in 0 until height) {
+        if (y % 32 == 0) cancellationProbe()
+        val row = y * width
+        for (x in 0 until width) {
+            var value = 0.0
+            if (x >= reach && x < width - reach) {
+                val first = row + x - reach
+                for (k in weights.indices) value += values[first + k] * weights[k]
+            } else {
+                for (k in weights.indices) value += values[row + (x + k - reach).coerceIn(0, width - 1)] * weights[k]
+            }
+            horizontal[row + x] = (value / sum).toFloat()
+        }
     }
-    for (y in 0 until height) for (x in 0 until width) {
-        if (x == 0 && y % 32 == 0) cancellationProbe()
-        var value = 0.0
-        for (k in -reach..reach) value += horizontal[(y + k).coerceIn(0, height - 1) * width + x] * weights[k + reach]
-        result[y * width + x] = (value / sum).toFloat()
+    // Visit contiguous rows while retaining each pixel's original tap order
+    // and Double accumulator. Only the existing pass boundaries quantize.
+    val rowValues = DoubleArray(width)
+    for (y in 0 until height) {
+        if (y % 32 == 0) cancellationProbe()
+        rowValues.fill(0.0)
+        for (k in weights.indices) {
+            val sourceRow = (y + k - reach).coerceIn(0, height - 1) * width
+            val weight = weights[k]
+            for (x in 0 until width) rowValues[x] += horizontal[sourceRow + x] * weight
+        }
+        val row = y * width
+        for (x in 0 until width) result[row + x] = (rowValues[x] / sum).toFloat()
     }
     return result
 }
@@ -191,9 +207,10 @@ internal fun makeGeometryField(
     val separators = DoubleArray(longest + 1)
     for (y in 0 until rows) {
         if (y % 32 == 0) cancellationProbe()
-        for (x in 0 until columns) input[x] = distances[y * columns + x].toDouble()
+        val row = y * columns
+        for (x in 0 until columns) input[x] = distances[row + x].toDouble()
         distanceLine(input, columns, output, sites, separators)
-        for (x in 0 until columns) distances[y * columns + x] = output[x].toFloat()
+        for (x in 0 until columns) distances[row + x] = output[x].toFloat()
     }
     for (x in 0 until columns) {
         if (x % 32 == 0) cancellationProbe()
@@ -211,7 +228,6 @@ internal fun makeGeometryField(
     val alpha = ByteArray(count)
     val short = min(w, h)
     val maxDistance = max(1.0, distances.maxOrNull()?.toDouble() ?: 0.0)
-    fun at(x: Int, y: Int) = distances[y.coerceIn(0, rows - 1) * columns + x.coerceIn(0, columns - 1)].toDouble()
     // These longitudinal terms depend only on the column. Preserve Double
     // intermediates and operation order; quantize only at the existing stores.
     val columnLengthArch = DoubleArray(width)
@@ -222,43 +238,56 @@ internal fun makeGeometryField(
         columnLengthArch[x] = 0.86 + 0.14 * sine * sine
         columnLengthSlope[x] = 0.14 * PI / w * sin(u * PI * 2.0)
     }
-    for (y in 0 until height) for (x in 0 until width) {
-        if (x == 0 && y % 32 == 0) cancellationProbe()
-        val i = y * width + x
-        val mx = x + 1
-        val my = y + 1
-        alpha[i] = coverage[my * columns + mx]
-        val roll = short * (0.205 + texture.clouds[i].toDouble() * 0.023)
-        val dome = tanh(at(mx, my) / roll)
-        val slope = (1.0 - dome * dome) / roll
-        profile[i] = dome.toFloat()
-        val dx = at(mx + 2, my) - at(mx - 2, my)
-        val dy = at(mx, my + 2) - at(mx, my - 2)
-        val direction = hypot(dx, dy)
-        gradX[i] = (if (direction > 0.001) dx / direction * slope else 0.0).toFloat()
-        gradY[i] = (if (direction > 0.001) dy / direction * slope else 0.0).toFloat()
-        val q = clamp(at(mx, my) / maxDistance, 0.0, 1.0)
-        val arch = sqrt(q * (2.0 - q))
-        val roundSlope = (1.0 - q) / (maxDistance * max(arch, 0.035))
-        val lengthArch = columnLengthArch[x]
-        val lengthSlope = columnLengthSlope[x]
-        roundProfile[i] = (arch * lengthArch).toFloat()
-        roundGradX[i] = ((if (direction > 0.001) dx / direction * roundSlope * lengthArch else 0.0) + arch * lengthSlope).toFloat()
-        roundGradY[i] = (if (direction > 0.001) dy / direction * roundSlope * lengthArch else 0.0).toFloat()
+    for (y in 0 until height) {
+        if (y % 32 == 0) cancellationProbe()
+        val row = y * width
+        val maskRow = (y + 1) * columns
+        val above = max(0, y - 1) * columns
+        val below = min(rows - 1, y + 3) * columns
+        for (x in 0 until width) {
+            val i = row + x
+            val mx = x + 1
+            val distance = distances[maskRow + mx].toDouble()
+            alpha[i] = coverage[maskRow + mx]
+            val roll = short * (0.205 + texture.clouds[i].toDouble() * 0.023)
+            val dome = tanh(distance / roll)
+            val slope = (1.0 - dome * dome) / roll
+            profile[i] = dome.toFloat()
+            val dx = distances[maskRow + min(columns - 1, x + 3)].toDouble() - distances[maskRow + max(0, x - 1)].toDouble()
+            val dy = distances[below + mx].toDouble() - distances[above + mx].toDouble()
+            val direction = hypot(dx, dy)
+            gradX[i] = (if (direction > 0.001) dx / direction * slope else 0.0).toFloat()
+            gradY[i] = (if (direction > 0.001) dy / direction * slope else 0.0).toFloat()
+            val q = clamp(distance / maxDistance, 0.0, 1.0)
+            val arch = sqrt(q * (2.0 - q))
+            val roundSlope = (1.0 - q) / (maxDistance * max(arch, 0.035))
+            val lengthArch = columnLengthArch[x]
+            val lengthSlope = columnLengthSlope[x]
+            roundProfile[i] = (arch * lengthArch).toFloat()
+            roundGradX[i] = ((if (direction > 0.001) dx / direction * roundSlope * lengthArch else 0.0) + arch * lengthSlope).toFloat()
+            roundGradY[i] = (if (direction > 0.001) dy / direction * roundSlope * lengthArch else 0.0).toFloat()
+        }
     }
     val softened = smoothHeight(roundProfile, width, height, scale, cancellationProbe)
-    fun heightAt(x: Int, y: Int) = softened[y.coerceIn(0, height - 1) * width + x.coerceIn(0, width - 1)].toDouble()
-    for (y in 0 until height) for (x in 0 until width) {
-        if (x == 0 && y % 32 == 0) cancellationProbe()
-        val i = y * width + x
-        val blend = clamp((at(x + 1, y + 1) - 2.0) / 3.0, 0.0, 1.0)
-        val weight = blend * blend * (3.0 - 2.0 * blend)
-        val rp = roundProfile[i].toDouble()
-        val gx = roundGradX[i].toDouble()
-        val gy = roundGradY[i].toDouble()
-        roundProfile[i] = (rp + (softened[i].toDouble() - rp) * weight).toFloat()
-        roundGradX[i] = (gx + ((heightAt(x + 2, y) - heightAt(x - 2, y)) * scale / 4.0 - gx) * weight).toFloat()
-        roundGradY[i] = (gy + ((heightAt(x, y + 2) - heightAt(x, y - 2)) * scale / 4.0 - gy) * weight).toFloat()
+    for (y in 0 until height) {
+        if (y % 32 == 0) cancellationProbe()
+        val row = y * width
+        val maskRow = (y + 1) * columns + 1
+        val above = max(0, y - 2) * width
+        val below = min(height - 1, y + 2) * width
+        for (x in 0 until width) {
+            val i = row + x
+            val blend = clamp((distances[maskRow + x].toDouble() - 2.0) / 3.0, 0.0, 1.0)
+            val weight = blend * blend * (3.0 - 2.0 * blend)
+            val rp = roundProfile[i].toDouble()
+            val gx = roundGradX[i].toDouble()
+            val gy = roundGradY[i].toDouble()
+            val dx = softened[row + min(width - 1, x + 2)].toDouble() - softened[row + max(0, x - 2)].toDouble()
+            val dy = softened[below + x].toDouble() - softened[above + x].toDouble()
+            roundProfile[i] = (rp + (softened[i].toDouble() - rp) * weight).toFloat()
+            roundGradX[i] = (gx + (dx * scale / 4.0 - gx) * weight).toFloat()
+            roundGradY[i] = (gy + (dy * scale / 4.0 - gy) * weight).toFloat()
+        }
     }
     return GeometryField(segments, profile, gradX, gradY, roundProfile, roundGradX, roundGradY, alpha, texture)
 }

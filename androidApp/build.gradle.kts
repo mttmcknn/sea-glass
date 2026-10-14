@@ -38,5 +38,6 @@ android {
 
 dependencies {
     implementation(project(":sample"))
+    implementation(project(":sea-glass"))
     implementation(libs.androidx.activity.compose)
 }

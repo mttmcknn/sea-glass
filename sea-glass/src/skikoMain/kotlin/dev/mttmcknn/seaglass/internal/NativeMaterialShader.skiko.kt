@@ -16,7 +16,7 @@ import org.jetbrains.skia.Shader
 
 internal actual class NativeMaterialProgram actual constructor(source: String) {
     // A program can be shared; its per-piece uniforms must never be shared.
-    private val effect = RuntimeEffect.makeForShader(source)
+    private val effect = traceMaterial("SeaGlass.ProgramCreate") { RuntimeEffect.makeForShader(source) }
 
     actual fun createInstance(): NativeMaterialShader? = SkiaMaterialShader(effect)
 

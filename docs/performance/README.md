@@ -1,6 +1,6 @@
 # Performance hill climb
 
-The default renderer on **Android 13+ and Skia now draws the complete material in the component's draw pass**, using a runtime body shader and native ground blur. It removes the asynchronous flat-fill-to-bitmap transition. Most recipe changes update shader uniforms; only size, density, shape, tumble and seed rebuild the small smooth geometry field. This implements the new rendering path; **near-instant response on a real GPU remains unverified** because no Android device is available in this environment.
+The default renderer on **Android 13+ and Skia draws a complete material on the first frame**, using a runtime body shader and native ground blur. Optical changes update their affected uniforms immediately. Later shape, tumble and seed edits prepare geometry on a worker while the previous complete shape stays visible; rapid edits retain the final request. Logical-size changes still draw synchronously. The measurements below describe the earlier CPU optimization work. Follow-up emulator measurements are documented in [Android emulator profiling](android-emulator-profile.md); they do not establish physical-device GPU performance.
 
 The available headless Skia backend executes the shader in software. It is **slower than the cached CPU bitmap implementation in this harness**, not evidence of a GPU speedup. The material is complete when drawn, but first-paint measurements still include Compose dispatch, drawing and readback. Neither completion on the first material draw nor a changed-image count establishes device FPS.
 
@@ -13,6 +13,17 @@ The baseline is commit [`116bab1`](https://github.com/mttmcknn/sea-glass/commit/
 - [CPU playground baseline](ui-baseline.csv), [optimized CPU renderer with cancellation](ui-optimized-cancellation.csv), and [optimized CPU renderer with conflation](ui-conflated.csv).
 - [CPU bitmap first-paint run](first-paint-cpu.csv), [live shader iteration 1 first-paint run](first-paint-live.csv), and [live shader iteration 1 software UI run](ui-live-software.csv).
 - [Final live shader software UI run](ui-live-final-software.csv).
+
+## Material You cache follow-up (October 14, 2026)
+
+Material 3 palettes are resolved from container/on-container roles and remembered by their actual colors. The Android wallpaper color scheme is remembered across unrelated recompositions. Switching colors keeps the renderer's geometry cache valid; it does not change the shape, seed, or recipe.
+
+Two avoidable rendering costs were removed alongside the sample toggle:
+
+- The older-Android CPU worker reuses its uploaded image when the renderer returns the same immutable pixel buffer. Ink-only and ignored pigment-alpha changes no longer allocate/upload an identical bitmap.
+- The live ground renderer caches cast shadow, contact shadow, and transmitted light independently. A body-color edit records only the colored light layer, retaining both neutral shadow records. Frost changes retain the contact shadow. Each cache remains bounded to the current component state.
+
+These are reductions in redundant work, not measured frame-rate or latency speedups. Regression checks count uploads/ground recordings and compare cached ground output exactly with a fresh renderer after color, frost, elevation, thickness, and transmission changes. Existing CPU parity and live shader quality checks still apply. The historical timings below remain unchanged; they do not measure this follow-up. The optimized sample also passed a functional smoke check on an API 36 arm64 Android emulator using the Apple M3 Max graphics translation backend. This is rendering/interaction coverage, not a physical-device performance result.
 
 ## Current live renderer: evidence and limits
 
@@ -213,4 +224,4 @@ The Android sample is configured as **0.1.3** with an installable `demoRelease` 
 ./gradlew :androidApp:assembleDemoRelease
 ```
 
-The APK is written to `androidApp/build/outputs/apk/demoRelease/androidApp-demoRelease.apk`. Device frame timing, thermal behavior and memory measurements remain separate follow-up measurements; this report makes no on-device performance claim.
+The APK is written to `androidApp/build/outputs/apk/demoRelease/androidApp-demoRelease.apk`. See [Android emulator profiling](android-emulator-profile.md) for the later measured slider and example-switch follow-up. Physical-device timing, thermal behavior and sustained-load memory measurements remain unverified.
