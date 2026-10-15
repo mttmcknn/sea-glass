@@ -30,19 +30,40 @@ Run `:androidApp:assembleDemoRelease` and `:desktopApp:verifyPlayground` for the
 
 ## Set up Central access
 
-The Central Portal confirmed ownership of the `dev.mttmcknn` namespace on October 15, 2026. Token and signing credentials are still required before publication.
+The Central Portal confirmed ownership of the `dev.mttmcknn` namespace on October 15, 2026. Publication also requires a Central Portal user token and a usable GPG signing key whose public key is discoverable.
 
-Create a Central Portal user token and a GPG signing key whose public key is discoverable. Provide these Gradle properties through a secure local configuration outside the repository, or the corresponding environment variables:
+Save the token's username and password in a private local configuration outside the repository, such as `~/.gradle/gradle.properties`, or supply the corresponding environment variables. Use the generated token credentials, not the Portal login:
 
 | Gradle property | Environment variable |
 | --- | --- |
 | `mavenCentralUsername` | `ORG_GRADLE_PROJECT_mavenCentralUsername` |
 | `mavenCentralPassword` | `ORG_GRADLE_PROJECT_mavenCentralPassword` |
+
+The default signing setup accepts an in-memory key through these private Gradle properties or environment variables:
+
+| Gradle property | Environment variable |
+| --- | --- |
 | `signingInMemoryKey` | `ORG_GRADLE_PROJECT_signingInMemoryKey` |
 | `signingInMemoryKeyPassword` | `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword` |
 | `signingInMemoryKeyId` (optional) | `ORG_GRADLE_PROJECT_signingInMemoryKeyId` |
 
-Use the token's username and password, rather than the Portal login. Never commit tokens or private signing keys. See the [plugin's Central setup](https://vanniktech.github.io/gradle-maven-publish-plugin/central/) for current credential and signing requirements.
+To reuse an existing local GPG key through `gpg-agent`, opt in with `-Psigning.useGpgCmd=true`. Put the executable path and full signing-key fingerprint in your private Gradle properties file, adjusting the path for your installation:
+
+```properties
+signing.gnupg.executable=/opt/homebrew/bin/gpg
+signing.gnupg.keyName=YOUR_FULL_SIGNING_KEY_FINGERPRINT
+```
+
+Leave `signing.gnupg.passphrase` unset so `gpg-agent` and pinentry request the passphrase directly. This mode uses the existing local key without exporting it; in-memory key properties are unnecessary. A working pinentry program is required when the key needs unlocking. On macOS, `pinentry-mac` can provide a native prompt when configured for `gpg-agent`. With a terminal pinentry, run from an interactive shell and set `export GPG_TTY="$(tty)"` in that shell.
+
+Verify signed artifacts locally before uploading:
+
+```sh
+./gradlew :sea-glass:publishAllPublicationsToLocalVerificationRepository \
+  -Psigning.useGpgCmd=true
+```
+
+Never commit tokens or private signing keys. See the [plugin's Central setup](https://vanniktech.github.io/gradle-maven-publish-plugin/central/), [Gradle's GPG-agent signing configuration](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:using_gpg_agent), and [GnuPG's pinentry setup](https://www.gnupg.org/documentation/manuals/gnupg/Invoking-GPG_002dAGENT.html).
 
 ## Prepare a release candidate
 
@@ -57,6 +78,8 @@ After the candidate is approved and credentials are available, run from the prep
 ```sh
 ./gradlew :sea-glass:publishToMavenCentral
 ```
+
+Add `-Psigning.useGpgCmd=true` when using the local GPG-agent setup above.
 
 For a non-snapshot release, `automaticRelease = false` leaves the uploaded deployment for manual publication in the Central Portal. Review its validation result, then publish it there. For a `-SNAPSHOT` version, this same task makes the snapshot available immediately; it is not a dry run. `publishAndReleaseToMavenCentral` also releases automatically and is outside the manual workflow described here.
 

@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
@@ -89,6 +90,12 @@ mavenPublishing {
             connection.set("scm:git:https://github.com/mttmcknn/sea-glass.git")
             developerConnection.set("scm:git:ssh://git@github.com/mttmcknn/sea-glass.git")
         }
+    }
+}
+
+if (providers.gradleProperty("signing.useGpgCmd").orNull == "true") {
+    extensions.configure<SigningExtension> {
+        useGpgCmd()
     }
 }
 
