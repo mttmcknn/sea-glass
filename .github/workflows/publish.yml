@@ -85,11 +85,18 @@ jobs:
       - name: Test the publication verifier
         run: python3 -m unittest discover -s validation -p 'test_verify_publication.py' -v
 
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
+        with:
+          cmdline-tools-version: '12266719' # 16.0, for JDK 17
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+          log-accepted-android-sdk-licenses: false
+
       - name: Check Xcode, Android SDK, and GnuPG
         run: |
           xcodebuild -version
           xcrun --sdk iphonesimulator --show-sdk-version
-          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          sdkmanager --version
           gpg --version
 
       - name: Run JVM and iOS tests, check the playground, and build the demo
