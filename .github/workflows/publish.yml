@@ -1,0 +1,169 @@
+name: Stage Maven Central release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: Approved non-snapshot release version (X.Y.Z)
+        type: string
+        required: true
+      approved_sha:
+        description: Full approved commit SHA pointed to by the release tag
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stage-maven-central
+  cancel-in-progress: false
+
+jobs:
+  stage:
+    name: Verify and stage the approved release
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify the approved tag, commit, version, and namespace
+        env:
+          RELEASE_VERSION: ${{ inputs.release_version }}
+          APPROVED_SHA: ${{ inputs.approved_sha }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          version = os.environ['RELEASE_VERSION']
+          approved_sha = os.environ['APPROVED_SHA']
+          if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version):
+              raise SystemExit('release_version must be a non-snapshot X.Y.Z version.')
+          if not re.fullmatch(r'[0-9a-f]{40}', approved_sha):
+              raise SystemExit('approved_sha must be the full 40-character commit SHA.')
+          tag = f'v{version}'
+          if os.environ['GITHUB_REF_TYPE'] != 'tag' or os.environ['GITHUB_REF_NAME'] != tag:
+              raise SystemExit(f'Dispatch this workflow against the approved tag {tag}.')
+          head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          tag_sha = subprocess.check_output(
+              ['git', 'rev-parse', f'refs/tags/{tag}^{{commit}}'], text=True
+          ).strip()
+          if head != approved_sha or tag_sha != approved_sha or os.environ['GITHUB_SHA'] != approved_sha:
+              raise SystemExit('The tag, checkout, and dispatch must all match approved_sha.')
+          properties = {}
+          for raw_line in Path('gradle.properties').read_text().splitlines():
+              line = raw_line.strip()
+              if line and not line.startswith(('#', '!')) and '=' in line:
+                  key, value = line.split('=', 1)
+                  properties[key.strip()] = value.strip()
+          if properties.get('VERSION_NAME') != version:
+              raise SystemExit('VERSION_NAME does not match the approved release version.')
+          if properties.get('GROUP') != 'dev.mttmcknn':
+              raise SystemExit('Publication must use the verified dev.mttmcknn namespace.')
+          publishing = Path('sea-glass/build.gradle.kts').read_text()
+          if 'publishToMavenCentral(automaticRelease = false)' not in publishing:
+              raise SystemExit('The library must retain manual Central publication.')
+          print(f'Approved candidate: dev.mttmcknn:sea-glass:{version}, {tag}, {head}')
+          PY
+
+      - uses: actions/setup-java@v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-disabled: true
+
+      - name: Test the publication verifier
+        run: python3 -m unittest discover -s validation -p 'test_verify_publication.py' -v
+
+      - name: Check Xcode, Android SDK, and GnuPG
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphonesimulator --show-sdk-version
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          gpg --version
+
+      - name: Run JVM and iOS tests, check the playground, and build the demo
+        run: >-
+          ./gradlew :sea-glass:jvmTest :sea-glass:iosSimulatorArm64Test
+          :desktopApp:verifyPlayground
+          :androidApp:assembleDemoRelease
+          -PseaGlass.android=true -Psigning.useGpgCmd=false
+          --no-configuration-cache --no-daemon
+
+      - name: Build all five signed local publications
+        env:
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          if [ -z "$ORG_GRADLE_PROJECT_signingInMemoryKey" ]; then
+            echo 'Configure the GPG_SIGNING_KEY repository secret before staging.' >&2
+            exit 1
+          fi
+          ./gradlew :sea-glass:publishAllPublicationsToLocalVerificationRepository \
+            -PseaGlass.android=true -Psigning.useGpgCmd=false \
+            --no-configuration-cache --no-daemon
+
+      - name: Verify all five publications and the Sea Glass signatures
+        env:
+          RELEASE_VERSION: ${{ inputs.release_version }}
+        run: |
+          python3 validation/verify_publication.py \
+            --repository sea-glass/build/verification-repository \
+            --version "$RELEASE_VERSION" --group dev.mttmcknn \
+            --fingerprint 0AEB37022B619062D178402160A4B9CA4E001652 \
+            --public-key gradle/sea-glass-signing-public-key.asc \
+            --output-json build/reports/publication-verification.json
+
+      - name: Upload the verified signed publication set
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-publications-${{ inputs.release_version }}
+          path: sea-glass/build/verification-repository/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Stage the release in Maven Central
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          if [ -z "$ORG_GRADLE_PROJECT_mavenCentralUsername" ] || [ -z "$ORG_GRADLE_PROJECT_mavenCentralPassword" ]; then
+            echo 'Configure the OSSRH_USERNAME and OSSRH_PASSWORD Central token secrets before staging.' >&2
+            exit 1
+          fi
+          ./gradlew :sea-glass:publishToMavenCentral \
+            -PseaGlass.android=true -Psigning.useGpgCmd=false \
+            --no-configuration-cache --no-daemon
+
+      - name: Record the staged candidate
+        env:
+          RELEASE_VERSION: ${{ inputs.release_version }}
+          APPROVED_SHA: ${{ inputs.approved_sha }}
+        run: |
+          {
+            printf 'Staged dev.mttmcknn:sea-glass:%s from %s.\n\n' "$RELEASE_VERSION" "$APPROVED_SHA"
+            printf 'Review the deployment in the Central Portal and publish it manually after approval.\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload verification reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-verification-${{ github.run_id }}
+          path: |
+            sea-glass/build/reports/tests/
+            sea-glass/build/test-results/
+            build/reports/publication-verification.json
+          retention-days: 14

@@ -1,0 +1,74 @@
+name: Verify Sea Glass
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Tests and all five publications
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Test the publication verifier
+        run: python3 -m unittest discover -s validation -p 'test_verify_publication.py' -v
+
+      - name: Check Xcode and Android SDK
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphonesimulator --show-sdk-version
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+
+      - name: Run JVM and iOS tests, check the playground, and build the demo
+        run: >-
+          ./gradlew :sea-glass:jvmTest :sea-glass:iosSimulatorArm64Test
+          :desktopApp:verifyPlayground
+          :androidApp:assembleDemoRelease
+          -PseaGlass.android=true -Psigning.useGpgCmd=false
+          --no-configuration-cache
+
+      - name: Build an unsigned local publication set
+        run: >-
+          ./gradlew :sea-glass:publishAllPublicationsToLocalVerificationRepository
+          -PVERSION_NAME=0.0.0-SNAPSHOT
+          -PseaGlass.android=true -Psigning.useGpgCmd=false
+          --no-configuration-cache
+
+      - name: Verify all five local publications
+        run: >-
+          python3 validation/verify_publication.py
+          --repository sea-glass/build/verification-repository
+          --version 0.0.0-SNAPSHOT --group dev.mttmcknn --allow-unsigned
+          --output-json build/reports/publication-verification.json
+
+      - name: Upload verification reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-reports-${{ github.run_id }}
+          path: |
+            sea-glass/build/reports/tests/
+            sea-glass/build/test-results/
+            build/reports/publication-verification.json
+          retention-days: 14
