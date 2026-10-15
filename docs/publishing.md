@@ -30,7 +30,7 @@ Run `:androidApp:assembleDemoRelease` and `:desktopApp:verifyPlayground` for the
 
 ## Set up Central access
 
-Register a [Central Portal account and namespace](https://central.sonatype.org/register/namespace/). Verify ownership of `dev.mttmcknn` before using it. If that namespace cannot be verified, choose and verify a different group, then update the coordinates and dependency examples together before the first publication.
+The Central Portal confirmed ownership of the `dev.mttmcknn` namespace on October 15, 2026. Token and signing credentials are still required before publication.
 
 Create a Central Portal user token and a GPG signing key whose public key is discoverable. Provide these Gradle properties through a secure local configuration outside the repository, or the corresponding environment variables:
 
