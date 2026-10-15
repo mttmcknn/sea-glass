@@ -2,7 +2,7 @@
 
 Sea Glass is configured for Maven Central through `com.vanniktech.maven.publish` 0.37.0. Releases can be staged locally or through a manually dispatched GitHub Actions workflow, then published manually in the Central Portal. Only the `sea-glass` library module is published; pushing a tag does not upload a release.
 
-The current development coordinates are `dev.mttmcknn:sea-glass:0.1.0-SNAPSHOT`. `GROUP` and `VERSION_NAME` live in the root `gradle.properties`. This setup does not establish that an artifact is available on Central. Until publication is verified, use the composite-build instructions in the [README](../README.md#use-in-an-app).
+The first release candidate coordinates are `dev.mttmcknn:sea-glass:0.1.0`. `GROUP` and `VERSION_NAME` live in the root `gradle.properties`. Follow the [release process](releasing.md) for version policy and candidate approval. This setup does not establish that an artifact is available on Central. Until publication is verified, use the composite-build instructions in the [README](../README.md#use-in-an-app).
 
 ## Check the artifacts locally
 
@@ -24,7 +24,7 @@ The five expected artifacts share the same group and version:
 | `sea-glass-iosarm64` | iOS device KLIB |
 | `sea-glass-iossimulatorarm64` | Apple Silicon iOS simulator KLIB |
 
-Inspect the generated POM and Gradle module metadata for each artifact. Confirm that the platform files, source JARs, and Javadoc JARs are present. The plugin currently supplies placeholder Javadoc JARs; API documentation is in this repository. A successful local upload verifies packaging, not Central namespace ownership, signatures, or portal acceptance. Signing is optional for the current snapshot when no key is configured; non-snapshot builds require a signing key even for local verification.
+Inspect the generated POM and Gradle module metadata for each artifact. Confirm that the platform files, source JARs, and Javadoc JARs are present. The plugin currently supplies placeholder Javadoc JARs; API documentation is in this repository. A successful local upload alone verifies packaging, not Central namespace ownership, signatures, or portal acceptance. Signing is optional for snapshots when no key is configured; non-snapshot builds require a signing key even for local verification. Use the publication verifier to check signatures explicitly.
 
 Run `:androidApp:assembleDemoRelease` and `:desktopApp:verifyPlayground` for the sample checks before choosing a release candidate. iOS compilation does not verify rendering on a device. Physical-device performance and older-Android fallback coverage remain separate checks.
 
@@ -90,7 +90,7 @@ The workflow verifies signatures against [Sea Glass's public certificate](../gra
 
 ## Prepare a release candidate
 
-Choose a release version, tag, next development version, and release notes. Validate the resulting source and metadata, review the diff, and commit the agreed candidate. This repository currently has no changelog or Metalava API snapshots. No API snapshots are configured; if Metalava snapshots are introduced later, API generation and compatibility checks must both pass before copying them.
+Follow the [release process](releasing.md) to choose a release version, tag, next development version, and release notes. Validate the resulting source and metadata, review the diff, and commit the agreed candidate. This repository currently has no changelog or Metalava API snapshots. Release notes live in `docs/releases/`. If Metalava snapshots are introduced later, API generation and compatibility checks must both pass before copying them.
 
 Publication requires approval of the visible candidate details: version and tag, notes or diff, next development version, prepared commit, coordinates, destination, publishing mechanism, and validation results. The publishing setup alone is not a release candidate.
 

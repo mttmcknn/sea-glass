@@ -141,7 +141,7 @@ python3 -m http.server 8000 --directory dist
 
 ## Use in an app
 
-The current version is `0.1.0-SNAPSHOT`. Maven Central publishing is configured, but artifact availability has not been verified. To use the library from a checkout, include it as a composite build:
+The first release candidate is [`0.1.0`](docs/releases/0.1.0.md). Maven Central artifact availability has not been verified. To use the candidate from a checkout, include it as a composite build:
 
 ```kotlin
 // settings.gradle.kts in your application
@@ -154,7 +154,7 @@ includeBuild("../sea-glass") {
 
 ```kotlin
 // Android dependencies, or commonMain.dependencies in a KMP app
-implementation("dev.mttmcknn:sea-glass:0.1.0-SNAPSHOT")
+implementation("dev.mttmcknn:sea-glass:0.1.0")
 ```
 
 See [the usage guide](docs/usage.md) for styles, containers, custom controls, clipping, and rendering costs. [Rendering notes](docs/rendering.md) explain how the port matches the web source and where platform rasterization can differ.
@@ -165,7 +165,7 @@ The build pins Kotlin 2.3.21, Compose Multiplatform 1.10.3, AGP 9.0.0, and Gradl
 
 ## Publishing
 
-[Maven publishing](docs/publishing.md) covers local artifact verification, Central namespace and signing setup, and the manual release process. The library targets Android, desktop/JVM, iOS devices, and Apple Silicon iOS simulators. The repository uses the [Apache License 2.0](LICENSE).
+[The release process](docs/releasing.md) defines SemVer, candidate validation, approval, staging, and publication verification. [Maven publishing](docs/publishing.md) covers the commands, Central namespace, and signing setup. The library targets Android, desktop/JVM, iOS devices, and Apple Silicon iOS simulators. The repository uses the [Apache License 2.0](LICENSE).
 
 ## Validation
 
