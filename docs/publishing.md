@@ -51,8 +51,10 @@ To reuse an existing local GPG key through `gpg-agent`, opt in with `-Psigning.u
 
 ```properties
 signing.gnupg.executable=/opt/homebrew/bin/gpg
-signing.gnupg.keyName=YOUR_FULL_SIGNING_KEY_FINGERPRINT
+seaGlass.signing.gnupg.keyName=YOUR_FULL_SIGNING_KEY_FINGERPRINT
 ```
+
+The `seaGlass.signing.gnupg.keyName` property selects the key only for the Sea Glass library project. The standard `signing.gnupg.keyName` remains the fallback when this property is absent, so the shared key setting can stay in place for DejaVu and other projects.
 
 Leave `signing.gnupg.passphrase` unset so `gpg-agent` and pinentry request the passphrase directly. This mode uses the existing local key without exporting it; in-memory key properties are unnecessary. A working pinentry program is required when the key needs unlocking. On macOS, `pinentry-mac` can provide a native prompt when configured for `gpg-agent`. With a terminal pinentry, run from an interactive shell and set `export GPG_TTY="$(tty)"` in that shell.
 

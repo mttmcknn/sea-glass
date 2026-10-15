@@ -94,6 +94,9 @@ mavenPublishing {
 }
 
 if (providers.gradleProperty("signing.useGpgCmd").orNull == "true") {
+    providers.gradleProperty("seaGlass.signing.gnupg.keyName").orNull?.let { keyName ->
+        extensions.extraProperties.set("signing.gnupg.keyName", keyName)
+    }
     extensions.configure<SigningExtension> {
         useGpgCmd()
     }
