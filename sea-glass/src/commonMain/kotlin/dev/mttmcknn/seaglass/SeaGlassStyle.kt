@@ -1,7 +1,12 @@
 package dev.mttmcknn.seaglass
 
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -68,6 +73,34 @@ public data class SeaGlassPalette(val body: Color, val edge: Color, val ink: Col
         public val Rose: SeaGlassPalette = SeaGlassPalette(Color(0xFFEECED6), Color(0xFFFFF0F1), Color(0xFF963F59))
         public val Amber: SeaGlassPalette = SeaGlassPalette(Color(0xFFF0D9BE), Color(0xFFFFFCE0), Color(0xFF865733))
         public val Mint: SeaGlassPalette = SeaGlassPalette(Color(0xFFC0DED0), Color(0xFFE6FFF0), Color(0xFF396C5A))
+
+        /**
+         * Use a Material 3 container color as pigment and its matching on-container
+         * color as foreground. The edge is the container blended 35% toward white.
+         *
+         * Works with custom, light, dark, and Android dynamic schemes on every
+         * platform. The optical renderer transforms the pigment, so the rendered
+         * surface is not a flat Material container or a contrast guarantee.
+         */
+        public fun fromColorScheme(
+            colorScheme: ColorScheme,
+            role: SeaGlassColorRole = SeaGlassColorRole.Primary,
+        ): SeaGlassPalette = fromMaterialColors(role.container(colorScheme), role.onContainer(colorScheme))
+
+        /**
+         * Read the current Material theme, retaining the same palette instance
+         * until this role's resolved pigment or foreground changes.
+         */
+        @Composable
+        public fun materialTheme(role: SeaGlassColorRole = SeaGlassColorRole.Primary): SeaGlassPalette {
+            val colorScheme = MaterialTheme.colorScheme
+            val body = role.container(colorScheme)
+            val ink = role.onContainer(colorScheme)
+            return remember(body, ink) { fromMaterialColors(body, ink) }
+        }
+
+        private fun fromMaterialColors(body: Color, ink: Color): SeaGlassPalette =
+            SeaGlassPalette(body = body, edge = lerp(body, Color.White, .35f), ink = ink)
     }
 }
 

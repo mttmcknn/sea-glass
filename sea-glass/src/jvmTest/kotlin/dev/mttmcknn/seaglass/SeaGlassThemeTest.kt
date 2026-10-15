@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -26,6 +27,8 @@ import javax.imageio.ImageIO
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNotSame
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -118,6 +121,99 @@ class SeaGlassThemeTest {
         assertEquals(SeaGlassPalette.Mint.ink, observed["surface"])
         assertEquals(SeaGlassPalette.Mint.ink, observed["button"])
         assertEquals(SeaGlassPalette.Rose.ink, observed["override"])
+    }
+
+    @Test
+    fun materialAdapterInheritsRecipeAndShapeAndTracksTheMaterialTheme() = withScene {
+        val parent = SeaGlassComponentStyle(
+            material = SeaGlassStyle.Tumbled.copy(seed = 73),
+            palette = SeaGlassPalette.Mint,
+            shape = SeaGlassShape.Capsule,
+        )
+        val scheme = mutableStateOf(lightColorScheme())
+        val observed = mutableMapOf<String, ThemeSnapshot>()
+        setContent {
+            MaterialTheme(colorScheme = scheme.value) {
+                SeaGlassTheme(style = parent) {
+                    SeaGlassMaterialTheme {
+                        Probe("primary", observed)
+                        SeaGlassMaterialTheme(role = SeaGlassColorRole.Tertiary) {
+                            Probe("tertiary", observed)
+                            SeaGlassTheme(palette = SeaGlassPalette.Rose) {
+                                Probe("override", observed)
+                            }
+                        }
+                        Probe("restored-primary", observed)
+                    }
+                    Probe("restored-parent", observed)
+                }
+            }
+        }
+        awaitFrame { observed.size == 5 }
+        fun verify() {
+            val primary = ThemeSnapshot(parent.material, SeaGlassPalette.fromColorScheme(scheme.value), parent.shape)
+            assertEquals(primary, observed["primary"])
+            assertEquals(primary, observed["restored-primary"])
+            assertEquals(
+                primary.copy(palette = SeaGlassPalette.fromColorScheme(scheme.value, SeaGlassColorRole.Tertiary)),
+                observed["tertiary"],
+            )
+            assertEquals(primary.copy(palette = SeaGlassPalette.Rose), observed["override"])
+            assertEquals(ThemeSnapshot(parent.material, parent.palette, parent.shape), observed["restored-parent"])
+        }
+        verify()
+
+        scheme.value = darkColorScheme()
+        awaitFrame { observed["primary"]?.palette?.body == scheme.value.primaryContainer }
+        verify()
+    }
+
+    @Test
+    fun materialPaletteIsMemoizedByResolvedColorsAndUpdatesWithRoleAndInk() = withScene {
+        val scheme = mutableStateOf(lightColorScheme())
+        val role = mutableStateOf(SeaGlassColorRole.Primary)
+        val unrelated = mutableStateOf(0)
+        var observed: SeaGlassPalette? = null
+        var observedRevision = -1
+        setContent {
+            MaterialTheme(colorScheme = scheme.value) {
+                val palette = SeaGlassPalette.materialTheme(role.value)
+                val revision = unrelated.value
+                SideEffect {
+                    observed = palette
+                    observedRevision = revision
+                }
+            }
+        }
+        awaitFrame { observed != null }
+        val initial = observed
+
+        unrelated.value++
+        awaitFrame { observedRevision == 1 }
+        assertSame(initial, observed, "Unrelated recomposition must retain the palette")
+
+        scheme.value = scheme.value.copy(surface = Color.Red)
+        unrelated.value++
+        awaitFrame { observedRevision == 2 }
+        assertSame(initial, observed, "An unrelated Material color must retain the palette")
+
+        role.value = SeaGlassColorRole.Secondary
+        awaitFrame { observed?.body == scheme.value.secondaryContainer }
+        assertEquals(SeaGlassPalette.fromColorScheme(scheme.value, SeaGlassColorRole.Secondary), observed)
+        assertNotSame(initial, observed)
+
+        val secondary = observed
+        scheme.value = scheme.value.copy(secondaryContainer = Color(0xFFCDE9E0))
+        awaitFrame { observed?.body == scheme.value.secondaryContainer }
+        assertNotSame(secondary, observed)
+
+        val changedBody = observed
+        val ink = Color(0xFF143528).copy(alpha = .8f)
+        scheme.value = scheme.value.copy(onSecondaryContainer = ink)
+        awaitFrame { observed?.ink == ink }
+        assertNotSame(changedBody, observed)
+        assertEquals(changedBody?.body, observed?.body)
+        assertEquals(changedBody?.edge, observed?.edge)
     }
 
     @Test

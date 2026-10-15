@@ -3,7 +3,10 @@ package dev.mttmcknn.seaglass.sample
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +20,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -25,6 +35,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
@@ -58,117 +69,154 @@ private val RecipeSaver = listSaver<SeaGlassStyle, Any>(
         transmission = it[7] as Float, seed = it[8] as Int) },
 )
 
-/** The same material recipe and specimens as the HTML playground, rendered by Compose. */
-@Composable
-fun SeaGlassPlayground() {
-    MaterialTheme(
-        colorScheme = lightColorScheme(
-            primary = Color(0xff507864),
-            onPrimary = Color.White,
-            secondaryContainer = Color(0xffe3ece2),
-            onSecondaryContainer = Ink,
-            surface = Page,
-            background = Page,
-            onSurface = Ink,
-            onBackground = Ink,
-        ),
-    ) {
-        var style by rememberSaveable(stateSaver = RecipeSaver) { mutableStateOf(SeaGlassStyle()) }
-        var paletteIndex by rememberSaveable { mutableIntStateOf(0) }
-        var preset by rememberSaveable { mutableStateOf("Reference") }
-        var sceneName by rememberSaveable { mutableStateOf(SeaGlassScene.Components.name) }
-        val scene = SeaGlassScene.valueOf(sceneName)
-        var previewOnly by rememberSaveable { mutableStateOf(false) }
-        var saved by rememberSaveable { mutableStateOf(false) }
-        var showComposer by rememberSaveable { mutableStateOf(false) }
-        var note by rememberSaveable { mutableStateOf("") }
-        val showcase = remember { movableContentOf<SeaGlassScene> { SeaGlassShowcase(it) } }
-        val previewScroll = rememberScrollState()
-        val controlsScroll = rememberScrollState()
-        val compactScroll = rememberScrollState()
-        val snackbar = remember { SnackbarHostState() }
-        val scope = rememberCoroutineScope()
-        val report: (String) -> Unit = { message -> scope.launch { snackbar.showSnackbar(message) }; Unit }
-        val updateStyle: (SeaGlassStyle) -> Unit = { style = it; preset = "" }
-        val reset = { style = SeaGlassStyle(); paletteIndex = 0; preset = "Reference" }
+private val PlaygroundColors = lightColorScheme(
+    primary = Color(0xff507864),
+    onPrimary = Color.White,
+    secondaryContainer = Color(0xffe3ece2),
+    onSecondaryContainer = Ink,
+    surface = Page,
+    background = Page,
+    onSurface = Ink,
+    onBackground = Ink,
+)
+private val FallbackMaterialColors = lightColorScheme()
+private val LocalMaterialYouEnabled = compositionLocalOf { false }
 
-        val openPreview = {
-            previewOnly = true
-            report("Double-tap the background to return to controls")
-        }
-        Box(Modifier.fillMaxSize().background(Page)) {
-            if (previewOnly) {
-                ShowcasePreview(scene, style, paletteIndex, showcase, onExit = { previewOnly = false })
-            } else {
-                Column(Modifier.fillMaxSize().safeDrawingPadding()) {
-                    Row(
-                        Modifier.fillMaxWidth().border(1.dp, Border).padding(horizontal = 24.dp, vertical = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        BrandMark()
-                        Spacer(Modifier.width(12.dp))
-                        Column {
-                            Text("sea glass", fontSize = 24.sp, fontFamily = FontFamily.Serif, color = Ink)
-                            Eyebrow("MATERIAL PLAYGROUND")
+/**
+ * Live glass examples. Android hosts supply wallpaper colors; other hosts use
+ * the fallback Material scheme. The showcase's light canvas uses a light scheme.
+ */
+@Composable
+fun SeaGlassPlayground(
+    materialColorScheme: ColorScheme = FallbackMaterialColors,
+    materialColorSource: String = "Material theme colors",
+) {
+    var materialYou by rememberSaveable { mutableStateOf(false) }
+    MaterialTheme(colorScheme = if (materialYou) materialColorScheme else PlaygroundColors) {
+        CompositionLocalProvider(LocalMaterialYouEnabled provides materialYou) {
+            var style by rememberSaveable(stateSaver = RecipeSaver) { mutableStateOf(SeaGlassStyle()) }
+            var paletteIndex by rememberSaveable { mutableIntStateOf(0) }
+            var preset by rememberSaveable { mutableStateOf("Reference") }
+            var sceneName by rememberSaveable { mutableStateOf(SeaGlassScene.Components.name) }
+            val scene = SeaGlassScene.valueOf(sceneName)
+            var previewOnly by rememberSaveable { mutableStateOf(false) }
+            var saved by rememberSaveable { mutableStateOf(false) }
+            var showComposer by rememberSaveable { mutableStateOf(false) }
+            var note by rememberSaveable { mutableStateOf("") }
+            val previewToggleFocus = remember { FocusRequester() }
+            var restorePreviewFocus by remember { mutableStateOf(false) }
+            val previewScroll = rememberScrollState()
+            val controlsScroll = rememberScrollState()
+            val compactScroll = rememberScrollState()
+            val snackbar = remember { SnackbarHostState() }
+            val scope = rememberCoroutineScope()
+            val report: (String) -> Unit = { message -> scope.launch { snackbar.showSnackbar(message) }; Unit }
+            val updateStyle: (SeaGlassStyle) -> Unit = { style = it; preset = "" }
+            val reset = { style = SeaGlassStyle(); paletteIndex = 0; preset = "Reference"; materialYou = false }
+            val selectPalette: (Int) -> Unit = { paletteIndex = it; materialYou = false }
+            val toggleSaved = { saved = !saved }
+            val composeNote = { showComposer = true }
+            val showcaseActions = remember(selectPalette, toggleSaved, composeNote, report) {
+                ShowcaseActions(selectPalette, toggleSaved, composeNote, report)
+            }
+            val movableShowcase = remember {
+                movableContentOf<ShowcaseState, ShowcaseActions> { state, actions ->
+                    ShowcaseContent(state, actions)
+                }
+            }
+            val showcase: @Composable (SeaGlassScene) -> Unit = { selectedScene ->
+                movableShowcase(ShowcaseState(selectedScene, paletteIndex, saved), showcaseActions)
+            }
+
+            val openPreview = {
+                previewOnly = true
+                report("Double-tap the background or press Escape to return to controls")
+            }
+            val closePreview = {
+                previewOnly = false
+                restorePreviewFocus = true
+            }
+            LaunchedEffect(previewOnly, restorePreviewFocus) {
+                if (!previewOnly && restorePreviewFocus) {
+                    previewToggleFocus.requestFocus()
+                    restorePreviewFocus = false
+                }
+            }
+            Box(Modifier.fillMaxSize().background(Page)) {
+                if (previewOnly) {
+                    ShowcasePreview(scene, style, paletteIndex, showcase, onExit = closePreview)
+                } else {
+                    Column(Modifier.fillMaxSize().safeDrawingPadding()) {
+                        Row(
+                            Modifier.fillMaxWidth().border(1.dp, Border).padding(horizontal = 24.dp, vertical = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            BrandMark()
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text("sea glass", fontSize = 24.sp, fontFamily = FontFamily.Serif, color = Ink)
+                                Eyebrow("MATERIAL PLAYGROUND")
+                            }
+                            Spacer(Modifier.weight(1f))
+                            TextButton(onClick = reset) { Text("Reset") }
                         }
-                        Spacer(Modifier.weight(1f))
-                        TextButton(onClick = reset) { Text("Reset") }
-                    }
-                    BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
-                        // Use the available app window, including live multi-window resizing.
-                        val wide = maxWidth >= 600.dp
-                        if (wide) {
-                            val gutter = if (maxWidth >= 960.dp) 28.dp else 16.dp
-                            val controlsWidth = (maxWidth * .34f).coerceIn(240.dp, 326.dp)
-                            Row(Modifier.fillMaxSize().padding(gutter), horizontalArrangement = Arrangement.spacedBy(gutter)) {
-                                Column(Modifier.weight(1f).fillMaxHeight().testTag("playground-preview")
-                                    .verticalScroll(previewScroll)) {
-                                    PlaygroundPreview(style, paletteIndex, scene, { sceneName = it.name }, { paletteIndex = it },
-                                        { showComposer = true }, saved, { saved = !saved }, report, openPreview, showcase, compactIntro = true)
+                        BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
+                            // Use the available app window, including live multi-window resizing.
+                            val wide = maxWidth >= 600.dp
+                            if (wide) {
+                                val gutter = if (maxWidth >= 960.dp) 28.dp else 16.dp
+                                val controlsWidth = (maxWidth * .34f).coerceIn(240.dp, 326.dp)
+                                Row(Modifier.fillMaxSize().padding(gutter), horizontalArrangement = Arrangement.spacedBy(gutter)) {
+                                    Column(Modifier.weight(1f).fillMaxHeight().testTag("playground-preview")
+                                        .verticalScroll(previewScroll)) {
+                                        PlaygroundPreview(style, paletteIndex, scene, { sceneName = it.name }, selectPalette,
+                                            composeNote, saved, toggleSaved, report, openPreview, showcase, materialYou, { materialYou = it },
+                                            materialColorSource, previewToggleFocus, compactIntro = true)
+                                    }
+                                    Column(Modifier.width(controlsWidth).fillMaxHeight().testTag("playground-controls")
+                                        .verticalScroll(controlsScroll)) {
+                                        MaterialControls(style, updateStyle, preset, { name ->
+                                            style = presetStyle(name, style.seed); preset = name
+                                        }, paletteIndex, selectPalette)
+                                    }
                                 }
-                                Column(Modifier.width(controlsWidth).fillMaxHeight().testTag("playground-controls")
-                                    .verticalScroll(controlsScroll)) {
+                            } else {
+                                Column(
+                                    Modifier.fillMaxSize().testTag("playground-stacked")
+                                        .verticalScroll(compactScroll).padding(20.dp),
+                                    verticalArrangement = Arrangement.spacedBy(28.dp),
+                                ) {
+                                    PlaygroundPreview(style, paletteIndex, scene, { sceneName = it.name }, selectPalette,
+                                        composeNote, saved, toggleSaved, report, openPreview, showcase, materialYou, { materialYou = it }, materialColorSource, previewToggleFocus)
                                     MaterialControls(style, updateStyle, preset, { name ->
                                         style = presetStyle(name, style.seed); preset = name
-                                    }, paletteIndex, { paletteIndex = it })
+                                    }, paletteIndex, selectPalette)
                                 }
-                            }
-                        } else {
-                            Column(
-                                Modifier.fillMaxSize().testTag("playground-stacked")
-                                    .verticalScroll(compactScroll).padding(20.dp),
-                                verticalArrangement = Arrangement.spacedBy(28.dp),
-                            ) {
-                                PlaygroundPreview(style, paletteIndex, scene, { sceneName = it.name }, { paletteIndex = it },
-                                    { showComposer = true }, saved, { saved = !saved }, report, openPreview, showcase)
-                                MaterialControls(style, updateStyle, preset, { name ->
-                                    style = presetStyle(name, style.seed); preset = name
-                                }, paletteIndex, { paletteIndex = it })
                             }
                         }
                     }
                 }
+                SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).safeDrawingPadding().padding(16.dp))
             }
-            SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).safeDrawingPadding().padding(16.dp))
-        }
-        if (showComposer) {
-            AlertDialog(
-                onDismissRequest = { showComposer = false },
-                title = { Text("Collect a small moment", fontFamily = FontFamily.Serif) },
-                text = {
-                    OutlinedTextField(
-                        value = note, onValueChange = { note = it },
-                        label = { Text("A note to yourself") },
-                        modifier = Modifier.fillMaxWidth(), minLines = 3,
-                    )
-                },
-                confirmButton = {
-                    TextButton(enabled = note.isNotBlank(), onClick = {
-                        showComposer = false; saved = true; report("Your moment is saved for this session")
-                    }) { Text("Save moment") }
-                },
-                dismissButton = { TextButton(onClick = { showComposer = false }) { Text("Cancel") } },
-            )
+            if (showComposer) {
+                AlertDialog(
+                    onDismissRequest = { showComposer = false },
+                    title = { Text("Collect a small moment", fontFamily = FontFamily.Serif) },
+                    text = {
+                        OutlinedTextField(
+                            value = note, onValueChange = { note = it },
+                            label = { Text("A note to yourself") },
+                            modifier = Modifier.fillMaxWidth(), minLines = 3,
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(enabled = note.isNotBlank(), onClick = {
+                            showComposer = false; saved = true; report("Your moment is saved for this session")
+                        }) { Text("Save moment") }
+                    },
+                    dismissButton = { TextButton(onClick = { showComposer = false }) { Text("Cancel") } },
+                )
+            }
         }
     }
 }
@@ -186,6 +234,10 @@ private fun PlaygroundPreview(
     report: (String) -> Unit,
     onPreviewOnly: () -> Unit,
     showcase: @Composable (SeaGlassScene) -> Unit,
+    materialYou: Boolean,
+    onMaterialYou: (Boolean) -> Unit,
+    materialColorSource: String,
+    previewToggleFocus: FocusRequester,
     compactIntro: Boolean = false,
 ) {
     // The controls provide subtree defaults. Individual pieces only override identity,
@@ -208,10 +260,25 @@ private fun PlaygroundPreview(
                     fontSize = 14.sp, lineHeight = 22.sp, color = Muted)
                 Spacer(Modifier.height(28.dp))
             }
+            Row(
+                Modifier.fillMaxWidth().testTag("playground-material-you")
+                    .toggleable(value = materialYou, role = Role.Switch, onValueChange = onMaterialYou)
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f).padding(end = 12.dp)) {
+                    Text("Material You", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Ink)
+                    Text(if (materialYou) materialColorSource else "Use your Material colors for the glass",
+                        fontSize = 12.sp, color = Muted)
+                }
+                Switch(checked = materialYou, onCheckedChange = null)
+            }
+            Spacer(Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 SceneSelector(scene, onScene, Modifier.weight(1f))
-                TextButton(onClick = onPreviewOnly, modifier = Modifier.testTag("playground-preview-toggle")) {
+                TextButton(onClick = onPreviewOnly, modifier = Modifier.testTag("playground-preview-toggle")
+                    .focusRequester(previewToggleFocus)) {
                     Text("Preview only", fontSize = 12.sp)
                 }
             }
@@ -262,8 +329,9 @@ private fun PlaygroundPreview(
     }
 }
 
+@Composable
 private fun scenePalette(scene: SeaGlassScene, paletteIndex: Int): SeaGlassPalette =
-    palettes.getOrNull(paletteIndex - 1) ?: when (scene) {
+    if (LocalMaterialYouEnabled.current) SeaGlassPalette.materialTheme() else palettes.getOrNull(paletteIndex - 1) ?: when (scene) {
         SeaGlassScene.Music -> SeaGlassPalette.Mint
         SeaGlassScene.Phone -> SeaGlassPalette.Rose
         SeaGlassScene.Chat -> SeaGlassPalette.Lilac
@@ -298,7 +366,18 @@ private fun SceneSelector(scene: SeaGlassScene, onScene: (SeaGlassScene) -> Unit
 @Composable
 private fun ShowcasePreview(scene: SeaGlassScene, style: SeaGlassStyle, paletteIndex: Int,
     showcase: @Composable (SeaGlassScene) -> Unit, onExit: () -> Unit) {
+    val previewFocus = remember { FocusRequester() }
+    // The clean preview has no chrome. Own initial focus so Escape also works
+    // before a scene control is focused, and observe keys from its descendants.
+    LaunchedEffect(previewFocus) { previewFocus.requestFocus() }
     Box(Modifier.fillMaxSize().safeDrawingPadding().testTag("playground-showcase")
+        .onPreviewKeyEvent { event ->
+            if (event.type == KeyEventType.KeyUp && (event.key == Key.Escape || event.key == Key.Back)) {
+                onExit()
+                true
+            } else false
+        }
+        .focusRequester(previewFocus).focusable()
         .pointerInput(onExit) { detectTapGestures(onDoubleTap = { onExit() }) }
         .semantics { customActions = listOf(CustomAccessibilityAction("Show controls") { onExit(); true }) }) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
@@ -316,17 +395,36 @@ private fun ShowcasePreview(scene: SeaGlassScene, style: SeaGlassStyle, paletteI
 /** A clean, native example interface for a gallery or screenshot, using the current theme. */
 @Composable
 fun SeaGlassShowcase(scene: SeaGlassScene, modifier: Modifier = Modifier) {
+    ShowcaseContent(ShowcaseState(scene), ShowcaseActions.None, modifier)
+}
+
+private data class ShowcaseState(val scene: SeaGlassScene, val paletteIndex: Int = 0, val saved: Boolean = false)
+
+private data class ShowcaseActions(
+    val onPalette: (Int) -> Unit,
+    val onSave: () -> Unit,
+    val onCompose: () -> Unit,
+    val report: (String) -> Unit,
+) {
+    companion object {
+        val None = ShowcaseActions({}, {}, {}, {})
+    }
+}
+
+/** Plain scene content shared by the playground and standalone galleries. */
+@Composable
+private fun ShowcaseContent(state: ShowcaseState, actions: ShowcaseActions, modifier: Modifier = Modifier) {
     Box(modifier.fillMaxWidth()) {
-        when (scene) {
+        when (state.scene) {
             SeaGlassScene.Music -> MusicPlayerScene()
             SeaGlassScene.Phone -> PhoneCallScene()
             SeaGlassScene.Email -> EmailScene()
             SeaGlassScene.Chat -> AiChatScene()
             else -> Column(Modifier.fillMaxWidth().padding(24.dp)) {
-                when (scene) {
-                    SeaGlassScene.ShapeStudy -> ShapeStudy(0)
-                    SeaGlassScene.Fieldnotes -> ContextStudy(false, {}, {})
-                    else -> ComponentStudy(0, {}, {}, {})
+                when (state.scene) {
+                    SeaGlassScene.ShapeStudy -> ShapeStudy(state.paletteIndex)
+                    SeaGlassScene.Fieldnotes -> ContextStudy(state.saved, actions.onSave, actions.onCompose)
+                    else -> ComponentStudy(state.paletteIndex, actions.onPalette, actions.onCompose, actions.report)
                 }
             }
         }
@@ -438,7 +536,8 @@ private fun ShapeStudy(paletteIndex: Int) {
                     val seed = style.seed + row * 31 + column * 13
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         SeaGlassSurface(
-                            Modifier.size(width = if (shape == SeaGlassShape.Disc) 64.dp else 76.dp, height = 64.dp),
+                            Modifier.size(width = if (shape == SeaGlassShape.Disc) 64.dp else 76.dp, height = 64.dp)
+                                .testTag("shape-study-${shape.name}-$column"),
                             style = style.copy(seed = seed), palette = selectedPalette(paletteIndex, palettes[(row + column) % palettes.size]),
                             shape = shape,
                         ) {}
@@ -479,7 +578,7 @@ private val palettes = listOf(SeaGlassPalette.Lagoon, SeaGlassPalette.Lilac, Sea
 private val paletteNames = listOf("Mix", "Lagoon", "Lilac", "Rose", "Amber", "Mint")
 @Composable
 private fun selectedPalette(index: Int, fallback: SeaGlassPalette): SeaGlassPalette =
-    if (index == 0) fallback else SeaGlassTheme.palette
+    if (index == 0 && !LocalMaterialYouEnabled.current) fallback else SeaGlassTheme.palette
 
 private fun presetStyle(name: String, seed: Int): SeaGlassStyle = when (name) {
     "Tumbled" -> SeaGlassStyle.Tumbled.copy(seed = seed)
@@ -508,18 +607,23 @@ private fun MaterialControls(
         }
         Spacer(Modifier.height(16.dp))
         Text("Glass color", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Ink)
+        if (LocalMaterialYouEnabled.current) {
+            Text("Choose a palette to leave Material You", fontSize = 11.sp, color = Muted)
+        }
         Spacer(Modifier.height(12.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.SpaceBetween) {
             paletteNames.forEachIndexed { index, name ->
+                val selected = index == paletteIndex && !LocalMaterialYouEnabled.current
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.clickable { onPalette(index) }.semantics { contentDescription = "Choose $name palette" }) {
-                    Box(Modifier.size(32.dp).border(if (index == paletteIndex) 2.dp else 1.dp,
-                        if (index == paletteIndex) Ink else Border, CircleShape).padding(4.dp)
+                    modifier = Modifier.selectable(selected = selected, role = Role.RadioButton, onClick = { onPalette(index) })
+                        .semantics { contentDescription = "Choose $name palette" }) {
+                    Box(Modifier.size(32.dp).border(if (selected) 2.dp else 1.dp,
+                        if (selected) Ink else Border, CircleShape).padding(4.dp)
                         .background(if (index == 0) Color(0xffe6e4dc) else palettes[index - 1].body, CircleShape)) {
                         if (index == 0) Text("∴", modifier = Modifier.align(Alignment.Center), color = Muted, fontSize = 14.sp)
                     }
                     Spacer(Modifier.height(5.dp))
-                    Text(name, fontSize = 9.sp, color = if (index == paletteIndex) Ink else Muted)
+                    Text(name, fontSize = 9.sp, color = if (selected) Ink else Muted)
                 }
             }
         }

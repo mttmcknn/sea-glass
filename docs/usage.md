@@ -73,7 +73,9 @@ Leave space beneath the control for its glow. The material draws into a transpar
 
 On **Android 13+ and Skia**, `LiveMaterialRenderer` draws the complete material during the first draw. The body uses a runtime shader; the three ground-light layers use native blur. There is no asynchronous flat-color placeholder or later completed-image swap on this path.
 
-Each surface caches a small smooth geometry field and its tumbled vector contour. Only changes to size, density, shape, tumble, or seed rebuild that geometry. Frost, grain, bulge, thickness, transmission, light angle and pigment changes update shader uniforms; affected ground-light layers are re-recorded separately. Elevation changes the ground light without rebuilding the body geometry. Changing foreground ink does not change the material.
+Each surface caches its geometry and tumbled contour. Size changes draw a complete material immediately. Shape, tumble and seed edits reuse cached geometry when available; otherwise a worker prepares the update while the previous complete shape stays visible. Rapid edits keep the active update and the newest pending request. Once editing stops, the final requested geometry is displayed. Body, seeded grain, content clipping and focus outline change together. Leaving composition cancels pending work.
+
+Frost, grain, bulge, thickness, transmission, light angle and pigment changes update their affected shader uniforms immediately; affected ground-light layers are re-recorded separately. Elevation changes only the ground light. Foreground ink and ignored pigment alpha do not rewrite body uniforms. A density change that preserves logical size updates the native contour and density uniform without regenerating or uploading geometry.
 
 The smooth field is sampled at up to one sample per dp and reduced toward a 262,144-sample budget for oversized surfaces. This is a geometry cache, not the final rendered image: the silhouette and procedural grain draw at display resolution. The shader's grain pattern differs from the CPU reference, with measured mean body color differences around 0.68–2.00/255 across four fixtures. See [rendering notes](rendering.md) for the visual comparison and its limits.
 
@@ -121,6 +123,47 @@ MaterialTheme {
 Read the current values through `SeaGlassTheme.style` (the material recipe), `.palette`, `.shape`, or `.componentStyle` (all three). A nested theme inherits every omitted field. Changing a provided value updates its consumers. Outside any provider, the original Reference recipe, Lagoon palette, and Rounded shape apply.
 
 The provider itself adds no drawing, spacing, semantics, or foreground-color override. `SeaGlassSurface` and `SeaGlassButton` provide ink to their content as before. A material modifier is composable and reads its theme where it is created; create it inside the intended theme scope rather than caching it outside that scope.
+
+## Material You and Material 3 colors
+
+`SeaGlassMaterialTheme` derives a palette from the surrounding Material 3 `MaterialTheme`. It works with your app's custom colors and light/dark schemes on every platform. On Android 12 and later, it also works with wallpaper colors supplied through a dynamic scheme.
+
+```kotlin
+MaterialTheme(colorScheme = appColorScheme) {
+    SeaGlassMaterialTheme(style = SeaGlassStyle.Tumbled) {
+        SeaGlassButton(onClick = onCompose) { Text("Compose") }
+
+        SeaGlassMaterialTheme(role = SeaGlassColorRole.Tertiary) {
+            // Keeps the parent's Tumbled recipe and shape, changes the color role.
+            SeaGlassButton(onClick = onAdd) { Text("Add") }
+        }
+    }
+}
+```
+
+`SeaGlassColorRole.Primary` is the default. `Primary`, `Secondary`, and `Tertiary` map their Material container color to `body`, blend that container 35% toward white for `edge`, and use the matching on-container color for `ink`. The renderer still applies its optical effects to those pigments; the result is not a flat Material container, so check text contrast against the rendered surface in your app.
+
+Omitted `style` and `shape` values inherit the enclosing sea-glass theme. Nested `SeaGlassTheme` palette overrides and explicit component palettes continue to work. The adapter leaves Material typography and ordinary component colors unchanged.
+
+For a single component, use `SeaGlassPalette.materialTheme(role)` in composition. For a resolved palette outside composition, use `SeaGlassPalette.fromColorScheme(colorScheme, role)`. The composable factory retains the same palette instance until the selected container or foreground changes; unrelated recompositions and changes to other Material colors do not recreate it. Palette changes use the renderer's existing pigment update path and preserve cached geometry when the piece's size, shape, tumble, and seed stay the same.
+
+Android applications can use the optional scheme helper:
+
+```kotlin
+val colors = rememberSeaGlassColorScheme(
+    dynamicColor = useMaterialYou,
+    darkTheme = isSystemInDarkTheme(),
+    lightFallback = appLightColorScheme,
+    darkFallback = appDarkColorScheme,
+)
+MaterialTheme(colorScheme = colors) {
+    SeaGlassMaterialTheme {
+        SeaGlassButton(onClick = onCompose) { Text("Compose") }
+    }
+}
+```
+
+`rememberSeaGlassColorScheme` is Android-only. When dynamic color is enabled on API 31+, it uses Material 3's dynamic light/dark schemes and remembers the result by context, resource configuration, and dark mode. On older Android versions, or with dynamic color disabled, it returns the chosen fallback unchanged. The default fallbacks are Material 3's standard light/dark schemes. This API 31 requirement is separate from the API 33 requirement for the live shader renderer: Android 12 can use wallpaper colors with the compatibility renderer. See the [official dynamic-color guidance](https://developer.android.com/develop/ui/compose/designsystems/material3#dynamic_color_schemes).
 
 ## Reusable component styles
 
