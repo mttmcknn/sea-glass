@@ -1,5 +1,5 @@
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
-Daemon will be stopped at the end of the build 
+Daemon will be stopped at the end of the build
 Calculating task graph as no cached configuration is available for tasks: :sea-glass:compileKotlinIosSimulatorArm64
 :sea-glass:kmpPartiallyResolvedDependenciesChecker SKIPPED
 :sea-glass:checkKotlinGradlePluginConfigurationErrors SKIPPED
@@ -36,7 +36,7 @@ Calculating task graph as no cached configuration is available for tasks: :sea-g
 BUILD SUCCESSFUL in 4s
 Configuration cache entry stored.
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
-Daemon will be stopped at the end of the build 
+Daemon will be stopped at the end of the build
 Reusing configuration cache.
 > Task :sea-glass:generateExpectResourceCollectorsForCommonMain SKIPPED
 > Task :sea-glass:generateComposeResClass SKIPPED

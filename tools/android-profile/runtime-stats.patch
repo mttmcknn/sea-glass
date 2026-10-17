@@ -15,7 +15,7 @@
  import androidx.activity.compose.setContent
 @@ -11,6 +17,77 @@
  import dev.mttmcknn.seaglass.sample.SeaGlassPlayground
- 
+
  class MainActivity : ComponentActivity() {
 +    // BEGIN temporary Sea Glass runtime diagnostics; remove before shipping.
 +    // Reads only unless a separate allocation-counting command is requested.

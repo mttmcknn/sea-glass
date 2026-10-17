@@ -12,6 +12,8 @@ The measured production source is `c617b88` on local branch `codex/performance-f
 - Validation logs: 73 JVM tests, eight desktop interaction/accessibility groups, five Android uploader tests, iOS source compilation, and a successful Android build after removing diagnostics.
 - `protection-check.json`: original and release checkouts remained clean at `c0ebad4`; the separate README edits remain present. The prior media source was not modified.
 
+The copied CSV and log files use LF line endings and omit trailing whitespace. The original capture artifacts under the task workspace's `evidence/` directory are preserved unchanged.
+
 The sample-only runtime diagnostic hook was identical in all measured APKs and has been removed from every checkout. Its patch remains at [`tools/android-profile/runtime-stats.patch`](../../../tools/android-profile/runtime-stats.patch) for reproducing approximate process counters. Deprecated object counting was enabled only in separate diagnostic captures. The clean production APK is not the instrumented APK whose hash appears in the measurement manifest.
 
 ## Local raw artifacts
