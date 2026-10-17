@@ -15,6 +15,26 @@ class LiveMaterialGeometryCacheTest {
     private val base = LiveMaterialGeometryKey(24.5, 16.25, RenderShape.Rounded, 0.025, 42, 1.0)
 
     @Test
+    fun defaultCacheRetainsAtMostFourMiBIncludingPackedStorage() {
+        val cache = LiveMaterialGeometryCache()
+        repeat(32) { seed ->
+            cache.geometryFor(base.copy(seed = seed)) {
+                LiveMaterialGeometry(
+                    emptyList(),
+                    NativeFloatTexture(128, 128, ByteArray(128 * 128 * 8)),
+                    NativeFloatTexture(128, 128, ByteArray(128 * 128 * 8)),
+                    1f,
+                    floatArrayOf(1f, 1f),
+                )
+            }
+            val retained = checkNotNull(cache.snapshot())
+            assertTrue(retained.retainedBytes <= 4L * 1024 * 1024)
+            assertTrue(retained.entries <= 32)
+        }
+        assertEquals(15, checkNotNull(cache.snapshot()).entries, "The budget must count both packed inputs and overhead")
+    }
+
+    @Test
     fun hitsReuseGeometryAndEveryGeometryInputChangesTheKey() {
         val cache = LiveMaterialGeometryCache()
         var builds = 0
@@ -166,9 +186,9 @@ class LiveMaterialGeometryCacheTest {
         assertContentEquals(expected.gradientScales, actual.gradientScales)
         assertEquals(expected.geometryA.width, actual.geometryA.width)
         assertEquals(expected.geometryA.height, actual.geometryA.height)
-        assertContentEquals(expected.geometryA.rgba, actual.geometryA.rgba)
+        assertContentEquals(expected.geometryA.rgbaF16, actual.geometryA.rgbaF16)
         assertEquals(expected.geometryB.width, actual.geometryB.width)
         assertEquals(expected.geometryB.height, actual.geometryB.height)
-        assertContentEquals(expected.geometryB.rgba, actual.geometryB.rgba)
+        assertContentEquals(expected.geometryB.rgbaF16, actual.geometryB.rgbaF16)
     }
 }

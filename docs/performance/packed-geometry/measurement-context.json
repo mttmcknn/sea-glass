@@ -1,0 +1,31 @@
+{
+  "baseline_commit": "c0ebad4857d475a360e62e21c13606e01ff8c6fa",
+  "host": {
+    "chip": "Apple M3 Max",
+    "memory_bytes": 137438953472,
+    "macOS": "27.0.1",
+    "jdk": "17.0.18+8"
+  },
+  "android": {
+    "api": 36,
+    "avd": "Minimap_Plugin_Demo_20261009",
+    "serial": "emulator-5600",
+    "read_only": true,
+    "viewport": [
+      1600,
+      2400
+    ],
+    "density_dpi": 320,
+    "physical_device": false,
+    "aot_compilation": "cmd package compile -m speed -f",
+    "restart_between_variants": true
+  },
+  "excluded": [
+    "baseline/live-geometry.json: exploratory run concurrent with reference generation and old oracle allocation",
+    "baseline-scroll-1..3: pane fit viewport, no scrolling rendered"
+  ],
+  "apk_sha256": {
+    "baseline": "11f710a4ebfe77e13bda2d199907773d9b84a7905fb30f5370145ddee7a40843",
+    "candidate": "58071d799d5344bd88306afaa2fb779db1f6b2f3564417db6c48214ab7314a77"
+  }
+}

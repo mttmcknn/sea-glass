@@ -21,7 +21,7 @@ internal data class LiveMaterialGeometryKey(
  * contour objects must remain read-only, including while native inputs upload.
  */
 internal class LiveMaterialGeometryCache(
-    private val maxBytes: Long = 8L * 1024 * 1024,
+    private val maxBytes: Long = 4L * 1024 * 1024,
     private val maxEntries: Int = 32,
 ) {
     init {
@@ -113,7 +113,7 @@ internal data class GeometryCacheSnapshot(val entries: Int, val retainedBytes: L
 // Count all four points per segment even if a producer shares endpoints.
 // This budget excludes each renderer's GPU inputs.
 internal fun estimatedGeometryBytes(geometry: LiveMaterialGeometry): Long =
-    (geometry.geometryA.rgba.size.toLong() + geometry.geometryB.rgba.size + geometry.gradientScales.size) * 4L +
+    geometry.geometryA.rgbaF16.size.toLong() + geometry.geometryB.rgbaF16.size + geometry.gradientScales.size * 4L +
         geometry.segments.size * 192L + 512L
 
 internal val sharedLiveMaterialGeometryCache = LiveMaterialGeometryCache()

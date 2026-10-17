@@ -148,3 +148,20 @@ tasks.register<JavaExec>("benchmarkRenderer") {
         jvmArgs("-XX:StartFlightRecording=filename=$it,settings=profile,dumponexit=true")
     }
 }
+
+tasks.register<JavaExec>("benchmarkLiveGeometry") {
+    group = "verification"
+    description = "Measure live geometry preparation, JVM allocations and native texture creation separately."
+    dependsOn(benchmarkCompilation.compileTaskProvider)
+    classpath = files(benchmarkCompilation.output.allOutputs, benchmarkCompilation.runtimeDependencyFiles)
+    mainClass.set("dev.mttmcknn.seaglass.internal.LiveGeometryBenchmark")
+    systemProperty("java.awt.headless", "true")
+    minHeapSize = "256m"
+    maxHeapSize = "1g"
+    args(providers.gradleProperty("benchmarkOutput").getOrElse(layout.buildDirectory.file("reports/sea-glass/live-geometry-benchmark.json").get().asFile.absolutePath))
+    providers.gradleProperty("benchmarkSamples").orNull?.let { args("--samples=$it") }
+    providers.gradleProperty("benchmarkWarmups").orNull?.let { args("--warmups=$it") }
+    providers.gradleProperty("benchmarkProfile").orNull?.let {
+        jvmArgs("-XX:StartFlightRecording=filename=$it,settings=profile,dumponexit=true")
+    }
+}

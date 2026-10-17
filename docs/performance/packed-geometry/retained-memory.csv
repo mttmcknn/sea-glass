@@ -1,0 +1,9 @@
+case,baseline_texturePayloadBytes,candidate_texturePayloadBytes,baseline_geometryCacheEstimateBytes,candidate_geometryCacheEstimateBytes,baseline_cloudCachePayloadBytes,candidate_cloudCachePayloadBytes,baseline_nativeRasterPayloadBytes,candidate_nativeRasterPayloadBytes
+freshClouds.button,770560,385280,801800,416520,0,0,385280,385280
+reusedClouds.button,770560,385280,801800,416520,96320,96320,385280,385280
+freshClouds.toolbar,1056000,528000,1087240,559240,0,0,528000,528000
+reusedClouds.toolbar,1056000,528000,1087240,559240,132000,132000,528000,528000
+freshClouds.disc,131072,65536,162312,96776,0,0,65536,65536
+reusedClouds.disc,131072,65536,162312,96776,16384,16384,65536,65536
+freshClouds.scene,2580224,1290112,2798904,1508792,0,0,1290112,1290112
+reusedClouds.scene,2580224,1290112,2798904,1508792,322528,322528,1290112,1290112

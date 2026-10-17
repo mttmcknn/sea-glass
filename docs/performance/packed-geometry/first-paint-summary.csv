@@ -1,0 +1,15 @@
+fixture,cache,samples_per_variant,baseline_immediate_exact,baseline_final_exact,baseline_median_first_frame_ms,baseline_median_final_frame_ms,candidate_immediate_exact,candidate_final_exact,candidate_median_first_frame_ms,candidate_median_final_frame_ms,final_frame_median_change_pct
+capsule,cold,3,2,3,35.782,37.697,2,3,34.114,39.072,3.647505106507154
+capsule,revisit,3,1,3,1.613,29.637,0,3,1.601,29.029,-2.0514896919391346
+disc,cold,3,3,3,23.306,23.413,1,3,1.507,29.134,24.435142869346095
+disc,revisit,3,1,3,0.589,19.521,2,3,16.073,21.669,11.003534654986936
+toolbar,cold,3,3,3,41.356,41.477,2,3,43.241,44.81,8.035778865395283
+toolbar,revisit,3,3,3,34.689,34.802,2,3,35.721,36.37,4.505488190333873
+music,cold,3,3,3,47.599,47.698,1,3,2.101,57.909,21.407606188938733
+music,revisit,3,2,3,42.734,48.005,2,3,39.382,42.744,-10.959275075512975
+phone,cold,3,1,3,1.757,53.851,3,3,48.674,48.865,-9.258880986425499
+phone,revisit,3,3,3,42.797,42.916,3,3,42.901,43.105,0.44039519060490306
+email,cold,3,2,3,61.286,71.04,2,3,59.425,66.511,-6.37528153153154
+email,revisit,3,2,3,55.537,56.908,2,3,53.703,55.532,-2.4179377240458377
+chat,cold,3,3,3,61.147,61.344,3,3,57.394,57.5,-6.266301512780393
+chat,revisit,3,3,3,50.109,50.207,3,3,46.495,46.595,-7.194215945983629

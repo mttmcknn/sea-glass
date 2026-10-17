@@ -50,16 +50,9 @@ private class SkiaMaterialShader(effect: RuntimeEffect) : NativeMaterialShader {
         // premultiplication. Skiko 0.9.37.4 has no public makeRawShader binding.
         // Use the verified F16 path on both platform families. The pinned Skiko
         // native runtime does not round-trip F32 image data correctly.
-        val bytes = ByteArray(texture.rgba.size * 2)
-        for (index in texture.rgba.indices) {
-            val bits = float16Bits(texture.rgba[index])
-            val offset = index * 2
-            bytes[offset] = bits.toByte()
-            bytes[offset + 1] = (bits ushr 8).toByte()
-        }
         val image = Image.makeRaster(
             ImageInfo(texture.width, texture.height, ColorType.RGBA_F16, ColorAlphaType.OPAQUE),
-            bytes,
+            texture.rgbaF16,
             texture.width * 8,
         )
         val input = image.makeShader(
@@ -105,28 +98,4 @@ private class SkiaInputTexture(val image: Image, val shader: Shader) {
         shader.close()
         image.close()
     }
-}
-
-/** IEEE binary16, round-to-nearest-even, including the small-gradient range. */
-private fun float16Bits(value: Float): Int {
-    val bits = value.toRawBits()
-    val sign = (bits ushr 16) and 0x8000
-    val exponent = (bits ushr 23) and 0xFF
-    val mantissa = bits and 0x7FFFFF
-    if (exponent == 0xFF) return sign or if (mantissa == 0) 0x7C00 else 0x7E00
-    val halfExponent = exponent - 127 + 15
-    if (halfExponent >= 31) return sign or 0x7C00
-    if (halfExponent <= 0) {
-        if (halfExponent < -10) return sign
-        val significant = mantissa or 0x800000
-        val shift = 14 - halfExponent
-        var rounded = significant ushr shift
-        val remainder = significant and ((1 shl shift) - 1)
-        val halfway = 1 shl (shift - 1)
-        if (remainder > halfway || (remainder == halfway && (rounded and 1) != 0)) rounded++
-        return sign or rounded
-    }
-    val rounded = mantissa + 0xFFF + ((mantissa ushr 13) and 1)
-    // Carry from the rounded mantissa naturally increments the half exponent.
-    return sign or ((halfExponent shl 10) + (rounded ushr 13))
 }

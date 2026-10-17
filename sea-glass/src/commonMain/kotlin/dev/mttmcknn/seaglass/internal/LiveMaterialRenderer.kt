@@ -23,8 +23,6 @@ internal class LiveMaterialRenderer private constructor(
     private var appliedRevision = 0L
     private var tracedRevision = 0L
     private val uniforms = LiveMaterialUniforms(shader)
-    // Only synchronous first paint/resize uses this cache. The worker owns its own.
-    private val cloudCache = LiveMaterialCloudCache()
 
     /** The composable's LaunchedEffect owns this consumer and its cancellation. */
     suspend fun prepareUpdates() = updates.run()
@@ -44,7 +42,10 @@ internal class LiveMaterialRenderer private constructor(
         if (displayed == null || displayed.widthDp != widthDp || displayed.heightDp != heightDp) {
             val geometry = sharedLiveMaterialGeometryCache.geometryFor(key) {
                 traceMaterial("SeaGlass.Geometry") {
-                    makeLiveMaterialGeometry(widthDp, heightDp, shape, bounded.tumble, bounded.seed, composeMaskRasterizer, fieldScale, cloudCache)
+                    // Synchronous builds only happen on first paint or a new
+                    // size, so retaining their cloud samples cannot help the
+                    // next size. Tumble's worker owns the reusable cloud cache.
+                    makeLiveMaterialGeometry(widthDp, heightDp, shape, bounded.tumble, bounded.seed, composeMaskRasterizer, fieldScale)
                 }
             }
             appliedRevision = updates.invalidate(key)
@@ -107,7 +108,6 @@ internal class LiveMaterialRenderer private constructor(
 
     fun close() {
         updates.close()
-        cloudCache.clear()
         shader.close()
     }
 

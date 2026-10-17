@@ -1,0 +1,15 @@
+{
+  "jvm": {
+    "tests": 64,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "desktop_groups": 8,
+  "android_uploader_tests": 5,
+  "ios": {
+    "status": "not_executed",
+    "compiled": true,
+    "blocker": "Xcode simctl wrapper invokes unfinished xcodebuild -runFirstLaunch. Only task-owned pending launcher/setup processes were stopped; simulator services were not modified."
+  }
+}

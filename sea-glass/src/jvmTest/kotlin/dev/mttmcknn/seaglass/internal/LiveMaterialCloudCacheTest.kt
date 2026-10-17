@@ -82,10 +82,10 @@ class LiveMaterialCloudCacheTest {
         assertContentEquals(expected.gradientScales, actual.gradientScales)
         assertEquals(expected.geometryA.width, actual.geometryA.width)
         assertEquals(expected.geometryA.height, actual.geometryA.height)
-        assertContentEquals(expected.geometryA.rgba, actual.geometryA.rgba)
+        assertContentEquals(expected.geometryA.rgbaF16, actual.geometryA.rgbaF16)
         assertEquals(expected.geometryB.width, actual.geometryB.width)
         assertEquals(expected.geometryB.height, actual.geometryB.height)
-        assertContentEquals(expected.geometryB.rgba, actual.geometryB.rgba)
+        assertContentEquals(expected.geometryB.rgbaF16, actual.geometryB.rgbaF16)
     }
 
     private data class CloudInput(val width: Double, val height: Double, val scale: Double, val seed: Int)
