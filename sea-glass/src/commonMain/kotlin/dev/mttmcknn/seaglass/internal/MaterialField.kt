@@ -140,6 +140,51 @@ private fun distanceLine(input: DoubleArray, length: Int, output: DoubleArray, s
     }
 }
 
+/**
+ * First EDT pass for the binary mask. Each covered pixel can select itself at
+ * 1e12f, or its nearest uncovered pixel at squared horizontal distance. Two
+ * scans find those candidates without constructing the general lower envelope.
+ */
+internal fun horizontalSquaredDistances(
+    coverage: ByteArray,
+    width: Int,
+    height: Int,
+    cancellationProbe: () -> Unit = {},
+): FloatArray {
+    val distances = FloatArray(coverage.size)
+    val far = 1e12f
+    for (y in 0 until height) {
+        if (y % 32 == 0) cancellationProbe()
+        val row = y * width
+        var nearest = -1
+        for (x in 0 until width) {
+            val index = row + x
+            if ((coverage[index].toInt() and 255) <= 127) {
+                nearest = x
+                distances[index] = 0f
+            } else if (nearest < 0) {
+                distances[index] = far
+            } else {
+                val delta = x - nearest
+                distances[index] = min(far.toDouble(), delta.toDouble() * delta).toFloat()
+            }
+        }
+        nearest = width
+        for (x in width - 1 downTo 0) {
+            val index = row + x
+            if (distances[index] == 0f) {
+                nearest = x
+            } else if (nearest < width) {
+                val delta = nearest - x
+                // Positive Float rounding is monotonic: min of the rounded
+                // candidates equals rounding the original minimum once.
+                distances[index] = min(distances[index], (delta.toDouble() * delta).toFloat())
+            }
+        }
+    }
+    return distances
+}
+
 private fun smoothHeight(values: FloatArray, width: Int, height: Int, scale: Double, cancellationProbe: () -> Unit): FloatArray {
     val sigma = 0.85 * scale
     val reach = ceil(sigma * 3.0).toInt()
@@ -199,19 +244,12 @@ internal fun makeGeometryField(
     val rows = height + 2
     val coverage = rasterizeMask(segments, columns, rows, scale, 1.0, 1.0)
     require(coverage.size == columns * rows) { "Mask rasterizer returned an incorrect pixel count" }
-    val distances = FloatArray(columns * rows) { if ((coverage[it].toInt() and 255) > 127) 1e12f else 0f }
-    val longest = max(columns, rows)
-    val input = DoubleArray(longest)
-    val output = DoubleArray(longest)
-    val sites = IntArray(longest)
-    val separators = DoubleArray(longest + 1)
-    for (y in 0 until rows) {
-        if (y % 32 == 0) cancellationProbe()
-        val row = y * columns
-        for (x in 0 until columns) input[x] = distances[row + x].toDouble()
-        distanceLine(input, columns, output, sites, separators)
-        for (x in 0 until columns) distances[row + x] = output[x].toFloat()
-    }
+    val distances = horizontalSquaredDistances(coverage, columns, rows, cancellationProbe)
+    // The general transform now runs only down columns.
+    val input = DoubleArray(rows)
+    val output = DoubleArray(rows)
+    val sites = IntArray(rows)
+    val separators = DoubleArray(rows + 1)
     for (x in 0 until columns) {
         if (x % 32 == 0) cancellationProbe()
         for (y in 0 until rows) input[y] = distances[y * columns + x].toDouble()
