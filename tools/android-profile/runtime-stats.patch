@@ -1,0 +1,93 @@
+--- a/androidApp/src/main/kotlin/dev/mttmcknn/seaglass/android/MainActivity.kt
++++ b/androidApp/src/main/kotlin/dev/mttmcknn/seaglass/android/MainActivity.kt
+@@ -3,6 +3,12 @@
+ import android.graphics.Color
+ import android.os.Build
+ import android.os.Bundle
++import android.os.Debug
++import android.os.Process
++import android.os.SystemClock
++import org.json.JSONObject
++import java.io.FileDescriptor
++import java.io.PrintWriter
+ import androidx.activity.ComponentActivity
+ import androidx.activity.SystemBarStyle
+ import androidx.activity.compose.setContent
+@@ -11,6 +17,77 @@
+ import dev.mttmcknn.seaglass.sample.SeaGlassPlayground
+ 
+ class MainActivity : ComponentActivity() {
++    // BEGIN temporary Sea Glass runtime diagnostics; remove before shipping.
++    // Reads only unless a separate allocation-counting command is requested.
++    @Suppress("DEPRECATION")
++    override fun dump(prefix: String, fd: FileDescriptor?, writer: PrintWriter, args: Array<out String>?) {
++        val command = args?.firstOrNull()
++        when (command) {
++            "sg-runtime-stats" -> Unit
++            "sg-start-counting" -> {
++                Debug.startAllocCounting()
++                Debug.resetAllCounts()
++                sgAllocationCountingRequested = true
++            }
++            "sg-stop-counting" -> {
++                Debug.stopAllocCounting()
++                sgAllocationCountingRequested = false
++            }
++            else -> {
++                super.dump(prefix, fd, writer, args)
++                return
++            }
++        }
++        // Capture all numeric values before constructing JSON. These getters and
++        // getRuntimeStats still have observer cost; measure paired idle dumps too.
++        val captureStartNs = SystemClock.elapsedRealtimeNanos()
++        val uptimeMs = SystemClock.uptimeMillis()
++        val pid = Process.myPid()
++        val processStartUptimeMs = Process.getStartUptimeMillis()
++        val processCpuTimeMs = Process.getElapsedCpuTime()
++        val runtime = Runtime.getRuntime()
++        val heapTotalBytes = runtime.totalMemory()
++        val heapFreeBytes = runtime.freeMemory()
++        val heapMaxBytes = runtime.maxMemory()
++        val nativeAllocatedBytes = Debug.getNativeHeapAllocatedSize()
++        val nativeSizeBytes = Debug.getNativeHeapSize()
++        val nativeFreeBytes = Debug.getNativeHeapFreeSize()
++        // Legacy counters may be unsupported or overflow; retain the raw values.
++        val legacyAllocCount = Debug.getGlobalAllocCount()
++        val legacyAllocBytes = Debug.getGlobalAllocSize()
++        val legacyGcCount = Debug.getGlobalGcInvocationCount()
++        val runtimeStats = Debug.getRuntimeStats()
++        val captureEndNs = SystemClock.elapsedRealtimeNanos()
++        val json = JSONObject()
++            .put("schemaVersion", 1)
++            .put("command", command)
++            .put("pid", pid)
++            .put("uptimeMs", uptimeMs)
++            .put("processStartUptimeMs", processStartUptimeMs)
++            .put("processCpuTimeMs", processCpuTimeMs)
++            .put("captureStartElapsedRealtimeNs", captureStartNs)
++            .put("captureEndElapsedRealtimeNs", captureEndNs)
++            .put("heapTotalBytes", heapTotalBytes)
++            .put("heapFreeBytes", heapFreeBytes)
++            .put("heapUsedBytes", heapTotalBytes - heapFreeBytes)
++            .put("heapMaxBytes", heapMaxBytes)
++            .put("nativeAllocatedBytes", nativeAllocatedBytes)
++            .put("nativeSizeBytes", nativeSizeBytes)
++            .put("nativeFreeBytes", nativeFreeBytes)
++            .put("allocationCountingRequested", sgAllocationCountingRequested)
++            .put("legacyGlobalAllocCount", legacyAllocCount)
++            .put("legacyGlobalAllocBytes", legacyAllocBytes)
++            .put("legacyGlobalGcInvocationCount", legacyGcCount)
++            .put("runtimeStats", JSONObject(runtimeStats))
++        writer.println(prefix + "SEAGLASS_RUNTIME_STATS " + json.toString())
++    }
++
++    companion object {
++        // Tracks only requests through this diagnostic hook, not profiler state.
++        private var sgAllocationCountingRequested = false
++    }
++    // END temporary Sea Glass runtime diagnostics.
++
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         // The playground always draws a light canvas, even in system dark mode.

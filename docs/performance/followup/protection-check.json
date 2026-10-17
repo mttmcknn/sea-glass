@@ -1,0 +1,33 @@
+{
+  "checkedUtc": "2026-10-17T19:43:02Z",
+  "original": {
+    "path": "/Users/mmckenna/Documents/Codex/2026-10-14/gh-repo-clone-mttmcknn-sea-glass/sea-glass",
+    "head": "c0ebad4857d475a360e62e21c13606e01ff8c6fa",
+    "status": "clean"
+  },
+  "release": {
+    "path": "/Users/mmckenna/Documents/Codex/2026-10-17/task/sea-glass-release",
+    "head": "c0ebad4857d475a360e62e21c13606e01ff8c6fa",
+    "status": "clean"
+  },
+  "readme": {
+    "path": "/Users/mmckenna/Documents/Codex/2026-10-15/task-2/sea-glass-readme",
+    "head": "c0ebad4857d475a360e62e21c13606e01ff8c6fa",
+    "status": [
+      " M README.md",
+      " M assets/demos/README.md",
+      " M docs/publishing.md",
+      "?? docs/playground.md"
+    ]
+  },
+  "mediaSource": {
+    "path": "/Users/mmckenna/Documents/Codex/2026-10-15/task/seaglass-progressive/source",
+    "modifiedByThisTask": false
+  },
+  "remoteOperations": {
+    "push": false,
+    "publish": false,
+    "remoteCi": false
+  },
+  "diagnosticHooks": "Removed from baseline, checkpoint, performance, contour and contour-cache checkouts; frozen diagnostic APKs and patch remain only as measurement evidence."
+}

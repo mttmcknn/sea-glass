@@ -1,0 +1,64 @@
+{
+  "notes": [
+    "Separate counting-enabled one-run diagnostics; excluded from main timing. Legacy object counts are approximate whole-process counters, not exact SeaGlass kernel counts. Denominator is actual complete Geometry slices in the same trace. ART GC counters remain authoritative over legacy GC=0."
+  ],
+  "rows": [
+    {
+      "name": "baseline-count-1",
+      "variant": "baseline",
+      "geometry_builds": 483,
+      "whole_process_legacy_object_delta": 890471,
+      "objects_per_build": 1843.625258799172,
+      "whole_process_art_allocated_bytes": 452136992,
+      "allocated_bytes_per_build": 936101.4327122153,
+      "art_gc_count": 23,
+      "art_gc_time_ms": 212,
+      "legacy_gc_delta": 0,
+      "requests": 483,
+      "applied": 481,
+      "final_cohorts": 2,
+      "all_final_cohorts_presented": true,
+      "data_loss_flags": 0,
+      "incomplete_geometry": 0,
+      "trace_sha256": "399c14205da356b1dfa5b6e29f0ede692cf63d864fb1432722a77127047f0c99"
+    },
+    {
+      "name": "checkpoint-count-1",
+      "variant": "checkpoint",
+      "geometry_builds": 490,
+      "whole_process_legacy_object_delta": 910155,
+      "objects_per_build": 1857.4591836734694,
+      "whole_process_art_allocated_bytes": 374145056,
+      "allocated_bytes_per_build": 763561.3387755102,
+      "art_gc_count": 35,
+      "art_gc_time_ms": 272,
+      "legacy_gc_delta": 0,
+      "requests": 490,
+      "applied": 490,
+      "final_cohorts": 2,
+      "all_final_cohorts_presented": true,
+      "data_loss_flags": 0,
+      "incomplete_geometry": 0,
+      "trace_sha256": "7faa15e96868c5cde3a8191f290f9e43f79dd38ca1b3f4696d49b99f09226927"
+    },
+    {
+      "name": "performance-count-1",
+      "variant": "performance",
+      "geometry_builds": 483,
+      "whole_process_legacy_object_delta": 581986,
+      "objects_per_build": 1204.9399585921326,
+      "whole_process_art_allocated_bytes": 361365536,
+      "allocated_bytes_per_build": 748168.8115942029,
+      "art_gc_count": 34,
+      "art_gc_time_ms": 264,
+      "legacy_gc_delta": 0,
+      "requests": 483,
+      "applied": 483,
+      "final_cohorts": 2,
+      "all_final_cohorts_presented": true,
+      "data_loss_flags": 0,
+      "incomplete_geometry": 0,
+      "trace_sha256": "f3cce2a24da97822b829e7f1567b3eb026bdf5e252b16b404131feb0a0bcca3c"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Performance hill climb
 
-The [October 17 packed-geometry follow-up](packed-geometry.md) measures the current local change: smaller retained CPU texture payloads and cheaper uploads, with unchanged shader inputs, mixed total CPU results and remaining cold-compilation/GC costs. It preserves the public API.
+The [October 17 allocation and distance-transform follow-up](allocation-and-distance-transform.md) records the selected local changes: smaller texture payloads, fewer temporary contour objects, and exact binary-mask computation. Matched emulator measurements show modest overall CPU savings and lower allocation, while GC and cold shader compilation remain costs. It builds on the [packed-geometry checkpoint](packed-geometry.md) and preserves the public API and tested visual output.
 
 The default renderer on **Android 13+ and Skia draws a complete material on the first frame**, using a runtime body shader and native ground blur. Optical changes update their affected uniforms immediately. Later shape, tumble and seed edits prepare geometry on a worker while the previous complete shape stays visible; rapid edits retain the final request. Logical-size changes still draw synchronously. The measurements below describe the earlier CPU optimization work. Follow-up emulator measurements are documented in [Android emulator profiling](android-emulator-profile.md); they do not establish physical-device GPU performance.
 

@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"exitCode\": 0,\n  \"stdout\": \"\\ndev.mttmcknn.seaglass.internal.AndroidFloatTextureUploaderTest:.....\\n\\nTime: 0.254\\n\\nOK (5 tests)\\n\\n\\n\",\n  \"stderr\": \"\"\n}"
+    }
+  ]
+}

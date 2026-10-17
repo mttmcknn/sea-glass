@@ -1,0 +1,78 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Calculating task graph as no cached configuration is available for tasks: :sea-glass:assembleAndroidDeviceTest
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+> Task :sea-glass:generateAndroidMainAssets UP-TO-DATE
+> Task :sea-glass:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :sea-glass:androidPreBuild UP-TO-DATE
+> Task :sea-glass:generateComposeResClass SKIPPED
+> Task :sea-glass:generateAndroidDeviceTestAssets UP-TO-DATE
+> Task :sea-glass:preAndroidMainBuild UP-TO-DATE
+> Task :sea-glass:preAndroidDeviceTestBuild UP-TO-DATE
+> Task :sea-glass:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForAndroidDeviceTest NO-SOURCE
+> Task :sea-glass:processAndroidDeviceTestJavaRes NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForAndroidDeviceTest NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForAndroidDeviceTest NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :sea-glass:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForCommonMain SKIPPED
+> Task :sea-glass:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForAndroidDeviceTest SKIPPED
+> Task :sea-glass:kmpPartiallyResolvedDependenciesChecker
+> Task :sea-glass:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sea-glass:copyAndroidDeviceTestComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :sea-glass:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :sea-glass:processAndroidDeviceTestNavigationResources UP-TO-DATE
+> Task :sea-glass:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :sea-glass:validateSigningAndroidDeviceTest UP-TO-DATE
+> Task :sea-glass:androidJar UP-TO-DATE
+> Task :sea-glass:generateAndroidDeviceTestResources UP-TO-DATE
+> Task :sea-glass:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :sea-glass:desugarAndroidDeviceTestFileDependencies UP-TO-DATE
+> Task :sea-glass:mergeAndroidDeviceTestJniLibFolders UP-TO-DATE
+> Task :sea-glass:writeAndroidDeviceTestSigningConfigVersions UP-TO-DATE
+> Task :sea-glass:processAndroidMainManifest UP-TO-DATE
+> Task :sea-glass:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :sea-glass:mergeAndroidMainAssets UP-TO-DATE
+> Task :sea-glass:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :sea-glass:compileAndroidDeviceTestNavigationResources UP-TO-DATE
+> Task :sea-glass:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :sea-glass:packageAndroidMainResources UP-TO-DATE
+> Task :sea-glass:packageAndroidDeviceTestResources UP-TO-DATE
+> Task :sea-glass:parseAndroidDeviceTestLocalResources UP-TO-DATE
+> Task :sea-glass:parseAndroidMainLocalResources UP-TO-DATE
+> Task :sea-glass:generateAndroidMainRFile UP-TO-DATE
+> Task :sea-glass:generateAndroidDeviceTestRFile UP-TO-DATE
+> Task :sea-glass:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :sea-glass:checkAndroidDeviceTestDuplicateClasses UP-TO-DATE
+> Task :sea-glass:checkAndroidDeviceTestAarMetadata UP-TO-DATE
+> Task :sea-glass:mergeAndroidDeviceTestAssets UP-TO-DATE
+> Task :sea-glass:mapAndroidDeviceTestSourceSetPaths UP-TO-DATE
+> Task :sea-glass:compressAndroidDeviceTestAssets UP-TO-DATE
+> Task :sea-glass:mergeAndroidDeviceTestNativeLibs UP-TO-DATE
+> Task :sea-glass:stripAndroidDeviceTestDebugSymbols UP-TO-DATE
+> Task :sea-glass:processAndroidDeviceTestManifest UP-TO-DATE
+> Task :sea-glass:mergeAndroidDeviceTestResources UP-TO-DATE
+> Task :sea-glass:mergeExtDexAndroidDeviceTest UP-TO-DATE
+> Task :sea-glass:compileAndroidMain UP-TO-DATE
+> Task :sea-glass:processAndroidDeviceTestResources UP-TO-DATE
+> Task :sea-glass:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :sea-glass:processAndroidMainJavaRes UP-TO-DATE
+> Task :sea-glass:mergeAndroidDeviceTestJavaResource UP-TO-DATE
+> Task :sea-glass:bundleLibRuntimeToDirAndroidMain
+> Task :sea-glass:mergeLibDexAndroidDeviceTest
+> Task :sea-glass:compileAndroidDeviceTest
+> Task :sea-glass:dexBuilderAndroidDeviceTest UP-TO-DATE
+> Task :sea-glass:mergeProjectDexAndroidDeviceTest UP-TO-DATE
+> Task :sea-glass:packageAndroidDeviceTest
+> Task :sea-glass:assembleAndroidDeviceTest
+> Task :sea-glass:createAndroidDeviceTestApkListingFileRedirect UP-TO-DATE
+
+BUILD SUCCESSFUL in 7s
+46 actionable tasks: 5 executed, 41 up-to-date
+Configuration cache entry stored.

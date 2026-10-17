@@ -1,0 +1,22 @@
+{
+  "checkedAtUtc": "2026-10-17T18:54:08.054291+00:00",
+  "currentXcodeVersion": "27.1",
+  "currentXcodeBuild": "27A9275",
+  "currentCoreSimulator": "1171.7",
+  "simctlWrapperRequiredCoreSimulator": "1174.9.2",
+  "wrapperPath": "/Applications/Xcode.app/Contents/Developer/usr/bin/simctl",
+  "releaseReportedXcode": "27.0 (27A266a)",
+  "releaseIosTestCount": 6,
+  "releaseIosTestTimestampUtc": "2026-10-17T17:57:56.492Z",
+  "releaseLog": "/Users/mmckenna/Documents/Codex/2026-10-17/task/local-release-checks.log",
+  "releaseTestExecutionCached": false,
+  "releaseTestCompilationCached": true,
+  "candidatePriorStatus": "Compiled and linked; test device resolution interrupted with xcrun exit 143 before test execution",
+  "candidateLog": "/Users/mmckenna/Documents/Codex/2026-10-17/task-2/candidate-checks.log",
+  "requiredAction": "Separately authorized Xcode first-launch setup to match CoreSimulator components",
+  "actionStatus": "not performed; candidate simulator execution remains blocked",
+  "limitations": [
+    "No evidence establishes when or how selected Xcode contents changed, or the release process DEVELOPER_DIR.",
+    "No license, first-launch setup, security change, or simulator runtime installation accepted."
+  ]
+}

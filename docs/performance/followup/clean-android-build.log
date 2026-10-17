@@ -1,0 +1,138 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Reusing configuration cache.
+> Task :sample:generateComposeResClass SKIPPED
+> Task :sea-glass:androidPreBuild UP-TO-DATE
+> Task :androidApp:generateDemoReleaseAssets UP-TO-DATE
+> Task :androidApp:preBuild UP-TO-DATE
+> Task :sample:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :sea-glass:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :sample:androidPreBuild UP-TO-DATE
+> Task :sea-glass:generateComposeResClass SKIPPED
+> Task :sea-glass:generateAndroidMainAssets UP-TO-DATE
+> Task :sample:preAndroidMainBuild UP-TO-DATE
+> Task :sea-glass:preAndroidMainBuild UP-TO-DATE
+> Task :androidApp:preDemoReleaseBuild UP-TO-DATE
+> Task :sea-glass:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :sample:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :sample:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sample:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :sample:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :sample:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :sample:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :sea-glass:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :sea-glass:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :sample:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :sample:generateResourceAccessorsForCommonMain SKIPPED
+> Task :sample:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForCommonMain SKIPPED
+> Task :sea-glass:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :sea-glass:kmpPartiallyResolvedDependenciesChecker
+> Task :sample:kmpPartiallyResolvedDependenciesChecker
+> Task :sea-glass:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sample:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sample:prepareAndroidMainArtProfile UP-TO-DATE
+> Task :sample:prepareLintJarForPublish UP-TO-DATE
+> Task :sea-glass:prepareLintJarForPublish UP-TO-DATE
+> Task :sea-glass:prepareAndroidMainArtProfile UP-TO-DATE
+> Task :sample:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :androidApp:generateDemoReleaseResources UP-TO-DATE
+> Task :androidApp:extractProguardFiles UP-TO-DATE
+> Task :sea-glass:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :androidApp:javaPreCompileDemoRelease UP-TO-DATE
+> Task :sea-glass:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :androidApp:mergeDemoReleaseJniLibFolders UP-TO-DATE
+> Task :sample:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :sea-glass:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :sample:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :sea-glass:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :androidApp:extractDeepLinksDemoRelease UP-TO-DATE
+> Task :sea-glass:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :androidApp:mergeDemoReleaseStartupProfile UP-TO-DATE
+> Task :androidApp:createDemoReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :sample:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :androidApp:extractDemoReleaseVersionControlInfo UP-TO-DATE
+> Task :sea-glass:mergeAndroidMainAssets UP-TO-DATE
+> Task :sample:processAndroidMainManifest UP-TO-DATE
+> Task :sea-glass:processAndroidMainManifest UP-TO-DATE
+> Task :sample:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :androidApp:validateSigningDemoRelease UP-TO-DATE
+> Task :sea-glass:packageAndroidMainResources UP-TO-DATE
+> Task :sea-glass:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :androidApp:packageDemoReleaseResources UP-TO-DATE
+> Task :androidApp:writeDemoReleaseAppMetadata UP-TO-DATE
+> Task :androidApp:writeDemoReleaseSigningConfigVersions UP-TO-DATE
+> Task :sea-glass:parseAndroidMainLocalResources UP-TO-DATE
+> Task :sea-glass:generateAndroidMainRFile UP-TO-DATE
+> Task :androidApp:collectDemoReleaseDependencies UP-TO-DATE
+> Task :androidApp:sdkDemoReleaseDependencyData UP-TO-DATE
+> Task :androidApp:mapDemoReleaseSourceSetPaths UP-TO-DATE
+> Task :sea-glass:checkAndroidMainAarMetadata UP-TO-DATE
+> Task :androidApp:checkDemoReleaseAarMetadata UP-TO-DATE
+> Task :sample:checkAndroidMainAarMetadata UP-TO-DATE
+> Task :androidApp:mergeDemoReleaseResources UP-TO-DATE
+> Task :androidApp:mergeDemoReleaseArtProfile UP-TO-DATE
+> Task :androidApp:processDemoReleaseNavigationResources UP-TO-DATE
+> Task :androidApp:compileDemoReleaseNavigationResources UP-TO-DATE
+> Task :androidApp:parseDemoReleaseLocalResources UP-TO-DATE
+> Task :androidApp:mergeDemoReleaseAssets UP-TO-DATE
+> Task :androidApp:generateDemoReleaseRFile UP-TO-DATE
+> Task :androidApp:checkDemoReleaseDuplicateClasses UP-TO-DATE
+> Task :androidApp:compressDemoReleaseAssets UP-TO-DATE
+> Task :sea-glass:extractAndroidMainAnnotations UP-TO-DATE
+> Task :androidApp:mergeDemoReleaseNativeLibs UP-TO-DATE
+> Task :androidApp:processDemoReleaseMainManifest UP-TO-DATE
+> Task :androidApp:stripDemoReleaseDebugSymbols UP-TO-DATE
+> Task :androidApp:extractDemoReleaseNativeSymbolTables UP-TO-DATE
+> Task :androidApp:processDemoReleaseManifest UP-TO-DATE
+> Task :androidApp:mergeDemoReleaseNativeDebugMetadata NO-SOURCE
+> Task :androidApp:processDemoReleaseManifestForPackage UP-TO-DATE
+> Task :sea-glass:compileAndroidMain UP-TO-DATE
+> Task :sea-glass:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :sea-glass:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :sea-glass:processAndroidMainJavaRes UP-TO-DATE
+> Task :sea-glass:createFullJarAndroidMain UP-TO-DATE
+> Task :sea-glass:mergeAndroidMainJavaResource UP-TO-DATE
+> Task :sea-glass:syncAndroidMainLibJars UP-TO-DATE
+> Task :sample:extractAndroidMainAnnotations UP-TO-DATE
+> Task :sea-glass:bundleAndroidMainLocalLintAar UP-TO-DATE
+> Task :sample:compileAndroidMain UP-TO-DATE
+> Task :sample:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :sample:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :sample:processAndroidMainJavaRes UP-TO-DATE
+> Task :sample:createFullJarAndroidMain UP-TO-DATE
+> Task :sample:mergeAndroidMainJavaResource UP-TO-DATE
+> Task :sample:syncAndroidMainLibJars UP-TO-DATE
+> Task :sample:bundleAndroidMainLocalLintAar UP-TO-DATE
+
+> Task :androidApp:processDemoReleaseResources UP-TO-DATE
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+
+> Task :androidApp:compileDemoReleaseKotlin
+> Task :androidApp:processDemoReleaseJavaRes UP-TO-DATE
+> Task :androidApp:compileDemoReleaseJavaWithJavac NO-SOURCE
+> Task :androidApp:mergeDemoReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :androidApp:mergeDemoReleaseJavaResource UP-TO-DATE
+> Task :androidApp:generateDemoReleaseLintVitalReportModel
+> Task :androidApp:expandDemoReleaseArtProfileWildcards
+> Task :androidApp:produceDemoReleaseComposeMapping
+> Task :androidApp:reportDemoReleaseComposeMappingErrors
+> Task :androidApp:lintVitalAnalyzeDemoRelease
+> Task :androidApp:lintVitalReportDemoRelease UP-TO-DATE
+> Task :androidApp:lintVitalDemoRelease
+> Task :androidApp:minifyDemoReleaseWithR8
+> Task :androidApp:convertShrunkResourcesToBinaryDemoRelease UP-TO-DATE
+> Task :androidApp:optimizeDemoReleaseResources UP-TO-DATE
+> Task :androidApp:mergeDemoReleaseComposeMapping
+> Task :androidApp:compileDemoReleaseArtProfile
+> Task :androidApp:packageDemoRelease
+> Task :androidApp:assembleDemoRelease
+> Task :androidApp:createDemoReleaseApkListingFileRedirect UP-TO-DATE
+
+BUILD SUCCESSFUL in 27s
+91 actionable tasks: 13 executed, 78 up-to-date
+Configuration cache entry reused.

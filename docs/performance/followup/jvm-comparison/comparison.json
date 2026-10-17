@@ -1,0 +1,5381 @@
+{
+  "schemaVersion": 1,
+  "beforeVariant": "checkpoint",
+  "afterVariant": "performance",
+  "inputs": [
+    {
+      "path": "checkpoint/live-geometry-1.json",
+      "sha256": "e7be387bcebabb45de6a9b8828539bf4dc7367687edf67026566b994aee35cad"
+    },
+    {
+      "path": "checkpoint/live-geometry-2.json",
+      "sha256": "a14e61e82c0c40025a8b266a95006411a46581fbed93fcb190761346ab076078"
+    },
+    {
+      "path": "performance/live-geometry-1.json",
+      "sha256": "c3bc467b0f96e3aa9b84a00812ec61317b81832a0fa48e6ca885c16d63b32274"
+    },
+    {
+      "path": "performance/live-geometry-2.json",
+      "sha256": "dc3bee16ea62de41a4c35139378d5366113a5fe9b15ecbedadc1eb08ff7d4a1c"
+    }
+  ],
+  "metadata": {
+    "schemaVersion": 1,
+    "workloadVersion": 1,
+    "fieldScale": 1.0,
+    "samples": 60,
+    "warmupsPerCase": 30,
+    "initialWarmupsPerCase": 2,
+    "javaVersion": "17.0.18",
+    "vmName": "OpenJDK 64-Bit Server VM",
+    "os": "Mac OS X aarch64",
+    "availableProcessors": 16,
+    "threadCpuTimeAvailable": true,
+    "threadAllocatedBytesAvailable": true,
+    "oracle": "SHA-256 of width/height as little-endian int64 and canonical little-endian RGBA_F16 texture inputs, plus separate exact contour/uniform SHA-256"
+  },
+  "normalizedVmArguments": [
+    "-Djava.awt.headless=true",
+    "-XX:StartFlightRecording=filename=<OUTPUT>,settings=profile,dumponexit=true",
+    "-Xms256m",
+    "-Xmx1g",
+    "-Dfile.encoding=UTF-8",
+    "-Duser.country=US",
+    "-Duser.language=en",
+    "-Duser.variant"
+  ],
+  "buildCachePolicies": {
+    "before": {
+      "reported": false,
+      "buildCachePolicy": null
+    },
+    "after": {
+      "reported": false,
+      "buildCachePolicy": null
+    }
+  },
+  "parity": {
+    "pairedSamples": 960,
+    "pairedChecksumComparisons": 1920,
+    "allF16Equal": true,
+    "allGeometryEqual": true,
+    "requiredEqualPayloads": [
+      "texturePayloadBytes",
+      "cloudCachePayloadBytes",
+      "nativeRasterPayloadBytes"
+    ],
+    "distinctFixtureTumbleStates": 40
+  },
+  "allocationObjectCountsAvailable": false,
+  "scope": "ThreadMXBean reports allocated heap BYTES on the current thread, not object counts. No model or expected byte-saving assumption is used. Native allocation and other threads are excluded. Combined stage sums are computed per observation before statistics.",
+  "memoryScope": "Exact texture/cloud primitive payload fields and native raster estimate do not count contour object storage. Optional retainedContourBasisBytes is reported separately; absent legacy values are treated as zero and reporting presence is recorded. geometryCacheEstimateBytes is an implementation accounting estimate, not a heap measurement; contour changes can alter it. Equal texture/cloud/native payloads do not establish unchanged total retention.",
+  "cachePolicyScope": "buildCachePolicy and per-case reuseContourBasis may intentionally differ between variants and are reported explicitly, while within-variant policy drift between rounds is rejected. Legacy absent reuseContourBasis means false. Timed repeated cases can therefore compare different internal cache policies without changing fixture, Tumble, oracle or sample order.",
+  "timingScope": "CPU geometry and native raster texture creation; not GPU execution or physical Android performance. Fixed-order rounds retained separately; no statistical significance or production recommendation inferred automatically.",
+  "cases": [
+    {
+      "name": "freshClouds.button",
+      "componentCount": 1,
+      "buildCachePolicy": {
+        "before": {
+          "reuseClouds": false,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        },
+        "after": {
+          "reuseClouds": false,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        }
+      },
+      "allocationDeltas": {
+        "geometry": {
+          "observations": 120,
+          "available": 120,
+          "median": 24768.0,
+          "p95": 24936,
+          "min": 24768,
+          "max": 25056,
+          "valueCounts": {
+            "24768": 69,
+            "24848": 9,
+            "24904": 11,
+            "24936": 30,
+            "25056": 1
+          }
+        },
+        "upload": {
+          "observations": 120,
+          "available": 120,
+          "median": 0.0,
+          "p95": 0,
+          "min": 0,
+          "max": 0,
+          "valueCounts": {
+            "0": 120
+          }
+        },
+        "combined": {
+          "observations": 120,
+          "available": 120,
+          "median": 24768.0,
+          "p95": 24936,
+          "min": 24768,
+          "max": 25056,
+          "valueCounts": {
+            "24768": 69,
+            "24848": 9,
+            "24904": 11,
+            "24936": 30,
+            "25056": 1
+          }
+        }
+      },
+      "phases": {
+        "geometry": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1849833.5,
+                "p95": 2265375,
+                "min": 1567042,
+                "max": 3137458
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1854500.0,
+                "p95": 2159000,
+                "min": 1569000,
+                "max": 2390000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1669832.0,
+                "p95": 1670000,
+                "min": 1669832,
+                "max": 1670208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1778437.5,
+                "p95": 2099083,
+                "min": 1454292,
+                "max": 2596125
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1770500.0,
+                "p95": 1929000,
+                "min": 1456000,
+                "max": 2238000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1645064.0,
+                "p95": 1645064,
+                "min": 1645064,
+                "max": 1645272
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1893396.0,
+                "p95": 2179625,
+                "min": 1615458,
+                "max": 2773458
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1889500.0,
+                "p95": 2137000,
+                "min": 1618000,
+                "max": 2251000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1669968.0,
+                "p95": 1670000,
+                "min": 1669832,
+                "max": 1670208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1674604.0,
+                "p95": 2069125,
+                "min": 1440375,
+                "max": 2605250
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1670500.0,
+                "p95": 2021000,
+                "min": 1444000,
+                "max": 2114000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1645064.0,
+                "p95": 1645152,
+                "min": 1645064,
+                "max": 1645152
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1877104.5,
+                "p95": 2221333,
+                "min": 1567042,
+                "max": 3137458
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1882000.0,
+                "p95": 2157000,
+                "min": 1569000,
+                "max": 2390000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 1669832.0,
+                "p95": 1670000,
+                "min": 1669832,
+                "max": 1670208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1712875.0,
+                "p95": 2099083,
+                "min": 1440375,
+                "max": 2605250
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1718000.0,
+                "p95": 1981000,
+                "min": 1444000,
+                "max": 2238000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 1645064.0,
+                "p95": 1645152,
+                "min": 1645064,
+                "max": 1645272
+              }
+            }
+          }
+        ],
+        "upload": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 23209.0,
+                "p95": 43541,
+                "min": 12875,
+                "max": 252625
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 26000.0,
+                "p95": 47000,
+                "min": 14000,
+                "max": 205000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 24416.5,
+                "p95": 55833,
+                "min": 14375,
+                "max": 216125
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 26500.0,
+                "p95": 61000,
+                "min": 15000,
+                "max": 190000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 22500.5,
+                "p95": 55000,
+                "min": 13875,
+                "max": 272708
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 24000.0,
+                "p95": 58000,
+                "min": 15000,
+                "max": 232000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 17479.5,
+                "p95": 43458,
+                "min": 14875,
+                "max": 172666
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 19000.0,
+                "p95": 56000,
+                "min": 16000,
+                "max": 159000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 22729.5,
+                "p95": 45375,
+                "min": 12875,
+                "max": 272708
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 25000.0,
+                "p95": 49000,
+                "min": 14000,
+                "max": 232000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 21750.0,
+                "p95": 54167,
+                "min": 14375,
+                "max": 216125
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 23000.0,
+                "p95": 60000,
+                "min": 15000,
+                "max": 190000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          }
+        ],
+        "combined": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1868166.5,
+                "p95": 2382584,
+                "min": 1579917,
+                "max": 3160667
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1874500.0,
+                "p95": 2228000,
+                "min": 1583000,
+                "max": 2439000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1670464.0,
+                "p95": 1670632,
+                "min": 1670464,
+                "max": 1670840
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1804083.5,
+                "p95": 2133375,
+                "min": 1469167,
+                "max": 2653291
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1801500.0,
+                "p95": 1984000,
+                "min": 1473000,
+                "max": 2428000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1645696.0,
+                "p95": 1645696,
+                "min": 1645696,
+                "max": 1645904
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1919083.5,
+                "p95": 2250958,
+                "min": 1632124,
+                "max": 2792792
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1911500.0,
+                "p95": 2243000,
+                "min": 1636000,
+                "max": 2294000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1670600.0,
+                "p95": 1670632,
+                "min": 1670464,
+                "max": 1670840
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1693395.5,
+                "p95": 2139958,
+                "min": 1455667,
+                "max": 2634375
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1694500.0,
+                "p95": 2106000,
+                "min": 1460000,
+                "max": 2148000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1645696.0,
+                "p95": 1645784,
+                "min": 1645696,
+                "max": 1645784
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1896771.0,
+                "p95": 2287084,
+                "min": 1579917,
+                "max": 3160667
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1906000.0,
+                "p95": 2237000,
+                "min": 1583000,
+                "max": 2439000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 1670464.0,
+                "p95": 1670632,
+                "min": 1670464,
+                "max": 1670840
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1742812.5,
+                "p95": 2139958,
+                "min": 1455667,
+                "max": 2653291
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1743500.0,
+                "p95": 2087000,
+                "min": 1460000,
+                "max": 2428000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 1645696.0,
+                "p95": 1645784,
+                "min": 1645696,
+                "max": 1645904
+              }
+            }
+          }
+        ]
+      },
+      "reportedMemory": {
+        "texturePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 385280.0,
+            "p95": 385280,
+            "min": 385280,
+            "max": 385280
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 385280.0,
+            "p95": 385280,
+            "min": 385280,
+            "max": 385280
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "geometryCacheEstimateBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 416520.0,
+            "p95": 416520,
+            "min": 416520,
+            "max": 416520
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 416520.0,
+            "p95": 416520,
+            "min": 416520,
+            "max": 416520
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "cloudCachePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "nativeRasterPayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 385280.0,
+            "p95": 385280,
+            "min": 385280,
+            "max": 385280
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 385280.0,
+            "p95": 385280,
+            "min": 385280,
+            "max": 385280
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "retainedContourBasisBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 0,
+          "afterReportedSamples": 0
+        }
+      }
+    },
+    {
+      "name": "reusedClouds.button",
+      "componentCount": 1,
+      "buildCachePolicy": {
+        "before": {
+          "reuseClouds": true,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        },
+        "after": {
+          "reuseClouds": true,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        }
+      },
+      "allocationDeltas": {
+        "geometry": {
+          "observations": 120,
+          "available": 120,
+          "median": 24768.0,
+          "p95": 24768,
+          "min": 24768,
+          "max": 24768,
+          "valueCounts": {
+            "24768": 120
+          }
+        },
+        "upload": {
+          "observations": 120,
+          "available": 120,
+          "median": 0.0,
+          "p95": 0,
+          "min": 0,
+          "max": 0,
+          "valueCounts": {
+            "0": 120
+          }
+        },
+        "combined": {
+          "observations": 120,
+          "available": 120,
+          "median": 24768.0,
+          "p95": 24768,
+          "min": 24768,
+          "max": 24768,
+          "valueCounts": {
+            "24768": 120
+          }
+        }
+      },
+      "phases": {
+        "geometry": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1515021.0,
+                "p95": 1847833,
+                "min": 1369209,
+                "max": 2119750
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1511500.0,
+                "p95": 1788000,
+                "min": 1372000,
+                "max": 1899000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1570856.0,
+                "p95": 1570856,
+                "min": 1570856,
+                "max": 1570856
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1419937.5,
+                "p95": 1688000,
+                "min": 1294292,
+                "max": 1809083
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1407500.0,
+                "p95": 1647000,
+                "min": 1295000,
+                "max": 1763000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1546088.0,
+                "p95": 1546088,
+                "min": 1546088,
+                "max": 1546088
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1464812.5,
+                "p95": 1861292,
+                "min": 1310958,
+                "max": 2165917
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1460500.0,
+                "p95": 1794000,
+                "min": 1313000,
+                "max": 1877000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1570856.0,
+                "p95": 1570856,
+                "min": 1570856,
+                "max": 1570856
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1436958.5,
+                "p95": 1680042,
+                "min": 1283500,
+                "max": 1729000
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1437000.0,
+                "p95": 1681000,
+                "min": 1286000,
+                "max": 1709000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1546088.0,
+                "p95": 1546088,
+                "min": 1546088,
+                "max": 1546088
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1506166.5,
+                "p95": 1861292,
+                "min": 1310958,
+                "max": 2165917
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1505000.0,
+                "p95": 1794000,
+                "min": 1313000,
+                "max": 1899000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 1570856.0,
+                "p95": 1570856,
+                "min": 1570856,
+                "max": 1570856
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1420896.0,
+                "p95": 1684041,
+                "min": 1283500,
+                "max": 1809083
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1416000.0,
+                "p95": 1665000,
+                "min": 1286000,
+                "max": 1763000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 1546088.0,
+                "p95": 1546088,
+                "min": 1546088,
+                "max": 1546088
+              }
+            }
+          }
+        ],
+        "upload": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 15291.5,
+                "p95": 33958,
+                "min": 10792,
+                "max": 70750
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 17000.0,
+                "p95": 35000,
+                "min": 11000,
+                "max": 67000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 12062.5,
+                "p95": 33625,
+                "min": 9334,
+                "max": 109916
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 13000.0,
+                "p95": 36000,
+                "min": 10000,
+                "max": 107000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 11604.0,
+                "p95": 36250,
+                "min": 9292,
+                "max": 150250
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 13000.0,
+                "p95": 37000,
+                "min": 10000,
+                "max": 113000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 14104.0,
+                "p95": 44250,
+                "min": 10083,
+                "max": 156459
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 15500.0,
+                "p95": 45000,
+                "min": 10000,
+                "max": 129000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 13812.5,
+                "p95": 36250,
+                "min": 9292,
+                "max": 150250
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 15000.0,
+                "p95": 37000,
+                "min": 10000,
+                "max": 113000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 13479.0,
+                "p95": 40209,
+                "min": 9334,
+                "max": 156459
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 15000.0,
+                "p95": 42000,
+                "min": 10000,
+                "max": 129000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          }
+        ],
+        "combined": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1530895.0,
+                "p95": 1875666,
+                "min": 1382876,
+                "max": 2145042
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1529000.0,
+                "p95": 1818000,
+                "min": 1387000,
+                "max": 1926000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1571488.0,
+                "p95": 1571488,
+                "min": 1571488,
+                "max": 1571488
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1433979.0,
+                "p95": 1704416,
+                "min": 1303750,
+                "max": 1822583
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1430000.0,
+                "p95": 1667000,
+                "min": 1305000,
+                "max": 1784000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1546720.0,
+                "p95": 1546720,
+                "min": 1546720,
+                "max": 1546720
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1499812.5,
+                "p95": 1880042,
+                "min": 1327167,
+                "max": 2196959
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1495000.0,
+                "p95": 1823000,
+                "min": 1329000,
+                "max": 1905000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1571488.0,
+                "p95": 1571488,
+                "min": 1571488,
+                "max": 1571488
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1453375.0,
+                "p95": 1707667,
+                "min": 1293583,
+                "max": 1748875
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1455000.0,
+                "p95": 1708000,
+                "min": 1299000,
+                "max": 1735000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 1546720.0,
+                "p95": 1546720,
+                "min": 1546720,
+                "max": 1546720
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1523187.5,
+                "p95": 1880042,
+                "min": 1327167,
+                "max": 2196959
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1520500.0,
+                "p95": 1823000,
+                "min": 1329000,
+                "max": 1926000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 1571488.0,
+                "p95": 1571488,
+                "min": 1571488,
+                "max": 1571488
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1437458.0,
+                "p95": 1707667,
+                "min": 1293583,
+                "max": 1822583
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1438000.0,
+                "p95": 1694000,
+                "min": 1299000,
+                "max": 1784000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 1546720.0,
+                "p95": 1546720,
+                "min": 1546720,
+                "max": 1546720
+              }
+            }
+          }
+        ]
+      },
+      "reportedMemory": {
+        "texturePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 385280.0,
+            "p95": 385280,
+            "min": 385280,
+            "max": 385280
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 385280.0,
+            "p95": 385280,
+            "min": 385280,
+            "max": 385280
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "geometryCacheEstimateBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 416520.0,
+            "p95": 416520,
+            "min": 416520,
+            "max": 416520
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 416520.0,
+            "p95": 416520,
+            "min": 416520,
+            "max": 416520
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "cloudCachePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 96320.0,
+            "p95": 96320,
+            "min": 96320,
+            "max": 96320
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 96320.0,
+            "p95": 96320,
+            "min": 96320,
+            "max": 96320
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "nativeRasterPayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 385280.0,
+            "p95": 385280,
+            "min": 385280,
+            "max": 385280
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 385280.0,
+            "p95": 385280,
+            "min": 385280,
+            "max": 385280
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "retainedContourBasisBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 0,
+          "afterReportedSamples": 0
+        }
+      }
+    },
+    {
+      "name": "freshClouds.toolbar",
+      "componentCount": 1,
+      "buildCachePolicy": {
+        "before": {
+          "reuseClouds": false,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        },
+        "after": {
+          "reuseClouds": false,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        }
+      },
+      "allocationDeltas": {
+        "geometry": {
+          "observations": 120,
+          "available": 120,
+          "median": 30592.0,
+          "p95": 30592,
+          "min": 30592,
+          "max": 30592,
+          "valueCounts": {
+            "30592": 120
+          }
+        },
+        "upload": {
+          "observations": 120,
+          "available": 120,
+          "median": 0.0,
+          "p95": 0,
+          "min": 0,
+          "max": 0,
+          "valueCounts": {
+            "0": 120
+          }
+        },
+        "combined": {
+          "observations": 120,
+          "available": 120,
+          "median": 30592.0,
+          "p95": 30592,
+          "min": 30592,
+          "max": 30592,
+          "valueCounts": {
+            "30592": 120
+          }
+        }
+      },
+      "phases": {
+        "geometry": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2227396.0,
+                "p95": 2835750,
+                "min": 2033042,
+                "max": 3550542
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2222000.0,
+                "p95": 2589000,
+                "min": 2036000,
+                "max": 2786000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2275584.0,
+                "p95": 2275584,
+                "min": 2275584,
+                "max": 2275584
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2137770.5,
+                "p95": 2541792,
+                "min": 1910875,
+                "max": 3665333
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2094500.0,
+                "p95": 2368000,
+                "min": 1912000,
+                "max": 2481000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2244992.0,
+                "p95": 2244992,
+                "min": 2244992,
+                "max": 2244992
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2233292.0,
+                "p95": 2616958,
+                "min": 2028583,
+                "max": 3318709
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2229000.0,
+                "p95": 2552000,
+                "min": 2029000,
+                "max": 2636000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2275584.0,
+                "p95": 2275584,
+                "min": 2275584,
+                "max": 2275584
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2032958.5,
+                "p95": 2407625,
+                "min": 1908041,
+                "max": 3060625
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2030500.0,
+                "p95": 2361000,
+                "min": 1910000,
+                "max": 2520000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2244992.0,
+                "p95": 2244992,
+                "min": 2244992,
+                "max": 2244992
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2227396.0,
+                "p95": 2742084,
+                "min": 2028583,
+                "max": 3550542
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2222000.0,
+                "p95": 2569000,
+                "min": 2029000,
+                "max": 2786000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 2275584.0,
+                "p95": 2275584,
+                "min": 2275584,
+                "max": 2275584
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2063229.0,
+                "p95": 2467166,
+                "min": 1908041,
+                "max": 3665333
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2064500.0,
+                "p95": 2368000,
+                "min": 1910000,
+                "max": 2520000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 2244992.0,
+                "p95": 2244992,
+                "min": 2244992,
+                "max": 2244992
+              }
+            }
+          }
+        ],
+        "upload": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 14583.0,
+                "p95": 23000,
+                "min": 11459,
+                "max": 43750
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 15500.0,
+                "p95": 24000,
+                "min": 12000,
+                "max": 39000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 14041.5,
+                "p95": 26167,
+                "min": 10709,
+                "max": 36792
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 15000.0,
+                "p95": 27000,
+                "min": 11000,
+                "max": 38000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 16729.0,
+                "p95": 34875,
+                "min": 11000,
+                "max": 45333
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 18000.0,
+                "p95": 36000,
+                "min": 11000,
+                "max": 47000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 14541.5,
+                "p95": 31750,
+                "min": 11500,
+                "max": 43584
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 16000.0,
+                "p95": 32000,
+                "min": 12000,
+                "max": 48000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 15791.5,
+                "p95": 34000,
+                "min": 11000,
+                "max": 45333
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 17000.0,
+                "p95": 36000,
+                "min": 11000,
+                "max": 47000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 14291.5,
+                "p95": 31750,
+                "min": 10709,
+                "max": 43584
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 15500.0,
+                "p95": 32000,
+                "min": 11000,
+                "max": 48000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          }
+        ],
+        "combined": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2240020.5,
+                "p95": 2857500,
+                "min": 2044875,
+                "max": 3572209
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2236500.0,
+                "p95": 2610000,
+                "min": 2049000,
+                "max": 2809000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2276216.0,
+                "p95": 2276216,
+                "min": 2276216,
+                "max": 2276216
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2158978.5,
+                "p95": 2559209,
+                "min": 1921584,
+                "max": 3678708
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2115000.0,
+                "p95": 2387000,
+                "min": 1924000,
+                "max": 2506000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2245624.0,
+                "p95": 2245624,
+                "min": 2245624,
+                "max": 2245624
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2262563.0,
+                "p95": 2641708,
+                "min": 2039791,
+                "max": 3334042
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2262000.0,
+                "p95": 2576000,
+                "min": 2040000,
+                "max": 2657000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2276216.0,
+                "p95": 2276216,
+                "min": 2276216,
+                "max": 2276216
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2053062.5,
+                "p95": 2426417,
+                "min": 1921333,
+                "max": 3091583
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2051500.0,
+                "p95": 2394000,
+                "min": 1925000,
+                "max": 2568000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2245624.0,
+                "p95": 2245624,
+                "min": 2245624,
+                "max": 2245624
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2246291.5,
+                "p95": 2762918,
+                "min": 2039791,
+                "max": 3572209
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2245000.0,
+                "p95": 2585000,
+                "min": 2040000,
+                "max": 2809000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 2276216.0,
+                "p95": 2276216,
+                "min": 2276216,
+                "max": 2276216
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2078604.0,
+                "p95": 2498916,
+                "min": 1921333,
+                "max": 3678708
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2078000.0,
+                "p95": 2394000,
+                "min": 1924000,
+                "max": 2568000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 2245624.0,
+                "p95": 2245624,
+                "min": 2245624,
+                "max": 2245624
+              }
+            }
+          }
+        ]
+      },
+      "reportedMemory": {
+        "texturePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 528000.0,
+            "p95": 528000,
+            "min": 528000,
+            "max": 528000
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 528000.0,
+            "p95": 528000,
+            "min": 528000,
+            "max": 528000
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "geometryCacheEstimateBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 559240.0,
+            "p95": 559240,
+            "min": 559240,
+            "max": 559240
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 559240.0,
+            "p95": 559240,
+            "min": 559240,
+            "max": 559240
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "cloudCachePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "nativeRasterPayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 528000.0,
+            "p95": 528000,
+            "min": 528000,
+            "max": 528000
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 528000.0,
+            "p95": 528000,
+            "min": 528000,
+            "max": 528000
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "retainedContourBasisBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 0,
+          "afterReportedSamples": 0
+        }
+      }
+    },
+    {
+      "name": "reusedClouds.toolbar",
+      "componentCount": 1,
+      "buildCachePolicy": {
+        "before": {
+          "reuseClouds": true,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        },
+        "after": {
+          "reuseClouds": true,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        }
+      },
+      "allocationDeltas": {
+        "geometry": {
+          "observations": 120,
+          "available": 120,
+          "median": 30592.0,
+          "p95": 30592,
+          "min": 30592,
+          "max": 30592,
+          "valueCounts": {
+            "30592": 120
+          }
+        },
+        "upload": {
+          "observations": 120,
+          "available": 120,
+          "median": 0.0,
+          "p95": 0,
+          "min": 0,
+          "max": 0,
+          "valueCounts": {
+            "0": 120
+          }
+        },
+        "combined": {
+          "observations": 120,
+          "available": 120,
+          "median": 30592.0,
+          "p95": 30592,
+          "min": 30592,
+          "max": 30592,
+          "valueCounts": {
+            "30592": 120
+          }
+        }
+      },
+      "phases": {
+        "geometry": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2069333.5,
+                "p95": 2391375,
+                "min": 1841833,
+                "max": 2671250
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2020500.0,
+                "p95": 2330000,
+                "min": 1842000,
+                "max": 2407000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2139576.0,
+                "p95": 2139576,
+                "min": 2139576,
+                "max": 2139576
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1963416.5,
+                "p95": 2237833,
+                "min": 1732417,
+                "max": 3136375
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1964500.0,
+                "p95": 2177000,
+                "min": 1734000,
+                "max": 2236000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2108984.0,
+                "p95": 2108984,
+                "min": 2108984,
+                "max": 2108984
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1961292.0,
+                "p95": 2337750,
+                "min": 1853000,
+                "max": 3238542
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1957500.0,
+                "p95": 2311000,
+                "min": 1854000,
+                "max": 2402000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2139576.0,
+                "p95": 2139576,
+                "min": 2139576,
+                "max": 2139576
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1797812.5,
+                "p95": 2116625,
+                "min": 1651416,
+                "max": 2223666
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1799000.0,
+                "p95": 2110000,
+                "min": 1654000,
+                "max": 2208000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2108984.0,
+                "p95": 2108984,
+                "min": 2108984,
+                "max": 2108984
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1986521.0,
+                "p95": 2391375,
+                "min": 1841833,
+                "max": 3238542
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1980000.0,
+                "p95": 2330000,
+                "min": 1842000,
+                "max": 2407000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 2139576.0,
+                "p95": 2139576,
+                "min": 2139576,
+                "max": 2139576
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1873333.0,
+                "p95": 2185625,
+                "min": 1651416,
+                "max": 3136375
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1853500.0,
+                "p95": 2169000,
+                "min": 1654000,
+                "max": 2236000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 2108984.0,
+                "p95": 2108984,
+                "min": 2108984,
+                "max": 2108984
+              }
+            }
+          }
+        ],
+        "upload": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 16125.0,
+                "p95": 30875,
+                "min": 11417,
+                "max": 47959
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 17000.0,
+                "p95": 32000,
+                "min": 11000,
+                "max": 50000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 12438.0,
+                "p95": 19792,
+                "min": 10417,
+                "max": 42250
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 13000.0,
+                "p95": 21000,
+                "min": 11000,
+                "max": 44000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 13542.0,
+                "p95": 31792,
+                "min": 10625,
+                "max": 35834
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 14000.0,
+                "p95": 33000,
+                "min": 11000,
+                "max": 37000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 15166.5,
+                "p95": 34458,
+                "min": 11459,
+                "max": 56125
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 16000.0,
+                "p95": 35000,
+                "min": 12000,
+                "max": 58000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 14312.0,
+                "p95": 30875,
+                "min": 10625,
+                "max": 47959
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 15000.0,
+                "p95": 33000,
+                "min": 11000,
+                "max": 50000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 13229.0,
+                "p95": 33334,
+                "min": 10417,
+                "max": 56125
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 15000.0,
+                "p95": 34000,
+                "min": 11000,
+                "max": 58000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          }
+        ],
+        "combined": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2092229.5,
+                "p95": 2420042,
+                "min": 1853749,
+                "max": 2696375
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 2038500.0,
+                "p95": 2348000,
+                "min": 1854000,
+                "max": 2434000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2140208.0,
+                "p95": 2140208,
+                "min": 2140208,
+                "max": 2140208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1975062.5,
+                "p95": 2255000,
+                "min": 1743208,
+                "max": 3155333
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1977500.0,
+                "p95": 2193000,
+                "min": 1746000,
+                "max": 2254000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2109616.0,
+                "p95": 2109616,
+                "min": 2109616,
+                "max": 2109616
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1977292.5,
+                "p95": 2356417,
+                "min": 1863667,
+                "max": 3256751
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1977000.0,
+                "p95": 2332000,
+                "min": 1865000,
+                "max": 2423000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2140208.0,
+                "p95": 2140208,
+                "min": 2140208,
+                "max": 2140208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1821854.5,
+                "p95": 2143541,
+                "min": 1664249,
+                "max": 2244666
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 1824000.0,
+                "p95": 2140000,
+                "min": 1668000,
+                "max": 2231000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 2109616.0,
+                "p95": 2109616,
+                "min": 2109616,
+                "max": 2109616
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 2000187.5,
+                "p95": 2420042,
+                "min": 1853749,
+                "max": 3256751
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1997000.0,
+                "p95": 2348000,
+                "min": 1854000,
+                "max": 2434000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 2140208.0,
+                "p95": 2140208,
+                "min": 2140208,
+                "max": 2140208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1887333.0,
+                "p95": 2201125,
+                "min": 1664249,
+                "max": 3155333
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 1880500.0,
+                "p95": 2186000,
+                "min": 1668000,
+                "max": 2254000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 2109616.0,
+                "p95": 2109616,
+                "min": 2109616,
+                "max": 2109616
+              }
+            }
+          }
+        ]
+      },
+      "reportedMemory": {
+        "texturePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 528000.0,
+            "p95": 528000,
+            "min": 528000,
+            "max": 528000
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 528000.0,
+            "p95": 528000,
+            "min": 528000,
+            "max": 528000
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "geometryCacheEstimateBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 559240.0,
+            "p95": 559240,
+            "min": 559240,
+            "max": 559240
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 559240.0,
+            "p95": 559240,
+            "min": 559240,
+            "max": 559240
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "cloudCachePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 132000.0,
+            "p95": 132000,
+            "min": 132000,
+            "max": 132000
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 132000.0,
+            "p95": 132000,
+            "min": 132000,
+            "max": 132000
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "nativeRasterPayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 528000.0,
+            "p95": 528000,
+            "min": 528000,
+            "max": 528000
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 528000.0,
+            "p95": 528000,
+            "min": 528000,
+            "max": 528000
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "retainedContourBasisBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 0,
+          "afterReportedSamples": 0
+        }
+      }
+    },
+    {
+      "name": "freshClouds.disc",
+      "componentCount": 1,
+      "buildCachePolicy": {
+        "before": {
+          "reuseClouds": false,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        },
+        "after": {
+          "reuseClouds": false,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        }
+      },
+      "allocationDeltas": {
+        "geometry": {
+          "observations": 120,
+          "available": 120,
+          "median": 17448.0,
+          "p95": 17448,
+          "min": 17448,
+          "max": 17576,
+          "valueCounts": {
+            "17448": 119,
+            "17576": 1
+          }
+        },
+        "upload": {
+          "observations": 120,
+          "available": 120,
+          "median": 0.0,
+          "p95": 0,
+          "min": 0,
+          "max": 0,
+          "valueCounts": {
+            "0": 120
+          }
+        },
+        "combined": {
+          "observations": 120,
+          "available": 120,
+          "median": 17448.0,
+          "p95": 17448,
+          "min": 17448,
+          "max": 17576,
+          "valueCounts": {
+            "17448": 119,
+            "17576": 1
+          }
+        }
+      },
+      "phases": {
+        "geometry": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 320937.5,
+                "p95": 418292,
+                "min": 296459,
+                "max": 551250
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 323000.0,
+                "p95": 419000,
+                "min": 298000,
+                "max": 536000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 329768.0,
+                "p95": 329768,
+                "min": 329768,
+                "max": 329896
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 295041.5,
+                "p95": 391792,
+                "min": 278625,
+                "max": 1071125
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 296000.0,
+                "p95": 394000,
+                "min": 280000,
+                "max": 724000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 312320.0,
+                "p95": 312320,
+                "min": 312320,
+                "max": 312448
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 321145.5,
+                "p95": 411292,
+                "min": 296375,
+                "max": 444041
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 322500.0,
+                "p95": 413000,
+                "min": 298000,
+                "max": 447000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 329768.0,
+                "p95": 329768,
+                "min": 329768,
+                "max": 329896
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 301750.0,
+                "p95": 395667,
+                "min": 277208,
+                "max": 460959
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 303500.0,
+                "p95": 398000,
+                "min": 278000,
+                "max": 436000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 312320.0,
+                "p95": 312320,
+                "min": 312320,
+                "max": 312320
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 321000.0,
+                "p95": 418292,
+                "min": 296375,
+                "max": 551250
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 323000.0,
+                "p95": 419000,
+                "min": 298000,
+                "max": 536000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 329768.0,
+                "p95": 329768,
+                "min": 329768,
+                "max": 329896
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 299833.0,
+                "p95": 395667,
+                "min": 277208,
+                "max": 1071125
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 301000.0,
+                "p95": 398000,
+                "min": 278000,
+                "max": 724000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 312320.0,
+                "p95": 312320,
+                "min": 312320,
+                "max": 312448
+              }
+            }
+          }
+        ],
+        "upload": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5292.0,
+                "p95": 11750,
+                "min": 4667,
+                "max": 32541
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 6000.0,
+                "p95": 14000,
+                "min": 5000,
+                "max": 34000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4063.0,
+                "p95": 7083,
+                "min": 3667,
+                "max": 8208
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5000.0,
+                "p95": 9000,
+                "min": 4000,
+                "max": 10000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4083.5,
+                "p95": 7667,
+                "min": 3708,
+                "max": 18083
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5000.0,
+                "p95": 11000,
+                "min": 4000,
+                "max": 20000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5354.0,
+                "p95": 11209,
+                "min": 4500,
+                "max": 24000
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 6500.0,
+                "p95": 12000,
+                "min": 4000,
+                "max": 25000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 4875.0,
+                "p95": 10833,
+                "min": 3708,
+                "max": 32541
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 6000.0,
+                "p95": 13000,
+                "min": 4000,
+                "max": 34000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 4917.0,
+                "p95": 9541,
+                "min": 3667,
+                "max": 24000
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 6000.0,
+                "p95": 10000,
+                "min": 4000,
+                "max": 25000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          }
+        ],
+        "combined": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 326562.5,
+                "p95": 444791,
+                "min": 301250,
+                "max": 571875
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 328000.0,
+                "p95": 433000,
+                "min": 303000,
+                "max": 557000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 330400.0,
+                "p95": 330400,
+                "min": 330400,
+                "max": 330528
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 299375.0,
+                "p95": 399584,
+                "min": 282417,
+                "max": 1078166
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 301000.0,
+                "p95": 402000,
+                "min": 284000,
+                "max": 733000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 312952.0,
+                "p95": 312952,
+                "min": 312952,
+                "max": 313080
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 325124.5,
+                "p95": 419833,
+                "min": 300292,
+                "max": 450999
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 327500.0,
+                "p95": 419000,
+                "min": 303000,
+                "max": 455000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 330400.0,
+                "p95": 330400,
+                "min": 330400,
+                "max": 330528
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 306666.5,
+                "p95": 413458,
+                "min": 281833,
+                "max": 470084
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 309500.0,
+                "p95": 411000,
+                "min": 284000,
+                "max": 448000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 312952.0,
+                "p95": 312952,
+                "min": 312952,
+                "max": 312952
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 325332.5,
+                "p95": 430875,
+                "min": 300292,
+                "max": 571875
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 328000.0,
+                "p95": 433000,
+                "min": 303000,
+                "max": 557000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 330400.0,
+                "p95": 330400,
+                "min": 330400,
+                "max": 330528
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 304667.0,
+                "p95": 407834,
+                "min": 281833,
+                "max": 1078166
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 307000.0,
+                "p95": 410000,
+                "min": 284000,
+                "max": 733000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 312952.0,
+                "p95": 312952,
+                "min": 312952,
+                "max": 313080
+              }
+            }
+          }
+        ]
+      },
+      "reportedMemory": {
+        "texturePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 65536.0,
+            "p95": 65536,
+            "min": 65536,
+            "max": 65536
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 65536.0,
+            "p95": 65536,
+            "min": 65536,
+            "max": 65536
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "geometryCacheEstimateBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 96776.0,
+            "p95": 96776,
+            "min": 96776,
+            "max": 96776
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 96776.0,
+            "p95": 96776,
+            "min": 96776,
+            "max": 96776
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "cloudCachePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "nativeRasterPayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 65536.0,
+            "p95": 65536,
+            "min": 65536,
+            "max": 65536
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 65536.0,
+            "p95": 65536,
+            "min": 65536,
+            "max": 65536
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "retainedContourBasisBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 0,
+          "afterReportedSamples": 0
+        }
+      }
+    },
+    {
+      "name": "reusedClouds.disc",
+      "componentCount": 1,
+      "buildCachePolicy": {
+        "before": {
+          "reuseClouds": true,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        },
+        "after": {
+          "reuseClouds": true,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        }
+      },
+      "allocationDeltas": {
+        "geometry": {
+          "observations": 120,
+          "available": 120,
+          "median": 17448.0,
+          "p95": 17448,
+          "min": 17448,
+          "max": 17448,
+          "valueCounts": {
+            "17448": 120
+          }
+        },
+        "upload": {
+          "observations": 120,
+          "available": 120,
+          "median": 0.0,
+          "p95": 0,
+          "min": 0,
+          "max": 0,
+          "valueCounts": {
+            "0": 120
+          }
+        },
+        "combined": {
+          "observations": 120,
+          "available": 120,
+          "median": 17448.0,
+          "p95": 17448,
+          "min": 17448,
+          "max": 17448,
+          "valueCounts": {
+            "17448": 120
+          }
+        }
+      },
+      "phases": {
+        "geometry": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 301396.0,
+                "p95": 371750,
+                "min": 262709,
+                "max": 407792
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 303500.0,
+                "p95": 374000,
+                "min": 265000,
+                "max": 403000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 312576.0,
+                "p95": 312576,
+                "min": 312576,
+                "max": 312576
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 296624.5,
+                "p95": 354792,
+                "min": 249958,
+                "max": 388125
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 298000.0,
+                "p95": 349000,
+                "min": 251000,
+                "max": 376000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 295128.0,
+                "p95": 295128,
+                "min": 295128,
+                "max": 295128
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 295770.5,
+                "p95": 364375,
+                "min": 271875,
+                "max": 531833
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 297500.0,
+                "p95": 363000,
+                "min": 273000,
+                "max": 508000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 312576.0,
+                "p95": 312576,
+                "min": 312576,
+                "max": 312576
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 301000.0,
+                "p95": 339834,
+                "min": 250291,
+                "max": 744166
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 299000.0,
+                "p95": 341000,
+                "min": 250000,
+                "max": 519000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 295128.0,
+                "p95": 295128,
+                "min": 295128,
+                "max": 295128
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 297604.0,
+                "p95": 371750,
+                "min": 262709,
+                "max": 531833
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 299500.0,
+                "p95": 374000,
+                "min": 265000,
+                "max": 508000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 312576.0,
+                "p95": 312576,
+                "min": 312576,
+                "max": 312576
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 298603.5,
+                "p95": 354792,
+                "min": 249958,
+                "max": 744166
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 298500.0,
+                "p95": 349000,
+                "min": 250000,
+                "max": 519000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 295128.0,
+                "p95": 295128,
+                "min": 295128,
+                "max": 295128
+              }
+            }
+          }
+        ],
+        "upload": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5312.5,
+                "p95": 9333,
+                "min": 4791,
+                "max": 23875
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 6000.0,
+                "p95": 11000,
+                "min": 5000,
+                "max": 24000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4312.0,
+                "p95": 7208,
+                "min": 3667,
+                "max": 49875
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5000.0,
+                "p95": 8000,
+                "min": 4000,
+                "max": 48000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4125.0,
+                "p95": 9917,
+                "min": 3708,
+                "max": 19750
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5000.0,
+                "p95": 12000,
+                "min": 4000,
+                "max": 19000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 6146.0,
+                "p95": 11459,
+                "min": 4542,
+                "max": 24750
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 7000.0,
+                "p95": 12000,
+                "min": 5000,
+                "max": 25000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5000.0,
+                "p95": 9917,
+                "min": 3708,
+                "max": 23875
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 6000.0,
+                "p95": 12000,
+                "min": 4000,
+                "max": 24000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5000.0,
+                "p95": 10291,
+                "min": 3667,
+                "max": 49875
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 6000.0,
+                "p95": 12000,
+                "min": 4000,
+                "max": 48000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 632.0,
+                "p95": 632,
+                "min": 632,
+                "max": 632
+              }
+            }
+          }
+        ],
+        "combined": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 306833.0,
+                "p95": 379458,
+                "min": 268042,
+                "max": 415834
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 309000.0,
+                "p95": 387000,
+                "min": 270000,
+                "max": 417000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 313208.0,
+                "p95": 313208,
+                "min": 313208,
+                "max": 313208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 301187.0,
+                "p95": 359542,
+                "min": 253750,
+                "max": 438000
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 303500.0,
+                "p95": 357000,
+                "min": 256000,
+                "max": 399000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 295760.0,
+                "p95": 295760,
+                "min": 295760,
+                "max": 295760
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 299874.5,
+                "p95": 373792,
+                "min": 275834,
+                "max": 541750
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 301500.0,
+                "p95": 376000,
+                "min": 277000,
+                "max": 520000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 313208.0,
+                "p95": 313208,
+                "min": 313208,
+                "max": 313208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 305937.5,
+                "p95": 346793,
+                "min": 256834,
+                "max": 755625
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 307500.0,
+                "p95": 349000,
+                "min": 258000,
+                "max": 531000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 295760.0,
+                "p95": 295760,
+                "min": 295760,
+                "max": 295760
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 304500.5,
+                "p95": 379458,
+                "min": 268042,
+                "max": 541750
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 307000.0,
+                "p95": 387000,
+                "min": 270000,
+                "max": 520000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 313208.0,
+                "p95": 313208,
+                "min": 313208,
+                "max": 313208
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 303645.5,
+                "p95": 359542,
+                "min": 253750,
+                "max": 755625
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 305000.0,
+                "p95": 357000,
+                "min": 256000,
+                "max": 531000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 295760.0,
+                "p95": 295760,
+                "min": 295760,
+                "max": 295760
+              }
+            }
+          }
+        ]
+      },
+      "reportedMemory": {
+        "texturePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 65536.0,
+            "p95": 65536,
+            "min": 65536,
+            "max": 65536
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 65536.0,
+            "p95": 65536,
+            "min": 65536,
+            "max": 65536
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "geometryCacheEstimateBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 96776.0,
+            "p95": 96776,
+            "min": 96776,
+            "max": 96776
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 96776.0,
+            "p95": 96776,
+            "min": 96776,
+            "max": 96776
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "cloudCachePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 16384.0,
+            "p95": 16384,
+            "min": 16384,
+            "max": 16384
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 16384.0,
+            "p95": 16384,
+            "min": 16384,
+            "max": 16384
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "nativeRasterPayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 65536.0,
+            "p95": 65536,
+            "min": 65536,
+            "max": 65536
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 65536.0,
+            "p95": 65536,
+            "min": 65536,
+            "max": 65536
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "retainedContourBasisBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 0,
+          "afterReportedSamples": 0
+        }
+      }
+    },
+    {
+      "name": "freshClouds.scene",
+      "componentCount": 7,
+      "buildCachePolicy": {
+        "before": {
+          "reuseClouds": false,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        },
+        "after": {
+          "reuseClouds": false,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        }
+      },
+      "allocationDeltas": {
+        "geometry": {
+          "observations": 120,
+          "available": 120,
+          "median": 152456.0,
+          "p95": 152456,
+          "min": 151920,
+          "max": 152456,
+          "valueCounts": {
+            "151920": 1,
+            "152064": 1,
+            "152456": 118
+          }
+        },
+        "upload": {
+          "observations": 120,
+          "available": 120,
+          "median": 0.0,
+          "p95": 0,
+          "min": 0,
+          "max": 0,
+          "valueCounts": {
+            "0": 120
+          }
+        },
+        "combined": {
+          "observations": 120,
+          "available": 120,
+          "median": 152456.0,
+          "p95": 152456,
+          "min": 151920,
+          "max": 152456,
+          "valueCounts": {
+            "151920": 1,
+            "152064": 1,
+            "152456": 118
+          }
+        }
+      },
+      "phases": {
+        "geometry": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5863375.0,
+                "p95": 6651417,
+                "min": 5241958,
+                "max": 7802959
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5786000.0,
+                "p95": 6403000,
+                "min": 5244000,
+                "max": 6493000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5808888.0,
+                "p95": 5808888,
+                "min": 5808888,
+                "max": 5808888
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5335875.5,
+                "p95": 6616375,
+                "min": 4953542,
+                "max": 7310208
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5334500.0,
+                "p95": 6006000,
+                "min": 4958000,
+                "max": 6095000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5656432.0,
+                "p95": 5656432,
+                "min": 5656432,
+                "max": 5656432
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5622583.0,
+                "p95": 6619625,
+                "min": 5251083,
+                "max": 7029750
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5609500.0,
+                "p95": 6295000,
+                "min": 5253000,
+                "max": 6599000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5808888.0,
+                "p95": 5808888,
+                "min": 5808888,
+                "max": 5808888
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5274021.0,
+                "p95": 6039709,
+                "min": 4914375,
+                "max": 6946291
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5253500.0,
+                "p95": 5880000,
+                "min": 4916000,
+                "max": 6047000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5656432.0,
+                "p95": 5656432,
+                "min": 5656432,
+                "max": 5656968
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5667479.0,
+                "p95": 6648375,
+                "min": 5241958,
+                "max": 7802959
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5651000.0,
+                "p95": 6397000,
+                "min": 5244000,
+                "max": 6599000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 5808888.0,
+                "p95": 5808888,
+                "min": 5808888,
+                "max": 5808888
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5307396.0,
+                "p95": 6270292,
+                "min": 4914375,
+                "max": 7310208
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5286000.0,
+                "p95": 5973000,
+                "min": 4916000,
+                "max": 6095000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 5656432.0,
+                "p95": 5656432,
+                "min": 5656432,
+                "max": 5656968
+              }
+            }
+          }
+        ],
+        "upload": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 47687.5,
+                "p95": 68333,
+                "min": 32500,
+                "max": 71542
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 49000.0,
+                "p95": 69000,
+                "min": 34000,
+                "max": 73000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 48645.5,
+                "p95": 78125,
+                "min": 32458,
+                "max": 104417
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 49500.0,
+                "p95": 80000,
+                "min": 33000,
+                "max": 91000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 45020.5,
+                "p95": 84417,
+                "min": 33333,
+                "max": 107083
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 46000.0,
+                "p95": 85000,
+                "min": 34000,
+                "max": 108000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 56292.0,
+                "p95": 96250,
+                "min": 32291,
+                "max": 121125
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 58000.0,
+                "p95": 96000,
+                "min": 32000,
+                "max": 123000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 47000.0,
+                "p95": 76875,
+                "min": 32500,
+                "max": 107083
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 48000.0,
+                "p95": 78000,
+                "min": 34000,
+                "max": 108000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 50521.0,
+                "p95": 88917,
+                "min": 32291,
+                "max": 121125
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 52000.0,
+                "p95": 88000,
+                "min": 32000,
+                "max": 123000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            }
+          }
+        ],
+        "combined": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5922354.5,
+                "p95": 6704709,
+                "min": 5275416,
+                "max": 7874501
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5836000.0,
+                "p95": 6463000,
+                "min": 5279000,
+                "max": 6548000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5812976.0,
+                "p95": 5812976,
+                "min": 5812976,
+                "max": 5812976
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5402083.5,
+                "p95": 6664042,
+                "min": 4986834,
+                "max": 7399125
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5398500.0,
+                "p95": 6086000,
+                "min": 4993000,
+                "max": 6186000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5660520.0,
+                "p95": 5660520,
+                "min": 5660520,
+                "max": 5660520
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5680937.5,
+                "p95": 6679834,
+                "min": 5284416,
+                "max": 7096709
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5659500.0,
+                "p95": 6347000,
+                "min": 5287000,
+                "max": 6661000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5812976.0,
+                "p95": 5812976,
+                "min": 5812976,
+                "max": 5812976
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5332583.5,
+                "p95": 6100042,
+                "min": 4950292,
+                "max": 7012791
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5324000.0,
+                "p95": 5976000,
+                "min": 4953000,
+                "max": 6115000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5660520.0,
+                "p95": 5660520,
+                "min": 5660520,
+                "max": 5661056
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5731312.5,
+                "p95": 6704709,
+                "min": 5275416,
+                "max": 7874501
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5709000.0,
+                "p95": 6451000,
+                "min": 5279000,
+                "max": 6661000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 5812976.0,
+                "p95": 5812976,
+                "min": 5812976,
+                "max": 5812976
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5362103.5,
+                "p95": 6350334,
+                "min": 4950292,
+                "max": 7399125
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5340000.0,
+                "p95": 6048000,
+                "min": 4953000,
+                "max": 6186000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 5660520.0,
+                "p95": 5660520,
+                "min": 5660520,
+                "max": 5661056
+              }
+            }
+          }
+        ]
+      },
+      "reportedMemory": {
+        "texturePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 1290112.0,
+            "p95": 1290112,
+            "min": 1290112,
+            "max": 1290112
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 1290112.0,
+            "p95": 1290112,
+            "min": 1290112,
+            "max": 1290112
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "geometryCacheEstimateBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 1508792.0,
+            "p95": 1508792,
+            "min": 1508792,
+            "max": 1508792
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 1508792.0,
+            "p95": 1508792,
+            "min": 1508792,
+            "max": 1508792
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "cloudCachePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "nativeRasterPayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 1290112.0,
+            "p95": 1290112,
+            "min": 1290112,
+            "max": 1290112
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 1290112.0,
+            "p95": 1290112,
+            "min": 1290112,
+            "max": 1290112
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "retainedContourBasisBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 0,
+          "afterReportedSamples": 0
+        }
+      }
+    },
+    {
+      "name": "reusedClouds.scene",
+      "componentCount": 7,
+      "buildCachePolicy": {
+        "before": {
+          "reuseClouds": true,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        },
+        "after": {
+          "reuseClouds": true,
+          "reuseContourBasis": false,
+          "reuseContourBasisReported": false
+        }
+      },
+      "allocationDeltas": {
+        "geometry": {
+          "observations": 120,
+          "available": 120,
+          "median": 152456.0,
+          "p95": 152456,
+          "min": 152376,
+          "max": 152456,
+          "valueCounts": {
+            "152376": 2,
+            "152456": 118
+          }
+        },
+        "upload": {
+          "observations": 120,
+          "available": 120,
+          "median": 0.0,
+          "p95": 0,
+          "min": 0,
+          "max": 0,
+          "valueCounts": {
+            "0": 120
+          }
+        },
+        "combined": {
+          "observations": 120,
+          "available": 120,
+          "median": 152456.0,
+          "p95": 152456,
+          "min": 152376,
+          "max": 152456,
+          "valueCounts": {
+            "152376": 2,
+            "152456": 118
+          }
+        }
+      },
+      "phases": {
+        "geometry": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5118187.5,
+                "p95": 5913000,
+                "min": 4787084,
+                "max": 6181833
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5112000.0,
+                "p95": 5864000,
+                "min": 4789000,
+                "max": 5975000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5475296.0,
+                "p95": 5475296,
+                "min": 5475296,
+                "max": 5489976
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4844458.5,
+                "p95": 5571500,
+                "min": 4511292,
+                "max": 5780750
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4807000.0,
+                "p95": 5507000,
+                "min": 4509000,
+                "max": 5551000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5322840.0,
+                "p95": 5322840,
+                "min": 5322840,
+                "max": 5337600
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5066021.0,
+                "p95": 5850125,
+                "min": 4781708,
+                "max": 6526834
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5065500.0,
+                "p95": 5765000,
+                "min": 4787000,
+                "max": 5951000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5475296.0,
+                "p95": 5475296,
+                "min": 5475296,
+                "max": 5489976
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4768479.0,
+                "p95": 5414500,
+                "min": 4439583,
+                "max": 5823250
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4748500.0,
+                "p95": 5369000,
+                "min": 4441000,
+                "max": 5425000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5322840.0,
+                "p95": 5322840,
+                "min": 5322840,
+                "max": 5337600
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5111104.0,
+                "p95": 5913000,
+                "min": 4781708,
+                "max": 6526834
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5097500.0,
+                "p95": 5778000,
+                "min": 4787000,
+                "max": 5975000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 5475296.0,
+                "p95": 5475296,
+                "min": 5475296,
+                "max": 5489976
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 4812395.5,
+                "p95": 5524958,
+                "min": 4439583,
+                "max": 5823250
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 4780500.0,
+                "p95": 5433000,
+                "min": 4441000,
+                "max": 5551000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 5322840.0,
+                "p95": 5322840,
+                "min": 5322840,
+                "max": 5337600
+              }
+            }
+          }
+        ],
+        "upload": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 53000.5,
+                "p95": 93125,
+                "min": 32416,
+                "max": 140916
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 54500.0,
+                "p95": 94000,
+                "min": 33000,
+                "max": 131000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 44333.5,
+                "p95": 97041,
+                "min": 31916,
+                "max": 159834
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 45000.0,
+                "p95": 94000,
+                "min": 33000,
+                "max": 134000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 41854.5,
+                "p95": 82459,
+                "min": 32542,
+                "max": 92541
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 43000.0,
+                "p95": 84000,
+                "min": 33000,
+                "max": 93000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 50583.5,
+                "p95": 87875,
+                "min": 32250,
+                "max": 132792
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 52000.0,
+                "p95": 89000,
+                "min": 32000,
+                "max": 117000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 46396.0,
+                "p95": 84625,
+                "min": 32416,
+                "max": 140916
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 48000.0,
+                "p95": 86000,
+                "min": 33000,
+                "max": 131000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 46625.0,
+                "p95": 88958,
+                "min": 31916,
+                "max": 159834
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 48000.0,
+                "p95": 90000,
+                "min": 32000,
+                "max": 134000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 4088.0,
+                "p95": 4088,
+                "min": 4088,
+                "max": 4088
+              }
+            }
+          }
+        ],
+        "combined": [
+          {
+            "round": "1",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5175479.5,
+                "p95": 5956750,
+                "min": 4834834,
+                "max": 6233708
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5162000.0,
+                "p95": 5940000,
+                "min": 4838000,
+                "max": 6044000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5479384.0,
+                "p95": 5479384,
+                "min": 5479384,
+                "max": 5494064
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4904958.0,
+                "p95": 5616541,
+                "min": 4551042,
+                "max": 5824917
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4849500.0,
+                "p95": 5573000,
+                "min": 4547000,
+                "max": 5589000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5326928.0,
+                "p95": 5326928,
+                "min": 5326928,
+                "max": 5341688
+              }
+            }
+          },
+          {
+            "round": "2",
+            "before": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5128333.5,
+                "p95": 5916458,
+                "min": 4837458,
+                "max": 6583918
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 5122000.0,
+                "p95": 5829000,
+                "min": 4844000,
+                "max": 6022000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5479384.0,
+                "p95": 5479384,
+                "min": 5479384,
+                "max": 5494064
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4837833.0,
+                "p95": 5476167,
+                "min": 4477000,
+                "max": 5889250
+              },
+              "cpuNs": {
+                "observations": 60,
+                "available": 60,
+                "median": 4823500.0,
+                "p95": 5420000,
+                "min": 4479000,
+                "max": 5486000
+              },
+              "allocatedBytes": {
+                "observations": 60,
+                "available": 60,
+                "median": 5326928.0,
+                "p95": 5326928,
+                "min": 5326928,
+                "max": 5341688
+              }
+            }
+          },
+          {
+            "round": "pooled",
+            "before": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5154375.0,
+                "p95": 5956750,
+                "min": 4834834,
+                "max": 6583918
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 5150000.0,
+                "p95": 5863000,
+                "min": 4838000,
+                "max": 6044000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 5479384.0,
+                "p95": 5479384,
+                "min": 5479384,
+                "max": 5494064
+              }
+            },
+            "after": {
+              "wallNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 4875854.0,
+                "p95": 5589791,
+                "min": 4477000,
+                "max": 5889250
+              },
+              "cpuNs": {
+                "observations": 120,
+                "available": 120,
+                "median": 4837000.0,
+                "p95": 5490000,
+                "min": 4479000,
+                "max": 5589000
+              },
+              "allocatedBytes": {
+                "observations": 120,
+                "available": 120,
+                "median": 5326928.0,
+                "p95": 5326928,
+                "min": 5326928,
+                "max": 5341688
+              }
+            }
+          }
+        ]
+      },
+      "reportedMemory": {
+        "texturePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 1290112.0,
+            "p95": 1290112,
+            "min": 1290112,
+            "max": 1290112
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 1290112.0,
+            "p95": 1290112,
+            "min": 1290112,
+            "max": 1290112
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "geometryCacheEstimateBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 1508792.0,
+            "p95": 1508792,
+            "min": 1508792,
+            "max": 1508792
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 1508792.0,
+            "p95": 1508792,
+            "min": 1508792,
+            "max": 1508792
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "cloudCachePayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 322528.0,
+            "p95": 322528,
+            "min": 322528,
+            "max": 322528
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 322528.0,
+            "p95": 322528,
+            "min": 322528,
+            "max": 322528
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "nativeRasterPayloadBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 1290112.0,
+            "p95": 1290112,
+            "min": 1290112,
+            "max": 1290112
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 1290112.0,
+            "p95": 1290112,
+            "min": 1290112,
+            "max": 1290112
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 120,
+          "afterReportedSamples": 120
+        },
+        "retainedContourBasisBytes": {
+          "before": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "after": {
+            "observations": 120,
+            "available": 120,
+            "median": 0.0,
+            "p95": 0,
+            "min": 0,
+            "max": 0
+          },
+          "allPairsEqual": true,
+          "beforeReportedSamples": 0,
+          "afterReportedSamples": 0
+        }
+      }
+    }
+  ]
+}

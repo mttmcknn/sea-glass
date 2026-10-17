@@ -1,0 +1,3615 @@
+{
+  "schema_version": 2,
+  "variants": [
+    "baseline",
+    "checkpoint",
+    "performance"
+  ],
+  "expected_runs_per_variant": 4,
+  "metadata": {
+    "status": "completed",
+    "package": "dev.mttmcknn.seaglass.sample",
+    "viewport": {
+      "width": 1600,
+      "height": 2400,
+      "dpi": 320
+    },
+    "apks": {
+      "baseline": {
+        "path": "/Users/mmckenna/Documents/Codex/2026-10-17/task-2/evidence/gc-followup/baseline/app.apk",
+        "bytes": 1332006,
+        "sha256": "50b8ba535b5d7d0b222025d7d447973dd4943a64aabf7ccccf5added3debcd7f"
+      },
+      "checkpoint": {
+        "path": "/Users/mmckenna/Documents/Codex/2026-10-17/task-2/evidence/gc-followup/checkpoint/app.apk",
+        "bytes": 1332006,
+        "sha256": "79e267aec00f3cfa223e86f3926c7d30479c79f7e3021ee0a39f63a7cf95285a"
+      },
+      "performance": {
+        "path": "/Users/mmckenna/Documents/Codex/2026-10-17/task-2/evidence/final-followup/performance/app.apk",
+        "bytes": 1332006,
+        "sha256": "090c7f2e2500a413c37c100a8a7a2736661258448cf1a036bef617126a904e08"
+      }
+    },
+    "blocks": [
+      {
+        "label": "B1",
+        "variant": "baseline",
+        "round": 1,
+        "directory": "blocks/baseline-block-1",
+        "warmup": "baseline-warmup-1",
+        "timed": [
+          "baseline-tumble-1",
+          "baseline-tumble-2"
+        ],
+        "diagnostics": [
+          "baseline-idle-1",
+          "baseline-count-1"
+        ],
+        "startedEpochSeconds": 1792265745,
+        "completedEpochSeconds": 1792265790,
+        "pid": "27797",
+        "completeCaptures": 5
+      },
+      {
+        "label": "C1",
+        "variant": "checkpoint",
+        "round": 1,
+        "directory": "blocks/checkpoint-block-1",
+        "warmup": "checkpoint-warmup-1",
+        "timed": [
+          "checkpoint-tumble-1",
+          "checkpoint-tumble-2"
+        ],
+        "diagnostics": [
+          "checkpoint-idle-1",
+          "checkpoint-count-1"
+        ],
+        "startedEpochSeconds": 1792265792,
+        "completedEpochSeconds": 1792265837,
+        "pid": "28381",
+        "completeCaptures": 5
+      },
+      {
+        "label": "F1",
+        "variant": "performance",
+        "round": 1,
+        "directory": "blocks/performance-block-1",
+        "warmup": "performance-warmup-1",
+        "timed": [
+          "performance-tumble-1",
+          "performance-tumble-2"
+        ],
+        "diagnostics": [
+          "performance-idle-1",
+          "performance-count-1"
+        ],
+        "startedEpochSeconds": 1792265839,
+        "completedEpochSeconds": 1792265884,
+        "pid": "28787",
+        "completeCaptures": 5
+      },
+      {
+        "label": "F2",
+        "variant": "performance",
+        "round": 2,
+        "directory": "blocks/performance-block-2",
+        "warmup": "performance-warmup-2",
+        "timed": [
+          "performance-tumble-3",
+          "performance-tumble-4"
+        ],
+        "diagnostics": [],
+        "startedEpochSeconds": 1792265885,
+        "completedEpochSeconds": 1792265912,
+        "pid": "29150",
+        "completeCaptures": 3
+      },
+      {
+        "label": "C2",
+        "variant": "checkpoint",
+        "round": 2,
+        "directory": "blocks/checkpoint-block-2",
+        "warmup": "checkpoint-warmup-2",
+        "timed": [
+          "checkpoint-tumble-3",
+          "checkpoint-tumble-4"
+        ],
+        "diagnostics": [],
+        "startedEpochSeconds": 1792265914,
+        "completedEpochSeconds": 1792265940,
+        "pid": "29399",
+        "completeCaptures": 3
+      },
+      {
+        "label": "B2",
+        "variant": "baseline",
+        "round": 2,
+        "directory": "blocks/baseline-block-2",
+        "warmup": "baseline-warmup-2",
+        "timed": [
+          "baseline-tumble-3",
+          "baseline-tumble-4"
+        ],
+        "diagnostics": [],
+        "startedEpochSeconds": 1792265942,
+        "completedEpochSeconds": 1792265969,
+        "pid": "29661",
+        "completeCaptures": 3
+      }
+    ],
+    "helpers": {
+      "capture.sh": "299d93a8403a6ee71d766a9f6ff15d218acdd25e6d7a8b6cce150863b17a3684",
+      "capture-block.sh": "e99cca54e03967827d0c6099d0b00029c2afa9363881f67162c94abe0aabb454",
+      "capture-cold.sh": "fc506a807a693b7190aa9c9b0c23c6ea34a8f3c7f5ca0ac22c897be8d45aa48d",
+      "config.pbtxt": "d648794fb7cca76929d9ace4fa783538158521c4bd4be587944298866cf713c2"
+    },
+    "processProtocol": "Install frozen APK; speed AOT; separate shell am force-stop and am start -W calls for each later block; initial block already freshly launched. Each capture resets and settles for one second; no additional two-second launch wait was used.",
+    "traceBasename": "{variant}-{workload}-{run}.perfetto-trace inside each raw block; staging adds seaglass- prefix.",
+    "excluded": [
+      "incomplete-session"
+    ],
+    "timing": "No host analysis/build work during capture. Counting separate and last in each first variant block.",
+    "optionalColdProtocol": {
+      "directory": "cold",
+      "variants": [
+        "baseline",
+        "performance"
+      ],
+      "runsPerVariant": 3,
+      "plannedOrder": [
+        "baseline-cold-1",
+        "performance-cold-1",
+        "performance-cold-2",
+        "baseline-cold-2",
+        "baseline-cold-3",
+        "performance-cold-3"
+      ],
+      "protocol": "Install and speed AOT each capture; force-stop; start six-second trace; am start -W; sleep six seconds; snapshots.",
+      "validation": "Separate protocol; main block completion validation does not assert cold captures exist.",
+      "limitation": "Fresh app process; shader-driver and filesystem caches may be warm."
+    },
+    "session": {
+      "deviceId": "056baaec-c2b1-4288-b3ae-84732ad5f5e0",
+      "deviceStartedUtc": "2026-10-17T19:35:04.459Z",
+      "hostOrchestrationElapsedSeconds": 224.221,
+      "hostElapsedSource": "Reported by root capturing agent; excludes emulator startup.",
+      "rawFirstBlockStartEpochSeconds": 1792265745,
+      "rawLastBlockCompleteEpochSeconds": 1792265969,
+      "rawBlockSpanSeconds": 224,
+      "validatedBlocks": 6,
+      "validatedCaptures": 24,
+      "distinctProcessCount": 6,
+      "evidenceType": "Android emulator; not physical Android"
+    },
+    "visualComparison": {
+      "path": "visual-comparison.json",
+      "scope": "Baseline vs performance reset screenshots; crop excludes system bars.",
+      "result": {
+        "crop": [
+          0,
+          144,
+          1600,
+          2304
+        ],
+        "dimensions": [
+          1600,
+          2400
+        ],
+        "channels": 4,
+        "changed_pixels": 0,
+        "exact": true,
+        "maximum_channel_difference": 0,
+        "mean_absolute_channel_difference": 0.0
+      }
+    }
+  },
+  "warnings": [],
+  "notes": [
+    "Main comparisons include only the explicitly requested variant/tumble/run labels. Warmups, idle observations and enabled deprecated allocation-counting runs are excluded from main frame/CPU summaries.",
+    "ART getRuntimeStats deltas are approximate whole-process allocation/GC counters. Bytes include Compose/framework/background work and snapshot observer overhead, not just SeaGlass.",
+    "Main snapshots require allocationCountingRequested=false; separate count snapshots require true. Unsupported/null runtime keys remain unavailable, not zero.",
+    "Idle observation bytes/CPU/GC are retained as measured per-variant diagnostics; no old idle number is assumed and no overhead is silently subtracted.",
+    "Per-build ratios divide whole-process totals by observed completed Geometry slices across the full capture, including worker and UI builds. This adjusts work-count differences but is not isolated-kernel allocation measurement. Zero builds produce null ratios.",
+    "Requests, geometry builds, uploads, Applied markers and matched presentations are separate populations. Final cohorts must have the expected surface count and presentation matches; warnings flag incompleteness.",
+    "The primary trace window is first DOWN through final UP+1000ms. Runtime endpoints span a somewhat wider interval. Scheduler residency and Process.getElapsedCpuTime differ in scope/accounting.",
+    "Stage scheduled time intersects the slice with its own thread running intervals. Wall time includes descheduling. Inclusive parent/child GC/driver durations must not be summed.",
+    "ART cumulative GC count/time, observed Perfetto GC slices and heap counter samples are distinct evidence. A smaller heap gauge or fewer samples does not establish fewer allocations/collections.",
+    "Heap-used/total/native allocator gauges and PSS are history/GC-dependent snapshots, not retained object graphs. No retained-size/leak claim follows from them alone.",
+    "Legacy object/byte counts are supplementary approximate API counters from separate runs. Any zero legacy GC delta must be compared with ART before interpretation. Do not substitute a missing ART object count with zero.",
+    "GPU observability is recorded per capture. CPU shader/flush and texture preparation do not establish GPU execution time. Emulator results do not establish physical-device, power, thermal or iOS performance."
+  ],
+  "per_run": [
+    {
+      "name": "baseline-tumble-1",
+      "variant": "baseline",
+      "run": 1,
+      "pid": 27797,
+      "trace_sha256": "f69c2a8aa56d551e1cce8e38ee2d590159caedf22bc3fc019ca9894d4e109da0",
+      "snapshot_elapsed_ms": 2759,
+      "primary_trace_elapsed_ms": 2496.459125,
+      "art_allocated_bytes": 458694688,
+      "art_freed_bytes": 449519744,
+      "art_gc_count": 23,
+      "art_gc_time_ms": 204,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1538,
+      "primary_app_scheduled_ms": 1615.25329,
+      "primary_ui_scheduled_ms": 309.455247,
+      "primary_renderthread_scheduled_ms": 468.45854,
+      "primary_heapdaemon_scheduled_ms": 198.511295,
+      "geometry_builds": 490,
+      "primary_worker_geometry_builds": 490,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 490,
+      "upload_frames": 70,
+      "geometry_scheduled_ms": 560.316546,
+      "geometry_wall_ms": 567.103715,
+      "texture_scheduled_ms": 136.158539,
+      "app_allocated_bytes_per_geometry_build": 936111.6081632653,
+      "geometry_scheduled_ms_per_build": 1.143503155102041,
+      "process_cpu_ms_per_build": 3.1387755102040815,
+      "app_scheduled_ms_per_build": 3.296435285714286,
+      "ui_p50_ms": 4.3010835,
+      "ui_p95_ms": 5.4069167,
+      "trace_gc_count": 23,
+      "trace_gc_wall_ms": 206.848333,
+      "compaction_pause_total_ms": 6.473002,
+      "compaction_pause_max_ms": 0.434834,
+      "heap_used_before_bytes": 20877504,
+      "heap_used_after_bytes": 30052448,
+      "heap_total_before_bytes": 27926750,
+      "heap_total_after_bytes": 33603710,
+      "native_allocated_before_bytes": 22906560,
+      "native_allocated_after_bytes": 25945424,
+      "post_capture_pss_kib": 77557,
+      "heap_counter_peak_kib": 35744.0,
+      "requested_revisions": 490,
+      "applied_revisions": 490,
+      "presented_in_applied_frame": 490,
+      "gfx_deadline_misses": 1,
+      "gfx_deadline_eligible": 74,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "baseline-tumble-2",
+      "variant": "baseline",
+      "run": 2,
+      "pid": 27797,
+      "trace_sha256": "4baa25aa0434871d788828e174120f6878f5ec9fe708285f9bff3f9389767599",
+      "snapshot_elapsed_ms": 2735,
+      "primary_trace_elapsed_ms": 2492.781293,
+      "art_allocated_bytes": 458715168,
+      "art_freed_bytes": 450113664,
+      "art_gc_count": 23,
+      "art_gc_time_ms": 206,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1551,
+      "primary_app_scheduled_ms": 1628.8359130000001,
+      "primary_ui_scheduled_ms": 311.97049,
+      "primary_renderthread_scheduled_ms": 471.126216,
+      "primary_heapdaemon_scheduled_ms": 202.20329,
+      "geometry_builds": 490,
+      "primary_worker_geometry_builds": 490,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 490,
+      "upload_frames": 70,
+      "geometry_scheduled_ms": 567.058129,
+      "geometry_wall_ms": 574.436626,
+      "texture_scheduled_ms": 136.69138,
+      "app_allocated_bytes_per_geometry_build": 936153.4040816326,
+      "geometry_scheduled_ms_per_build": 1.157261487755102,
+      "process_cpu_ms_per_build": 3.1653061224489796,
+      "app_scheduled_ms_per_build": 3.3241549244897963,
+      "ui_p50_ms": 4.363187,
+      "ui_p95_ms": 5.62258385,
+      "trace_gc_count": 23,
+      "trace_gc_wall_ms": 208.238917,
+      "compaction_pause_total_ms": 6.050875,
+      "compaction_pause_max_ms": 0.387167,
+      "heap_used_before_bytes": 20590784,
+      "heap_used_after_bytes": 29192288,
+      "heap_total_before_bytes": 27418845,
+      "heap_total_after_bytes": 31981694,
+      "native_allocated_before_bytes": 22939296,
+      "native_allocated_after_bytes": 25946128,
+      "post_capture_pss_kib": 76129,
+      "heap_counter_peak_kib": 35768.0,
+      "requested_revisions": 490,
+      "applied_revisions": 490,
+      "presented_in_applied_frame": 490,
+      "gfx_deadline_misses": 1,
+      "gfx_deadline_eligible": 74,
+      "timeline_missed_rows": 1,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "baseline-tumble-3",
+      "variant": "baseline",
+      "run": 3,
+      "pid": 29661,
+      "trace_sha256": "adff37f3fcb524ca36e712ca117c9e82e7ad69118d02e9ba740c64a2b6df8b8d",
+      "snapshot_elapsed_ms": 2799,
+      "primary_trace_elapsed_ms": 2497.325918,
+      "art_allocated_bytes": 452177952,
+      "art_freed_bytes": 451653760,
+      "art_gc_count": 23,
+      "art_gc_time_ms": 202,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1567,
+      "primary_app_scheduled_ms": 1641.689267,
+      "primary_ui_scheduled_ms": 318.127135,
+      "primary_renderthread_scheduled_ms": 475.588787,
+      "primary_heapdaemon_scheduled_ms": 199.792536,
+      "geometry_builds": 483,
+      "primary_worker_geometry_builds": 483,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 483,
+      "upload_frames": 69,
+      "geometry_scheduled_ms": 569.99021,
+      "geometry_wall_ms": 579.063797,
+      "texture_scheduled_ms": 137.998582,
+      "app_allocated_bytes_per_geometry_build": 936186.2360248447,
+      "geometry_scheduled_ms_per_build": 1.1801039544513459,
+      "process_cpu_ms_per_build": 3.2443064182194616,
+      "app_scheduled_ms_per_build": 3.3989425817805383,
+      "ui_p50_ms": 4.494125,
+      "ui_p95_ms": 5.5283955,
+      "trace_gc_count": 23,
+      "trace_gc_wall_ms": 205.230997,
+      "compaction_pause_total_ms": 5.854833,
+      "compaction_pause_max_ms": 0.371667,
+      "heap_used_before_bytes": 21295296,
+      "heap_used_after_bytes": 21819488,
+      "heap_total_before_bytes": 28762334,
+      "heap_total_after_bytes": 30236798,
+      "native_allocated_before_bytes": 23684816,
+      "native_allocated_after_bytes": 24133376,
+      "post_capture_pss_kib": 76991,
+      "heap_counter_peak_kib": 36552.0,
+      "requested_revisions": 483,
+      "applied_revisions": 483,
+      "presented_in_applied_frame": 483,
+      "gfx_deadline_misses": 2,
+      "gfx_deadline_eligible": 73,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "baseline-tumble-4",
+      "variant": "baseline",
+      "run": 4,
+      "pid": 29661,
+      "trace_sha256": "f7d55fc085bd6fcd8f645476f5233f0929bb189a40448fb024e32dbbf8b948c3",
+      "snapshot_elapsed_ms": 2733,
+      "primary_trace_elapsed_ms": 2478.877334,
+      "art_allocated_bytes": 452309024,
+      "art_freed_bytes": 450330752,
+      "art_gc_count": 23,
+      "art_gc_time_ms": 193,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1549,
+      "primary_app_scheduled_ms": 1622.586413,
+      "primary_ui_scheduled_ms": 309.40369,
+      "primary_renderthread_scheduled_ms": 470.418499,
+      "primary_heapdaemon_scheduled_ms": 195.148919,
+      "geometry_builds": 483,
+      "primary_worker_geometry_builds": 483,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 483,
+      "upload_frames": 69,
+      "geometry_scheduled_ms": 569.718959,
+      "geometry_wall_ms": 578.993544,
+      "texture_scheduled_ms": 136.222751,
+      "app_allocated_bytes_per_geometry_build": 936457.6066252588,
+      "geometry_scheduled_ms_per_build": 1.179542358178054,
+      "process_cpu_ms_per_build": 3.20703933747412,
+      "app_scheduled_ms_per_build": 3.35939215942029,
+      "ui_p50_ms": 4.3245,
+      "ui_p95_ms": 5.5221875,
+      "trace_gc_count": 23,
+      "trace_gc_wall_ms": 196.57246,
+      "compaction_pause_total_ms": 5.555288,
+      "compaction_pause_max_ms": 0.332458,
+      "heap_used_before_bytes": 20517056,
+      "heap_used_after_bytes": 22495328,
+      "heap_total_before_bytes": 27271389,
+      "heap_total_after_bytes": 31465598,
+      "native_allocated_before_bytes": 22895520,
+      "native_allocated_after_bytes": 24145968,
+      "post_capture_pss_kib": 77796,
+      "heap_counter_peak_kib": 35356.0,
+      "requested_revisions": 483,
+      "applied_revisions": 483,
+      "presented_in_applied_frame": 483,
+      "gfx_deadline_misses": 1,
+      "gfx_deadline_eligible": 73,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "checkpoint-tumble-1",
+      "variant": "checkpoint",
+      "run": 1,
+      "pid": 28381,
+      "trace_sha256": "604f6eceb4b16d12a020fd9e5eca6befa480c84dab65c8880dd53759791c56bb",
+      "snapshot_elapsed_ms": 2737,
+      "primary_trace_elapsed_ms": 2490.857751,
+      "art_allocated_bytes": 374018080,
+      "art_freed_bytes": 374145152,
+      "art_gc_count": 35,
+      "art_gc_time_ms": 282,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1546,
+      "primary_app_scheduled_ms": 1629.210825,
+      "primary_ui_scheduled_ms": 201.285551,
+      "primary_renderthread_scheduled_ms": 490.263963,
+      "primary_heapdaemon_scheduled_ms": 280.902668,
+      "geometry_builds": 490,
+      "primary_worker_geometry_builds": 490,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 490,
+      "upload_frames": 70,
+      "geometry_scheduled_ms": 571.66401,
+      "geometry_wall_ms": 583.859922,
+      "texture_scheduled_ms": 30.013051,
+      "app_allocated_bytes_per_geometry_build": 763302.2040816327,
+      "geometry_scheduled_ms_per_build": 1.1666612448979592,
+      "process_cpu_ms_per_build": 3.1551020408163266,
+      "app_scheduled_ms_per_build": 3.3249200510204084,
+      "ui_p50_ms": 2.700688,
+      "ui_p95_ms": 3.55731685,
+      "trace_gc_count": 35,
+      "trace_gc_wall_ms": 285.257422,
+      "compaction_pause_total_ms": 8.863127,
+      "compaction_pause_max_ms": 0.408334,
+      "heap_used_before_bytes": 14385344,
+      "heap_used_after_bytes": 14258272,
+      "heap_total_before_bytes": 17481950,
+      "heap_total_after_bytes": 17522815,
+      "native_allocated_before_bytes": 23462064,
+      "native_allocated_after_bytes": 24057408,
+      "post_capture_pss_kib": 67363,
+      "heap_counter_peak_kib": 20976.0,
+      "requested_revisions": 490,
+      "applied_revisions": 490,
+      "presented_in_applied_frame": 490,
+      "gfx_deadline_misses": 2,
+      "gfx_deadline_eligible": 74,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "checkpoint-tumble-2",
+      "variant": "checkpoint",
+      "run": 2,
+      "pid": 28381,
+      "trace_sha256": "07f7606836f3d5031fea5343b6a8fe329c2e04656ecd32b9ae84c3ffa0f451bc",
+      "snapshot_elapsed_ms": 2753,
+      "primary_trace_elapsed_ms": 2485.18325,
+      "art_allocated_bytes": 368906272,
+      "art_freed_bytes": 373518464,
+      "art_gc_count": 35,
+      "art_gc_time_ms": 269,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1505,
+      "primary_app_scheduled_ms": 1576.89561,
+      "primary_ui_scheduled_ms": 198.487413,
+      "primary_renderthread_scheduled_ms": 469.930906,
+      "primary_heapdaemon_scheduled_ms": 271.353673,
+      "geometry_builds": 483,
+      "primary_worker_geometry_builds": 483,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 483,
+      "upload_frames": 69,
+      "geometry_scheduled_ms": 553.705452,
+      "geometry_wall_ms": 558.561536,
+      "texture_scheduled_ms": 27.783615,
+      "app_allocated_bytes_per_geometry_build": 763781.1014492754,
+      "geometry_scheduled_ms_per_build": 1.146388099378882,
+      "process_cpu_ms_per_build": 3.1159420289855073,
+      "app_scheduled_ms_per_build": 3.2647942236024847,
+      "ui_p50_ms": 2.667041,
+      "ui_p95_ms": 3.350667,
+      "trace_gc_count": 35,
+      "trace_gc_wall_ms": 272.883293,
+      "compaction_pause_total_ms": 8.278087,
+      "compaction_pause_max_ms": 0.318125,
+      "heap_used_before_bytes": 14393536,
+      "heap_used_after_bytes": 9781344,
+      "heap_total_before_bytes": 17498335,
+      "heap_total_after_bytes": 19128446,
+      "native_allocated_before_bytes": 22816352,
+      "native_allocated_after_bytes": 22331344,
+      "post_capture_pss_kib": 61656,
+      "heap_counter_peak_kib": 20976.0,
+      "requested_revisions": 483,
+      "applied_revisions": 483,
+      "presented_in_applied_frame": 483,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 73,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "checkpoint-tumble-3",
+      "variant": "checkpoint",
+      "run": 3,
+      "pid": 29399,
+      "trace_sha256": "18625b89f09850de874892ab45dd647a39e57083616a5d49c1e10fa920f700dc",
+      "snapshot_elapsed_ms": 2756,
+      "primary_trace_elapsed_ms": 2501.051043,
+      "art_allocated_bytes": 374280224,
+      "art_freed_bytes": 373940352,
+      "art_gc_count": 35,
+      "art_gc_time_ms": 283,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1507,
+      "primary_app_scheduled_ms": 1586.382971,
+      "primary_ui_scheduled_ms": 199.531722,
+      "primary_renderthread_scheduled_ms": 469.448926,
+      "primary_heapdaemon_scheduled_ms": 280.032665,
+      "geometry_builds": 490,
+      "primary_worker_geometry_builds": 490,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 490,
+      "upload_frames": 70,
+      "geometry_scheduled_ms": 553.94662,
+      "geometry_wall_ms": 562.419122,
+      "texture_scheduled_ms": 28.648532,
+      "app_allocated_bytes_per_geometry_build": 763837.1918367347,
+      "geometry_scheduled_ms_per_build": 1.130503306122449,
+      "process_cpu_ms_per_build": 3.0755102040816324,
+      "app_scheduled_ms_per_build": 3.2375162673469386,
+      "ui_p50_ms": 2.813583,
+      "ui_p95_ms": 3.5961359,
+      "trace_gc_count": 35,
+      "trace_gc_wall_ms": 286.607707,
+      "compaction_pause_total_ms": 9.975711,
+      "compaction_pause_max_ms": 1.41075,
+      "heap_used_before_bytes": 14418112,
+      "heap_used_after_bytes": 14757984,
+      "heap_total_before_bytes": 17481950,
+      "heap_total_after_bytes": 18530431,
+      "native_allocated_before_bytes": 23461680,
+      "native_allocated_after_bytes": 24075200,
+      "post_capture_pss_kib": 69502,
+      "heap_counter_peak_kib": 21000.0,
+      "requested_revisions": 490,
+      "applied_revisions": 490,
+      "presented_in_applied_frame": 490,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 74,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "checkpoint-tumble-4",
+      "variant": "checkpoint",
+      "run": 4,
+      "pid": 29399,
+      "trace_sha256": "cd5745326327d891393e58d925f32db5be5735d498a0114bab95c66cfd934743",
+      "snapshot_elapsed_ms": 2750,
+      "primary_trace_elapsed_ms": 2478.165459,
+      "art_allocated_bytes": 368947232,
+      "art_freed_bytes": 373190784,
+      "art_gc_count": 35,
+      "art_gc_time_ms": 276,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1502,
+      "primary_app_scheduled_ms": 1574.012733,
+      "primary_ui_scheduled_ms": 191.706324,
+      "primary_renderthread_scheduled_ms": 472.740666,
+      "primary_heapdaemon_scheduled_ms": 279.423748,
+      "geometry_builds": 483,
+      "primary_worker_geometry_builds": 483,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 483,
+      "upload_frames": 69,
+      "geometry_scheduled_ms": 545.912932,
+      "geometry_wall_ms": 552.848675,
+      "texture_scheduled_ms": 28.568828,
+      "app_allocated_bytes_per_geometry_build": 763865.9047619047,
+      "geometry_scheduled_ms_per_build": 1.1302545175983436,
+      "process_cpu_ms_per_build": 3.109730848861284,
+      "app_scheduled_ms_per_build": 3.258825534161491,
+      "ui_p50_ms": 2.59225,
+      "ui_p95_ms": 3.4777085000000003,
+      "trace_gc_count": 35,
+      "trace_gc_wall_ms": 280.146126,
+      "compaction_pause_total_ms": 9.021581,
+      "compaction_pause_max_ms": 0.360792,
+      "heap_used_before_bytes": 14577856,
+      "heap_used_after_bytes": 10334304,
+      "heap_total_before_bytes": 17866975,
+      "heap_total_after_bytes": 20299903,
+      "native_allocated_before_bytes": 22834480,
+      "native_allocated_after_bytes": 22346288,
+      "post_capture_pss_kib": 63796,
+      "heap_counter_peak_kib": 20940.0,
+      "requested_revisions": 483,
+      "applied_revisions": 483,
+      "presented_in_applied_frame": 483,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 73,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "performance-tumble-1",
+      "variant": "performance",
+      "run": 1,
+      "pid": 28787,
+      "trace_sha256": "2075d83c65dda10287307284484c84a3718ac818da0cba2f16a3dd504a50094f",
+      "snapshot_elapsed_ms": 2738,
+      "primary_trace_elapsed_ms": 2494.383084,
+      "art_allocated_bytes": 366571552,
+      "art_freed_bytes": 365453440,
+      "art_gc_count": 35,
+      "art_gc_time_ms": 266,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1485,
+      "primary_app_scheduled_ms": 1563.267189,
+      "primary_ui_scheduled_ms": 204.432281,
+      "primary_renderthread_scheduled_ms": 475.507575,
+      "primary_heapdaemon_scheduled_ms": 271.129706,
+      "geometry_builds": 490,
+      "primary_worker_geometry_builds": 490,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 490,
+      "upload_frames": 70,
+      "geometry_scheduled_ms": 528.797008,
+      "geometry_wall_ms": 538.078212,
+      "texture_scheduled_ms": 28.849783,
+      "app_allocated_bytes_per_geometry_build": 748105.2081632653,
+      "geometry_scheduled_ms_per_build": 1.0791775673469388,
+      "process_cpu_ms_per_build": 3.0306122448979593,
+      "app_scheduled_ms_per_build": 3.190341202040816,
+      "ui_p50_ms": 2.9011250000000004,
+      "ui_p95_ms": 3.4912686,
+      "trace_gc_count": 35,
+      "trace_gc_wall_ms": 270.428834,
+      "compaction_pause_total_ms": 8.375542,
+      "compaction_pause_max_ms": 0.514375,
+      "heap_used_before_bytes": 14426304,
+      "heap_used_after_bytes": 15544416,
+      "heap_total_before_bytes": 17703134,
+      "heap_total_after_bytes": 20308094,
+      "native_allocated_before_bytes": 23642992,
+      "native_allocated_after_bytes": 24083824,
+      "post_capture_pss_kib": 70223,
+      "heap_counter_peak_kib": 20456.0,
+      "requested_revisions": 490,
+      "applied_revisions": 490,
+      "presented_in_applied_frame": 490,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 74,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "performance-tumble-2",
+      "variant": "performance",
+      "run": 2,
+      "pid": 28787,
+      "trace_sha256": "31edd45929fb205fa26b4039a88f82ee83088530299b7de9184c28ff5e9900e0",
+      "snapshot_elapsed_ms": 2764,
+      "primary_trace_elapsed_ms": 2487.989876,
+      "art_allocated_bytes": 361463840,
+      "art_freed_bytes": 365457536,
+      "art_gc_count": 35,
+      "art_gc_time_ms": 273,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1490,
+      "primary_app_scheduled_ms": 1560.865752,
+      "primary_ui_scheduled_ms": 208.035299,
+      "primary_renderthread_scheduled_ms": 467.834005,
+      "primary_heapdaemon_scheduled_ms": 277.624457,
+      "geometry_builds": 483,
+      "primary_worker_geometry_builds": 483,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 483,
+      "upload_frames": 69,
+      "geometry_scheduled_ms": 525.364001,
+      "geometry_wall_ms": 530.647,
+      "texture_scheduled_ms": 29.0557,
+      "app_allocated_bytes_per_geometry_build": 748372.3395445135,
+      "geometry_scheduled_ms_per_build": 1.0877101469979296,
+      "process_cpu_ms_per_build": 3.0848861283643894,
+      "app_scheduled_ms_per_build": 3.2316061118012422,
+      "ui_p50_ms": 2.849917,
+      "ui_p95_ms": 3.7169585,
+      "trace_gc_count": 35,
+      "trace_gc_wall_ms": 277.430623,
+      "compaction_pause_total_ms": 8.457208,
+      "compaction_pause_max_ms": 0.398709,
+      "heap_used_before_bytes": 14254272,
+      "heap_used_after_bytes": 10260576,
+      "heap_total_before_bytes": 17359070,
+      "heap_total_after_bytes": 20152447,
+      "native_allocated_before_bytes": 22842704,
+      "native_allocated_after_bytes": 22350912,
+      "post_capture_pss_kib": 63673,
+      "heap_counter_peak_kib": 20408.0,
+      "requested_revisions": 483,
+      "applied_revisions": 483,
+      "presented_in_applied_frame": 483,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 73,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "performance-tumble-3",
+      "variant": "performance",
+      "run": 3,
+      "pid": 29150,
+      "trace_sha256": "c8cd4d570d97358707e2ac3ad685a1307be51d9220405a77b69a94b6820c5473",
+      "snapshot_elapsed_ms": 2780,
+      "primary_trace_elapsed_ms": 2481.026334,
+      "art_allocated_bytes": 361562144,
+      "art_freed_bytes": 365424768,
+      "art_gc_count": 35,
+      "art_gc_time_ms": 264,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1468,
+      "primary_app_scheduled_ms": 1543.512986,
+      "primary_ui_scheduled_ms": 204.187518,
+      "primary_renderthread_scheduled_ms": 470.971493,
+      "primary_heapdaemon_scheduled_ms": 266.761626,
+      "geometry_builds": 483,
+      "primary_worker_geometry_builds": 483,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 483,
+      "upload_frames": 69,
+      "geometry_scheduled_ms": 521.6808,
+      "geometry_wall_ms": 526.568841,
+      "texture_scheduled_ms": 30.274959,
+      "app_allocated_bytes_per_geometry_build": 748575.867494824,
+      "geometry_scheduled_ms_per_build": 1.0800844720496894,
+      "process_cpu_ms_per_build": 3.039337474120083,
+      "app_scheduled_ms_per_build": 3.1956790600414076,
+      "ui_p50_ms": 2.96975,
+      "ui_p95_ms": 3.6235415,
+      "trace_gc_count": 35,
+      "trace_gc_wall_ms": 267.750497,
+      "compaction_pause_total_ms": 8.008501,
+      "compaction_pause_max_ms": 0.349334,
+      "heap_used_before_bytes": 14246080,
+      "heap_used_after_bytes": 10383456,
+      "heap_total_before_bytes": 17342685,
+      "heap_total_after_bytes": 20398207,
+      "native_allocated_before_bytes": 23632880,
+      "native_allocated_after_bytes": 22408960,
+      "post_capture_pss_kib": 62555,
+      "heap_counter_peak_kib": 20472.0,
+      "requested_revisions": 483,
+      "applied_revisions": 483,
+      "presented_in_applied_frame": 483,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 73,
+      "timeline_missed_rows": 0,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    },
+    {
+      "name": "performance-tumble-4",
+      "variant": "performance",
+      "run": 4,
+      "pid": 29150,
+      "trace_sha256": "05c82e9fcba465f33930d69d8102cf41ab9c0b515de40ed63c62bfaa1953b5a9",
+      "snapshot_elapsed_ms": 2765,
+      "primary_trace_elapsed_ms": 2489.042584,
+      "art_allocated_bytes": 366546976,
+      "art_freed_bytes": 365314176,
+      "art_gc_count": 34,
+      "art_gc_time_ms": 266,
+      "art_blocking_gc_count": 0,
+      "art_blocking_gc_time_ms": 0,
+      "process_cpu_delta_ms": 1499,
+      "primary_app_scheduled_ms": 1578.76279,
+      "primary_ui_scheduled_ms": 206.112077,
+      "primary_renderthread_scheduled_ms": 486.463926,
+      "primary_heapdaemon_scheduled_ms": 268.936286,
+      "geometry_builds": 490,
+      "primary_worker_geometry_builds": 490,
+      "geometry_ui_builds": 0,
+      "texture_uploads": 490,
+      "upload_frames": 70,
+      "geometry_scheduled_ms": 533.06342,
+      "geometry_wall_ms": 542.912835,
+      "texture_scheduled_ms": 30.041367,
+      "app_allocated_bytes_per_geometry_build": 748055.0530612245,
+      "geometry_scheduled_ms_per_build": 1.0878845306122449,
+      "process_cpu_ms_per_build": 3.059183673469388,
+      "app_scheduled_ms_per_build": 3.2219648775510206,
+      "ui_p50_ms": 2.6893960000000003,
+      "ui_p95_ms": 3.73956075,
+      "trace_gc_count": 34,
+      "trace_gc_wall_ms": 269.901875,
+      "compaction_pause_total_ms": 9.180455,
+      "compaction_pause_max_ms": 0.485292,
+      "heap_used_before_bytes": 14209216,
+      "heap_used_after_bytes": 15442016,
+      "heap_total_before_bytes": 17334494,
+      "heap_total_after_bytes": 20103295,
+      "native_allocated_before_bytes": 22834608,
+      "native_allocated_after_bytes": 24192352,
+      "post_capture_pss_kib": 69181,
+      "heap_counter_peak_kib": 29336.0,
+      "requested_revisions": 490,
+      "applied_revisions": 490,
+      "presented_in_applied_frame": 490,
+      "gfx_deadline_misses": 1,
+      "gfx_deadline_eligible": 74,
+      "timeline_missed_rows": 1,
+      "incomplete_ui_frames": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "snapshot_elapsed_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 2747.0,
+        "min": 2733,
+        "max": 2799,
+        "values": [
+          2759,
+          2735,
+          2799,
+          2733
+        ]
+      },
+      "primary_trace_elapsed_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 2494.6202089999997,
+        "min": 2478.877334,
+        "max": 2497.325918,
+        "values": [
+          2496.459125,
+          2492.781293,
+          2497.325918,
+          2478.877334
+        ]
+      },
+      "art_allocated_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 455501856.0,
+        "min": 452177952,
+        "max": 458715168,
+        "values": [
+          458694688,
+          458715168,
+          452177952,
+          452309024
+        ]
+      },
+      "art_freed_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 450222208.0,
+        "min": 449519744,
+        "max": 451653760,
+        "values": [
+          449519744,
+          450113664,
+          451653760,
+          450330752
+        ]
+      },
+      "art_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 23.0,
+        "min": 23,
+        "max": 23,
+        "values": [
+          23,
+          23,
+          23,
+          23
+        ]
+      },
+      "art_gc_time_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 203.0,
+        "min": 193,
+        "max": 206,
+        "values": [
+          204,
+          206,
+          202,
+          193
+        ]
+      },
+      "art_blocking_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "art_blocking_gc_time_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "process_cpu_delta_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 1550.0,
+        "min": 1538,
+        "max": 1567,
+        "values": [
+          1538,
+          1551,
+          1567,
+          1549
+        ]
+      },
+      "primary_app_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 1625.711163,
+        "min": 1615.25329,
+        "max": 1641.689267,
+        "values": [
+          1615.25329,
+          1628.8359130000001,
+          1641.689267,
+          1622.586413
+        ]
+      },
+      "primary_ui_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 310.7128685,
+        "min": 309.40369,
+        "max": 318.127135,
+        "values": [
+          309.455247,
+          311.97049,
+          318.127135,
+          309.40369
+        ]
+      },
+      "primary_renderthread_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 470.7723575,
+        "min": 468.45854,
+        "max": 475.588787,
+        "values": [
+          468.45854,
+          471.126216,
+          475.588787,
+          470.418499
+        ]
+      },
+      "primary_heapdaemon_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 199.1519155,
+        "min": 195.148919,
+        "max": 202.20329,
+        "values": [
+          198.511295,
+          202.20329,
+          199.792536,
+          195.148919
+        ]
+      },
+      "geometry_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          490,
+          483,
+          483
+        ]
+      },
+      "primary_worker_geometry_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          490,
+          483,
+          483
+        ]
+      },
+      "geometry_ui_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "texture_uploads": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          490,
+          483,
+          483
+        ]
+      },
+      "upload_frames": {
+        "n": 4,
+        "missing": 0,
+        "median": 69.5,
+        "min": 69,
+        "max": 70,
+        "values": [
+          70,
+          70,
+          69,
+          69
+        ]
+      },
+      "geometry_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 568.388544,
+        "min": 560.316546,
+        "max": 569.99021,
+        "values": [
+          560.316546,
+          567.058129,
+          569.99021,
+          569.718959
+        ]
+      },
+      "geometry_wall_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 576.715085,
+        "min": 567.103715,
+        "max": 579.063797,
+        "values": [
+          567.103715,
+          574.436626,
+          579.063797,
+          578.993544
+        ]
+      },
+      "texture_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 136.4570655,
+        "min": 136.158539,
+        "max": 137.998582,
+        "values": [
+          136.158539,
+          136.69138,
+          137.998582,
+          136.222751
+        ]
+      },
+      "app_allocated_bytes_per_geometry_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 936169.8200532387,
+        "min": 936111.6081632653,
+        "max": 936457.6066252588,
+        "values": [
+          936111.6081632653,
+          936153.4040816326,
+          936186.2360248447,
+          936457.6066252588
+        ]
+      },
+      "geometry_scheduled_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 1.168401922966578,
+        "min": 1.143503155102041,
+        "max": 1.1801039544513459,
+        "values": [
+          1.143503155102041,
+          1.157261487755102,
+          1.1801039544513459,
+          1.179542358178054
+        ]
+      },
+      "process_cpu_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 3.18617272996155,
+        "min": 3.1387755102040815,
+        "max": 3.2443064182194616,
+        "values": [
+          3.1387755102040815,
+          3.1653061224489796,
+          3.2443064182194616,
+          3.20703933747412
+        ]
+      },
+      "app_scheduled_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 3.3417735419550434,
+        "min": 3.296435285714286,
+        "max": 3.3989425817805383,
+        "values": [
+          3.296435285714286,
+          3.3241549244897963,
+          3.3989425817805383,
+          3.35939215942029
+        ]
+      },
+      "ui_p50_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 4.3438435,
+        "min": 4.3010835,
+        "max": 4.494125,
+        "values": [
+          4.3010835,
+          4.363187,
+          4.494125,
+          4.3245
+        ]
+      },
+      "ui_p95_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 5.5252915,
+        "min": 5.4069167,
+        "max": 5.62258385,
+        "values": [
+          5.4069167,
+          5.62258385,
+          5.5283955,
+          5.5221875
+        ]
+      },
+      "trace_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 23.0,
+        "min": 23,
+        "max": 23,
+        "values": [
+          23,
+          23,
+          23,
+          23
+        ]
+      },
+      "trace_gc_wall_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 206.039665,
+        "min": 196.57246,
+        "max": 208.238917,
+        "values": [
+          206.848333,
+          208.238917,
+          205.230997,
+          196.57246
+        ]
+      },
+      "compaction_pause_total_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 5.952854,
+        "min": 5.555288,
+        "max": 6.473002,
+        "values": [
+          6.473002,
+          6.050875,
+          5.854833,
+          5.555288
+        ]
+      },
+      "compaction_pause_max_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.379417,
+        "min": 0.332458,
+        "max": 0.434834,
+        "values": [
+          0.434834,
+          0.387167,
+          0.371667,
+          0.332458
+        ]
+      },
+      "heap_used_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 20734144.0,
+        "min": 20517056,
+        "max": 21295296,
+        "values": [
+          20877504,
+          20590784,
+          21295296,
+          20517056
+        ]
+      },
+      "heap_used_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 25843808.0,
+        "min": 21819488,
+        "max": 30052448,
+        "values": [
+          30052448,
+          29192288,
+          21819488,
+          22495328
+        ]
+      },
+      "heap_total_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 27672797.5,
+        "min": 27271389,
+        "max": 28762334,
+        "values": [
+          27926750,
+          27418845,
+          28762334,
+          27271389
+        ]
+      },
+      "heap_total_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 31723646.0,
+        "min": 30236798,
+        "max": 33603710,
+        "values": [
+          33603710,
+          31981694,
+          30236798,
+          31465598
+        ]
+      },
+      "native_allocated_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 22922928.0,
+        "min": 22895520,
+        "max": 23684816,
+        "values": [
+          22906560,
+          22939296,
+          23684816,
+          22895520
+        ]
+      },
+      "native_allocated_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 25045696.0,
+        "min": 24133376,
+        "max": 25946128,
+        "values": [
+          25945424,
+          25946128,
+          24133376,
+          24145968
+        ]
+      },
+      "post_capture_pss_kib": {
+        "n": 4,
+        "missing": 0,
+        "median": 77274.0,
+        "min": 76129,
+        "max": 77796,
+        "values": [
+          77557,
+          76129,
+          76991,
+          77796
+        ]
+      },
+      "heap_counter_peak_kib": {
+        "n": 4,
+        "missing": 0,
+        "median": 35756.0,
+        "min": 35356.0,
+        "max": 36552.0,
+        "values": [
+          35744.0,
+          35768.0,
+          36552.0,
+          35356.0
+        ]
+      },
+      "requested_revisions": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          490,
+          483,
+          483
+        ]
+      },
+      "applied_revisions": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          490,
+          483,
+          483
+        ]
+      },
+      "presented_in_applied_frame": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          490,
+          483,
+          483
+        ]
+      },
+      "gfx_deadline_misses": {
+        "n": 4,
+        "missing": 0,
+        "median": 1.0,
+        "min": 1,
+        "max": 2,
+        "values": [
+          1,
+          1,
+          2,
+          1
+        ]
+      },
+      "gfx_deadline_eligible": {
+        "n": 4,
+        "missing": 0,
+        "median": 73.5,
+        "min": 73,
+        "max": 74,
+        "values": [
+          74,
+          74,
+          73,
+          73
+        ]
+      },
+      "timeline_missed_rows": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 1,
+        "values": [
+          0,
+          1,
+          0,
+          0
+        ]
+      },
+      "incomplete_ui_frames": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "incomplete_geometry": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "data_loss_flags": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "checkpoint": {
+      "snapshot_elapsed_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 2751.5,
+        "min": 2737,
+        "max": 2756,
+        "values": [
+          2737,
+          2753,
+          2756,
+          2750
+        ]
+      },
+      "primary_trace_elapsed_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 2488.0205005,
+        "min": 2478.165459,
+        "max": 2501.051043,
+        "values": [
+          2490.857751,
+          2485.18325,
+          2501.051043,
+          2478.165459
+        ]
+      },
+      "art_allocated_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 371482656.0,
+        "min": 368906272,
+        "max": 374280224,
+        "values": [
+          374018080,
+          368906272,
+          374280224,
+          368947232
+        ]
+      },
+      "art_freed_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 373729408.0,
+        "min": 373190784,
+        "max": 374145152,
+        "values": [
+          374145152,
+          373518464,
+          373940352,
+          373190784
+        ]
+      },
+      "art_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 35.0,
+        "min": 35,
+        "max": 35,
+        "values": [
+          35,
+          35,
+          35,
+          35
+        ]
+      },
+      "art_gc_time_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 279.0,
+        "min": 269,
+        "max": 283,
+        "values": [
+          282,
+          269,
+          283,
+          276
+        ]
+      },
+      "art_blocking_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "art_blocking_gc_time_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "process_cpu_delta_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 1506.0,
+        "min": 1502,
+        "max": 1546,
+        "values": [
+          1546,
+          1505,
+          1507,
+          1502
+        ]
+      },
+      "primary_app_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 1581.6392905,
+        "min": 1574.012733,
+        "max": 1629.210825,
+        "values": [
+          1629.210825,
+          1576.89561,
+          1586.382971,
+          1574.012733
+        ]
+      },
+      "primary_ui_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 199.0095675,
+        "min": 191.706324,
+        "max": 201.285551,
+        "values": [
+          201.285551,
+          198.487413,
+          199.531722,
+          191.706324
+        ]
+      },
+      "primary_renderthread_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 471.335786,
+        "min": 469.448926,
+        "max": 490.263963,
+        "values": [
+          490.263963,
+          469.930906,
+          469.448926,
+          472.740666
+        ]
+      },
+      "primary_heapdaemon_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 279.7282065,
+        "min": 271.353673,
+        "max": 280.902668,
+        "values": [
+          280.902668,
+          271.353673,
+          280.032665,
+          279.423748
+        ]
+      },
+      "geometry_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          490,
+          483
+        ]
+      },
+      "primary_worker_geometry_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          490,
+          483
+        ]
+      },
+      "geometry_ui_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "texture_uploads": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          490,
+          483
+        ]
+      },
+      "upload_frames": {
+        "n": 4,
+        "missing": 0,
+        "median": 69.5,
+        "min": 69,
+        "max": 70,
+        "values": [
+          70,
+          69,
+          70,
+          69
+        ]
+      },
+      "geometry_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 553.826036,
+        "min": 545.912932,
+        "max": 571.66401,
+        "values": [
+          571.66401,
+          553.705452,
+          553.94662,
+          545.912932
+        ]
+      },
+      "geometry_wall_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 560.490329,
+        "min": 552.848675,
+        "max": 583.859922,
+        "values": [
+          583.859922,
+          558.561536,
+          562.419122,
+          552.848675
+        ]
+      },
+      "texture_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 28.60868,
+        "min": 27.783615,
+        "max": 30.013051,
+        "values": [
+          30.013051,
+          27.783615,
+          28.648532,
+          28.568828
+        ]
+      },
+      "app_allocated_bytes_per_geometry_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 763809.1466430051,
+        "min": 763302.2040816327,
+        "max": 763865.9047619047,
+        "values": [
+          763302.2040816327,
+          763781.1014492754,
+          763837.1918367347,
+          763865.9047619047
+        ]
+      },
+      "geometry_scheduled_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 1.1384457027506656,
+        "min": 1.1302545175983436,
+        "max": 1.1666612448979592,
+        "values": [
+          1.1666612448979592,
+          1.146388099378882,
+          1.130503306122449,
+          1.1302545175983436
+        ]
+      },
+      "process_cpu_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 3.1128364389233956,
+        "min": 3.0755102040816324,
+        "max": 3.1551020408163266,
+        "values": [
+          3.1551020408163266,
+          3.1159420289855073,
+          3.0755102040816324,
+          3.109730848861284
+        ]
+      },
+      "app_scheduled_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 3.261809878881988,
+        "min": 3.2375162673469386,
+        "max": 3.3249200510204084,
+        "values": [
+          3.3249200510204084,
+          3.2647942236024847,
+          3.2375162673469386,
+          3.258825534161491
+        ]
+      },
+      "ui_p50_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 2.6838645000000003,
+        "min": 2.59225,
+        "max": 2.813583,
+        "values": [
+          2.700688,
+          2.667041,
+          2.813583,
+          2.59225
+        ]
+      },
+      "ui_p95_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 3.517512675,
+        "min": 3.350667,
+        "max": 3.5961359,
+        "values": [
+          3.55731685,
+          3.350667,
+          3.5961359,
+          3.4777085000000003
+        ]
+      },
+      "trace_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 35.0,
+        "min": 35,
+        "max": 35,
+        "values": [
+          35,
+          35,
+          35,
+          35
+        ]
+      },
+      "trace_gc_wall_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 282.701774,
+        "min": 272.883293,
+        "max": 286.607707,
+        "values": [
+          285.257422,
+          272.883293,
+          286.607707,
+          280.146126
+        ]
+      },
+      "compaction_pause_total_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 8.942354,
+        "min": 8.278087,
+        "max": 9.975711,
+        "values": [
+          8.863127,
+          8.278087,
+          9.975711,
+          9.021581
+        ]
+      },
+      "compaction_pause_max_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.384563,
+        "min": 0.318125,
+        "max": 1.41075,
+        "values": [
+          0.408334,
+          0.318125,
+          1.41075,
+          0.360792
+        ]
+      },
+      "heap_used_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 14405824.0,
+        "min": 14385344,
+        "max": 14577856,
+        "values": [
+          14385344,
+          14393536,
+          14418112,
+          14577856
+        ]
+      },
+      "heap_used_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 12296288.0,
+        "min": 9781344,
+        "max": 14757984,
+        "values": [
+          14258272,
+          9781344,
+          14757984,
+          10334304
+        ]
+      },
+      "heap_total_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 17490142.5,
+        "min": 17481950,
+        "max": 17866975,
+        "values": [
+          17481950,
+          17498335,
+          17481950,
+          17866975
+        ]
+      },
+      "heap_total_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 18829438.5,
+        "min": 17522815,
+        "max": 20299903,
+        "values": [
+          17522815,
+          19128446,
+          18530431,
+          20299903
+        ]
+      },
+      "native_allocated_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 23148080.0,
+        "min": 22816352,
+        "max": 23462064,
+        "values": [
+          23462064,
+          22816352,
+          23461680,
+          22834480
+        ]
+      },
+      "native_allocated_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 23201848.0,
+        "min": 22331344,
+        "max": 24075200,
+        "values": [
+          24057408,
+          22331344,
+          24075200,
+          22346288
+        ]
+      },
+      "post_capture_pss_kib": {
+        "n": 4,
+        "missing": 0,
+        "median": 65579.5,
+        "min": 61656,
+        "max": 69502,
+        "values": [
+          67363,
+          61656,
+          69502,
+          63796
+        ]
+      },
+      "heap_counter_peak_kib": {
+        "n": 4,
+        "missing": 0,
+        "median": 20976.0,
+        "min": 20940.0,
+        "max": 21000.0,
+        "values": [
+          20976.0,
+          20976.0,
+          21000.0,
+          20940.0
+        ]
+      },
+      "requested_revisions": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          490,
+          483
+        ]
+      },
+      "applied_revisions": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          490,
+          483
+        ]
+      },
+      "presented_in_applied_frame": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          490,
+          483
+        ]
+      },
+      "gfx_deadline_misses": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 2,
+        "values": [
+          2,
+          0,
+          0,
+          0
+        ]
+      },
+      "gfx_deadline_eligible": {
+        "n": 4,
+        "missing": 0,
+        "median": 73.5,
+        "min": 73,
+        "max": 74,
+        "values": [
+          74,
+          73,
+          74,
+          73
+        ]
+      },
+      "timeline_missed_rows": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "incomplete_ui_frames": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "incomplete_geometry": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "data_loss_flags": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "performance": {
+      "snapshot_elapsed_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 2764.5,
+        "min": 2738,
+        "max": 2780,
+        "values": [
+          2738,
+          2764,
+          2780,
+          2765
+        ]
+      },
+      "primary_trace_elapsed_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 2488.51623,
+        "min": 2481.026334,
+        "max": 2494.383084,
+        "values": [
+          2494.383084,
+          2487.989876,
+          2481.026334,
+          2489.042584
+        ]
+      },
+      "art_allocated_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 364054560.0,
+        "min": 361463840,
+        "max": 366571552,
+        "values": [
+          366571552,
+          361463840,
+          361562144,
+          366546976
+        ]
+      },
+      "art_freed_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 365439104.0,
+        "min": 365314176,
+        "max": 365457536,
+        "values": [
+          365453440,
+          365457536,
+          365424768,
+          365314176
+        ]
+      },
+      "art_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 35.0,
+        "min": 34,
+        "max": 35,
+        "values": [
+          35,
+          35,
+          35,
+          34
+        ]
+      },
+      "art_gc_time_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 266.0,
+        "min": 264,
+        "max": 273,
+        "values": [
+          266,
+          273,
+          264,
+          266
+        ]
+      },
+      "art_blocking_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "art_blocking_gc_time_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "process_cpu_delta_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 1487.5,
+        "min": 1468,
+        "max": 1499,
+        "values": [
+          1485,
+          1490,
+          1468,
+          1499
+        ]
+      },
+      "primary_app_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 1562.0664705,
+        "min": 1543.512986,
+        "max": 1578.76279,
+        "values": [
+          1563.267189,
+          1560.865752,
+          1543.512986,
+          1578.76279
+        ]
+      },
+      "primary_ui_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 205.272179,
+        "min": 204.187518,
+        "max": 208.035299,
+        "values": [
+          204.432281,
+          208.035299,
+          204.187518,
+          206.112077
+        ]
+      },
+      "primary_renderthread_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 473.239534,
+        "min": 467.834005,
+        "max": 486.463926,
+        "values": [
+          475.507575,
+          467.834005,
+          470.971493,
+          486.463926
+        ]
+      },
+      "primary_heapdaemon_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 270.032996,
+        "min": 266.761626,
+        "max": 277.624457,
+        "values": [
+          271.129706,
+          277.624457,
+          266.761626,
+          268.936286
+        ]
+      },
+      "geometry_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          483,
+          490
+        ]
+      },
+      "primary_worker_geometry_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          483,
+          490
+        ]
+      },
+      "geometry_ui_builds": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "texture_uploads": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          483,
+          490
+        ]
+      },
+      "upload_frames": {
+        "n": 4,
+        "missing": 0,
+        "median": 69.5,
+        "min": 69,
+        "max": 70,
+        "values": [
+          70,
+          69,
+          69,
+          70
+        ]
+      },
+      "geometry_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 527.0805045,
+        "min": 521.6808,
+        "max": 533.06342,
+        "values": [
+          528.797008,
+          525.364001,
+          521.6808,
+          533.06342
+        ]
+      },
+      "geometry_wall_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 534.362606,
+        "min": 526.568841,
+        "max": 542.912835,
+        "values": [
+          538.078212,
+          530.647,
+          526.568841,
+          542.912835
+        ]
+      },
+      "texture_scheduled_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 29.5485335,
+        "min": 28.849783,
+        "max": 30.274959,
+        "values": [
+          28.849783,
+          29.0557,
+          30.274959,
+          30.041367
+        ]
+      },
+      "app_allocated_bytes_per_geometry_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 748238.7738538894,
+        "min": 748055.0530612245,
+        "max": 748575.867494824,
+        "values": [
+          748105.2081632653,
+          748372.3395445135,
+          748575.867494824,
+          748055.0530612245
+        ]
+      },
+      "geometry_scheduled_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 1.0838973095238096,
+        "min": 1.0791775673469388,
+        "max": 1.0878845306122449,
+        "values": [
+          1.0791775673469388,
+          1.0877101469979296,
+          1.0800844720496894,
+          1.0878845306122449
+        ]
+      },
+      "process_cpu_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 3.0492605737947356,
+        "min": 3.0306122448979593,
+        "max": 3.0848861283643894,
+        "values": [
+          3.0306122448979593,
+          3.0848861283643894,
+          3.039337474120083,
+          3.059183673469388
+        ]
+      },
+      "app_scheduled_ms_per_build": {
+        "n": 4,
+        "missing": 0,
+        "median": 3.2088219687962143,
+        "min": 3.190341202040816,
+        "max": 3.2316061118012422,
+        "values": [
+          3.190341202040816,
+          3.2316061118012422,
+          3.1956790600414076,
+          3.2219648775510206
+        ]
+      },
+      "ui_p50_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 2.875521,
+        "min": 2.6893960000000003,
+        "max": 2.96975,
+        "values": [
+          2.9011250000000004,
+          2.849917,
+          2.96975,
+          2.6893960000000003
+        ]
+      },
+      "ui_p95_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 3.6702500000000002,
+        "min": 3.4912686,
+        "max": 3.73956075,
+        "values": [
+          3.4912686,
+          3.7169585,
+          3.6235415,
+          3.73956075
+        ]
+      },
+      "trace_gc_count": {
+        "n": 4,
+        "missing": 0,
+        "median": 35.0,
+        "min": 34,
+        "max": 35,
+        "values": [
+          35,
+          35,
+          35,
+          34
+        ]
+      },
+      "trace_gc_wall_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 270.16535450000003,
+        "min": 267.750497,
+        "max": 277.430623,
+        "values": [
+          270.428834,
+          277.430623,
+          267.750497,
+          269.901875
+        ]
+      },
+      "compaction_pause_total_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 8.416374999999999,
+        "min": 8.008501,
+        "max": 9.180455,
+        "values": [
+          8.375542,
+          8.457208,
+          8.008501,
+          9.180455
+        ]
+      },
+      "compaction_pause_max_ms": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.4420005,
+        "min": 0.349334,
+        "max": 0.514375,
+        "values": [
+          0.514375,
+          0.398709,
+          0.349334,
+          0.485292
+        ]
+      },
+      "heap_used_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 14250176.0,
+        "min": 14209216,
+        "max": 14426304,
+        "values": [
+          14426304,
+          14254272,
+          14246080,
+          14209216
+        ]
+      },
+      "heap_used_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 12912736.0,
+        "min": 10260576,
+        "max": 15544416,
+        "values": [
+          15544416,
+          10260576,
+          10383456,
+          15442016
+        ]
+      },
+      "heap_total_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 17350877.5,
+        "min": 17334494,
+        "max": 17703134,
+        "values": [
+          17703134,
+          17359070,
+          17342685,
+          17334494
+        ]
+      },
+      "heap_total_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 20230270.5,
+        "min": 20103295,
+        "max": 20398207,
+        "values": [
+          20308094,
+          20152447,
+          20398207,
+          20103295
+        ]
+      },
+      "native_allocated_before_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 23237792.0,
+        "min": 22834608,
+        "max": 23642992,
+        "values": [
+          23642992,
+          22842704,
+          23632880,
+          22834608
+        ]
+      },
+      "native_allocated_after_bytes": {
+        "n": 4,
+        "missing": 0,
+        "median": 23246392.0,
+        "min": 22350912,
+        "max": 24192352,
+        "values": [
+          24083824,
+          22350912,
+          22408960,
+          24192352
+        ]
+      },
+      "post_capture_pss_kib": {
+        "n": 4,
+        "missing": 0,
+        "median": 66427.0,
+        "min": 62555,
+        "max": 70223,
+        "values": [
+          70223,
+          63673,
+          62555,
+          69181
+        ]
+      },
+      "heap_counter_peak_kib": {
+        "n": 4,
+        "missing": 0,
+        "median": 20464.0,
+        "min": 20408.0,
+        "max": 29336.0,
+        "values": [
+          20456.0,
+          20408.0,
+          20472.0,
+          29336.0
+        ]
+      },
+      "requested_revisions": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          483,
+          490
+        ]
+      },
+      "applied_revisions": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          483,
+          490
+        ]
+      },
+      "presented_in_applied_frame": {
+        "n": 4,
+        "missing": 0,
+        "median": 486.5,
+        "min": 483,
+        "max": 490,
+        "values": [
+          490,
+          483,
+          483,
+          490
+        ]
+      },
+      "gfx_deadline_misses": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 1,
+        "values": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      "gfx_deadline_eligible": {
+        "n": 4,
+        "missing": 0,
+        "median": 73.5,
+        "min": 73,
+        "max": 74,
+        "values": [
+          74,
+          73,
+          73,
+          74
+        ]
+      },
+      "timeline_missed_rows": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 1,
+        "values": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      "incomplete_ui_frames": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "incomplete_geometry": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "data_loss_flags": {
+        "n": 4,
+        "missing": 0,
+        "median": 0.0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "gestures": [
+    {
+      "name": "baseline-tumble-1",
+      "variant": "baseline",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 44.742408,
+      "up_event_to_latest_requested_cohort_present_ms": 34.742408
+    },
+    {
+      "name": "baseline-tumble-1",
+      "variant": "baseline",
+      "gesture": 2,
+      "move_event_count": 37,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.310241,
+      "up_event_to_latest_requested_cohort_present_ms": 34.310241
+    },
+    {
+      "name": "baseline-tumble-2",
+      "variant": "baseline",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 57.883871,
+      "up_event_to_latest_requested_cohort_present_ms": 50.883871
+    },
+    {
+      "name": "baseline-tumble-2",
+      "variant": "baseline",
+      "gesture": 2,
+      "move_event_count": 37,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 44.361371,
+      "up_event_to_latest_requested_cohort_present_ms": 33.361371
+    },
+    {
+      "name": "baseline-tumble-3",
+      "variant": "baseline",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.086169,
+      "up_event_to_latest_requested_cohort_present_ms": 34.086169
+    },
+    {
+      "name": "baseline-tumble-3",
+      "variant": "baseline",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 238,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.731044,
+      "up_event_to_latest_requested_cohort_present_ms": 32.731044
+    },
+    {
+      "name": "baseline-tumble-4",
+      "variant": "baseline",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.58784,
+      "up_event_to_latest_requested_cohort_present_ms": 33.58784
+    },
+    {
+      "name": "baseline-tumble-4",
+      "variant": "baseline",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 238,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.110007,
+      "up_event_to_latest_requested_cohort_present_ms": 33.110007
+    },
+    {
+      "name": "checkpoint-tumble-1",
+      "variant": "checkpoint",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.949889,
+      "up_event_to_latest_requested_cohort_present_ms": 33.949889
+    },
+    {
+      "name": "checkpoint-tumble-1",
+      "variant": "checkpoint",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.166097,
+      "up_event_to_latest_requested_cohort_present_ms": 34.166097
+    },
+    {
+      "name": "checkpoint-tumble-2",
+      "variant": "checkpoint",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 238,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 41.998476,
+      "up_event_to_latest_requested_cohort_present_ms": 32.998476
+    },
+    {
+      "name": "checkpoint-tumble-2",
+      "variant": "checkpoint",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.987143,
+      "up_event_to_latest_requested_cohort_present_ms": 33.987143
+    },
+    {
+      "name": "checkpoint-tumble-3",
+      "variant": "checkpoint",
+      "gesture": 1,
+      "move_event_count": 37,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.73203,
+      "up_event_to_latest_requested_cohort_present_ms": 34.73203
+    },
+    {
+      "name": "checkpoint-tumble-3",
+      "variant": "checkpoint",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.306614,
+      "up_event_to_latest_requested_cohort_present_ms": 34.306614
+    },
+    {
+      "name": "checkpoint-tumble-4",
+      "variant": "checkpoint",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.443201,
+      "up_event_to_latest_requested_cohort_present_ms": 34.443201
+    },
+    {
+      "name": "checkpoint-tumble-4",
+      "variant": "checkpoint",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 238,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.676077,
+      "up_event_to_latest_requested_cohort_present_ms": 34.676077
+    },
+    {
+      "name": "performance-tumble-1",
+      "variant": "performance",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.097327,
+      "up_event_to_latest_requested_cohort_present_ms": 34.097327
+    },
+    {
+      "name": "performance-tumble-1",
+      "variant": "performance",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.871579,
+      "up_event_to_latest_requested_cohort_present_ms": 33.871579
+    },
+    {
+      "name": "performance-tumble-2",
+      "variant": "performance",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 238,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.157415,
+      "up_event_to_latest_requested_cohort_present_ms": 34.157415
+    },
+    {
+      "name": "performance-tumble-2",
+      "variant": "performance",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.765416,
+      "up_event_to_latest_requested_cohort_present_ms": 32.765416
+    },
+    {
+      "name": "performance-tumble-3",
+      "variant": "performance",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.403475,
+      "up_event_to_latest_requested_cohort_present_ms": 34.403475
+    },
+    {
+      "name": "performance-tumble-3",
+      "variant": "performance",
+      "gesture": 2,
+      "move_event_count": 36,
+      "upload_count": 238,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 43.222767,
+      "up_event_to_latest_requested_cohort_present_ms": 35.222767
+    },
+    {
+      "name": "performance-tumble-4",
+      "variant": "performance",
+      "gesture": 1,
+      "move_event_count": 36,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 42.319271,
+      "up_event_to_latest_requested_cohort_present_ms": 33.319271
+    },
+    {
+      "name": "performance-tumble-4",
+      "variant": "performance",
+      "gesture": 2,
+      "move_event_count": 37,
+      "upload_count": 245,
+      "latest_requested_surface_count": 7,
+      "latest_requested_all_applied": true,
+      "latest_requested_all_presented": true,
+      "last_move_event_to_latest_requested_cohort_present_ms": 58.124979,
+      "up_event_to_latest_requested_cohort_present_ms": 50.124979
+    }
+  ],
+  "separate_diagnostic_runs": [
+    {
+      "name": "baseline-idle-1",
+      "variant": "baseline",
+      "before": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 27797,
+        "uptimeMs": 174152731,
+        "processStartUptimeMs": 174100440,
+        "processCpuTimeMs": 5753,
+        "captureStartElapsedRealtimeNs": 174152731615749,
+        "captureEndElapsedRealtimeNs": 174152731642958,
+        "heapTotalBytes": 27418845,
+        "heapFreeBytes": 6762525,
+        "heapUsedBytes": 20656320,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 22936832,
+        "nativeSizeBytes": 31035392,
+        "nativeFreeBytes": 3757456,
+        "allocationCountingRequested": false,
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "3",
+          "art.gc.gc-time": "655",
+          "art.gc.bytes-allocated": "1414048288",
+          "art.gc.bytes-freed": "1393391968",
+          "art.gc.gc-count-rate-histogram": "0:2,24:3",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:3,1:2",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "73",
+          "art.gc.blocking-gc-time": "28"
+        }
+      },
+      "after": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 27797,
+        "uptimeMs": 174155974,
+        "processStartUptimeMs": 174100440,
+        "processCpuTimeMs": 5754,
+        "captureStartElapsedRealtimeNs": 174155974854876,
+        "captureEndElapsedRealtimeNs": 174155974885876,
+        "heapTotalBytes": 27418845,
+        "heapFreeBytes": 6741997,
+        "heapUsedBytes": 20676848,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 22937264,
+        "nativeSizeBytes": 31035392,
+        "nativeFreeBytes": 3757024,
+        "allocationCountingRequested": false,
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "3",
+          "art.gc.gc-time": "655",
+          "art.gc.bytes-allocated": "1414068816",
+          "art.gc.bytes-freed": "1393391968",
+          "art.gc.gc-count-rate-histogram": "0:2,24:3",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:3,1:2",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "73",
+          "art.gc.blocking-gc-time": "28"
+        }
+      },
+      "runtime_deltas": {
+        "art.gc.bytes-freed": 0,
+        "art.gc.gc-time": 0,
+        "art.gc.blocking-gc-time": 0,
+        "art.gc.blocking-gc-count": 0,
+        "art.gc.bytes-allocated": 20528,
+        "art.gc.gc-count": 0
+      },
+      "elapsed_ms": 3243,
+      "process_cpu_delta_ms": 1,
+      "allocation_counting_enabled": false,
+      "legacy_deltas": {
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0
+      },
+      "snapshot_sha256": {
+        "before": "e63d33eeacbdeb5be9f92fefdbf52bfe79ed82be35e29d8ae838fe01fd500eb1",
+        "after": "e251bdac9d732c50020c3192284d91bdf0fc2452e58e4c32137a522c9ec39765"
+      }
+    },
+    {
+      "name": "baseline-count-1",
+      "variant": "baseline",
+      "before": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 27797,
+        "uptimeMs": 174162109,
+        "processStartUptimeMs": 174100440,
+        "processCpuTimeMs": 5925,
+        "captureStartElapsedRealtimeNs": 174162109769629,
+        "captureEndElapsedRealtimeNs": 174162109784587,
+        "heapTotalBytes": 27394269,
+        "heapFreeBytes": 13266925,
+        "heapUsedBytes": 14127344,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 20965152,
+        "nativeSizeBytes": 29749248,
+        "nativeFreeBytes": 4508528,
+        "allocationCountingRequested": true,
+        "legacyGlobalAllocCount": 173,
+        "legacyGlobalAllocBytes": 38672,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "4",
+          "art.gc.gc-time": "664",
+          "art.gc.bytes-allocated": "1414572848",
+          "art.gc.bytes-freed": "1400445504",
+          "art.gc.gc-count-rate-histogram": "0:2,1:1,24:3",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:3,1:3",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "74",
+          "art.gc.blocking-gc-time": "37"
+        }
+      },
+      "after": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 27797,
+        "uptimeMs": 174164873,
+        "processStartUptimeMs": 174100440,
+        "processCpuTimeMs": 7499,
+        "captureStartElapsedRealtimeNs": 174164873221255,
+        "captureEndElapsedRealtimeNs": 174164873261797,
+        "heapTotalBytes": 27582590,
+        "heapFreeBytes": 13606942,
+        "heapUsedBytes": 13975648,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 22448544,
+        "nativeSizeBytes": 30810112,
+        "nativeFreeBytes": 4036848,
+        "allocationCountingRequested": true,
+        "legacyGlobalAllocCount": 890644,
+        "legacyGlobalAllocBytes": 444508688,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "4",
+          "art.gc.gc-time": "876",
+          "art.gc.bytes-allocated": "1866709840",
+          "art.gc.bytes-freed": "1852734192",
+          "art.gc.gc-count-rate-histogram": "0:2,1:1,24:3",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:3,1:3",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "97",
+          "art.gc.blocking-gc-time": "37"
+        }
+      },
+      "runtime_deltas": {
+        "art.gc.bytes-freed": 452288688,
+        "art.gc.gc-time": 212,
+        "art.gc.blocking-gc-time": 0,
+        "art.gc.blocking-gc-count": 0,
+        "art.gc.bytes-allocated": 452136992,
+        "art.gc.gc-count": 23
+      },
+      "elapsed_ms": 2764,
+      "process_cpu_delta_ms": 1574,
+      "allocation_counting_enabled": true,
+      "legacy_deltas": {
+        "legacyGlobalAllocCount": 890471,
+        "legacyGlobalAllocBytes": 444470016,
+        "legacyGlobalGcInvocationCount": 0
+      },
+      "snapshot_sha256": {
+        "before": "4e71fad9da304d6e496f06ab24604f82c35d3a0294d56251ddb5a7740d199daa",
+        "after": "34c89cd358485efdb308f7fb01783f5e4cd485b0b50c9683c99c9022296b0874"
+      }
+    },
+    {
+      "name": "checkpoint-idle-1",
+      "variant": "checkpoint",
+      "before": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 28381,
+        "uptimeMs": 174199791,
+        "processStartUptimeMs": 174171719,
+        "processCpuTimeMs": 5539,
+        "captureStartElapsedRealtimeNs": 174199791010813,
+        "captureEndElapsedRealtimeNs": 174199791038355,
+        "heapTotalBytes": 17670367,
+        "heapFreeBytes": 3190815,
+        "heapUsedBytes": 14479552,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 22831360,
+        "nativeSizeBytes": 36802560,
+        "nativeFreeBytes": 10342336,
+        "allocationCountingRequested": false,
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "3",
+          "art.gc.gc-time": "804",
+          "art.gc.bytes-allocated": "1147423248",
+          "art.gc.bytes-freed": "1132943696",
+          "art.gc.gc-count-rate-histogram": "28:1,37:1",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:1,2:1",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "101",
+          "art.gc.blocking-gc-time": "24"
+        }
+      },
+      "after": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 28381,
+        "uptimeMs": 174203051,
+        "processStartUptimeMs": 174171719,
+        "processCpuTimeMs": 5540,
+        "captureStartElapsedRealtimeNs": 174203051339232,
+        "captureEndElapsedRealtimeNs": 174203051392690,
+        "heapTotalBytes": 17670367,
+        "heapFreeBytes": 3170287,
+        "heapUsedBytes": 14500080,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 22831792,
+        "nativeSizeBytes": 36802560,
+        "nativeFreeBytes": 10341904,
+        "allocationCountingRequested": false,
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "3",
+          "art.gc.gc-time": "804",
+          "art.gc.bytes-allocated": "1147443776",
+          "art.gc.bytes-freed": "1132943696",
+          "art.gc.gc-count-rate-histogram": "28:1,37:1",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:1,2:1",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "101",
+          "art.gc.blocking-gc-time": "24"
+        }
+      },
+      "runtime_deltas": {
+        "art.gc.bytes-freed": 0,
+        "art.gc.gc-time": 0,
+        "art.gc.blocking-gc-time": 0,
+        "art.gc.blocking-gc-count": 0,
+        "art.gc.bytes-allocated": 20528,
+        "art.gc.gc-count": 0
+      },
+      "elapsed_ms": 3260,
+      "process_cpu_delta_ms": 1,
+      "allocation_counting_enabled": false,
+      "legacy_deltas": {
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0
+      },
+      "snapshot_sha256": {
+        "before": "90f11cc32a41b7d2450e3d752476ab68196cc6771ca99a4425aada7bcb63d952",
+        "after": "a244252b48970f796ebc2315ae2d935424b4e7c4dbb060c5963c62f2eec058c0"
+      }
+    },
+    {
+      "name": "checkpoint-count-1",
+      "variant": "checkpoint",
+      "before": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 28381,
+        "uptimeMs": 174209183,
+        "processStartUptimeMs": 174171719,
+        "processCpuTimeMs": 5711,
+        "captureStartElapsedRealtimeNs": 174209183201568,
+        "captureEndElapsedRealtimeNs": 174209183224193,
+        "heapTotalBytes": 17490141,
+        "heapFreeBytes": 8314861,
+        "heapUsedBytes": 9175280,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 20927552,
+        "nativeSizeBytes": 35520512,
+        "nativeFreeBytes": 11029632,
+        "allocationCountingRequested": true,
+        "legacyGlobalAllocCount": 173,
+        "legacyGlobalAllocBytes": 38696,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "4",
+          "art.gc.gc-time": "812",
+          "art.gc.bytes-allocated": "1147947808",
+          "art.gc.bytes-freed": "1138772528",
+          "art.gc.gc-count-rate-histogram": "28:1,36:1,37:1",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:1,1:1,2:1",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "102",
+          "art.gc.blocking-gc-time": "32"
+        }
+      },
+      "after": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 28381,
+        "uptimeMs": 174211952,
+        "processStartUptimeMs": 174171719,
+        "processCpuTimeMs": 7248,
+        "captureStartElapsedRealtimeNs": 174211952838653,
+        "captureEndElapsedRealtimeNs": 174211952876153,
+        "heapTotalBytes": 20603006,
+        "heapFreeBytes": 10084382,
+        "heapUsedBytes": 10518624,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 22345936,
+        "nativeSizeBytes": 36577280,
+        "nativeFreeBytes": 10625984,
+        "allocationCountingRequested": true,
+        "legacyGlobalAllocCount": 910328,
+        "legacyGlobalAllocBytes": 362917864,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "4",
+          "art.gc.gc-time": "1084",
+          "art.gc.bytes-allocated": "1522092864",
+          "art.gc.bytes-freed": "1511574240",
+          "art.gc.gc-count-rate-histogram": "16:1,28:1,36:1,37:1",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:1,1:2,2:1",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "137",
+          "art.gc.blocking-gc-time": "32"
+        }
+      },
+      "runtime_deltas": {
+        "art.gc.bytes-freed": 372801712,
+        "art.gc.gc-time": 272,
+        "art.gc.blocking-gc-time": 0,
+        "art.gc.blocking-gc-count": 0,
+        "art.gc.bytes-allocated": 374145056,
+        "art.gc.gc-count": 35
+      },
+      "elapsed_ms": 2769,
+      "process_cpu_delta_ms": 1537,
+      "allocation_counting_enabled": true,
+      "legacy_deltas": {
+        "legacyGlobalAllocCount": 910155,
+        "legacyGlobalAllocBytes": 362879168,
+        "legacyGlobalGcInvocationCount": 0
+      },
+      "snapshot_sha256": {
+        "before": "9dfeeabdca6f91fdaaf50c98598dfce9933235c576f830b71775d2081db1cd31",
+        "after": "3b7167405d46b9e1bdd2e7e79997c373579ca34eef424e52e4c04784e9534d1a"
+      }
+    },
+    {
+      "name": "performance-idle-1",
+      "variant": "performance",
+      "before": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 28787,
+        "uptimeMs": 174246534,
+        "processStartUptimeMs": 174218465,
+        "processCpuTimeMs": 5407,
+        "captureStartElapsedRealtimeNs": 174246534238752,
+        "captureEndElapsedRealtimeNs": 174246534276377,
+        "heapTotalBytes": 17342685,
+        "heapFreeBytes": 3096605,
+        "heapUsedBytes": 14246080,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 22850672,
+        "nativeSizeBytes": 39428096,
+        "nativeFreeBytes": 12181344,
+        "allocationCountingRequested": false,
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "3",
+          "art.gc.gc-time": "785",
+          "art.gc.bytes-allocated": "1124571664",
+          "art.gc.bytes-freed": "1110325584",
+          "art.gc.gc-count-rate-histogram": "0:1,48:1,51:1",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:1,1:2",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "100",
+          "art.gc.blocking-gc-time": "23"
+        }
+      },
+      "after": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 28787,
+        "uptimeMs": 174249785,
+        "processStartUptimeMs": 174218465,
+        "processCpuTimeMs": 5408,
+        "captureStartElapsedRealtimeNs": 174249785677504,
+        "captureEndElapsedRealtimeNs": 174249785707546,
+        "heapTotalBytes": 17342685,
+        "heapFreeBytes": 3076077,
+        "heapUsedBytes": 14266608,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 22851104,
+        "nativeSizeBytes": 39428096,
+        "nativeFreeBytes": 12180912,
+        "allocationCountingRequested": false,
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "3",
+          "art.gc.gc-time": "785",
+          "art.gc.bytes-allocated": "1124592192",
+          "art.gc.bytes-freed": "1110325584",
+          "art.gc.gc-count-rate-histogram": "0:1,48:1,51:1",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:1,1:2",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "100",
+          "art.gc.blocking-gc-time": "23"
+        }
+      },
+      "runtime_deltas": {
+        "art.gc.bytes-freed": 0,
+        "art.gc.gc-time": 0,
+        "art.gc.blocking-gc-time": 0,
+        "art.gc.blocking-gc-count": 0,
+        "art.gc.bytes-allocated": 20528,
+        "art.gc.gc-count": 0
+      },
+      "elapsed_ms": 3251,
+      "process_cpu_delta_ms": 1,
+      "allocation_counting_enabled": false,
+      "legacy_deltas": {
+        "legacyGlobalAllocCount": 0,
+        "legacyGlobalAllocBytes": 0,
+        "legacyGlobalGcInvocationCount": 0
+      },
+      "snapshot_sha256": {
+        "before": "e7ea6906366bc963d775c85604af6f78298706a1953bd1b9b8cbb17ce30af6a6",
+        "after": "f8e15733fa65510b25573952a7d29ae8e49b09c581d150ea87608752633b353c"
+      }
+    },
+    {
+      "name": "performance-count-1",
+      "variant": "performance",
+      "before": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 28787,
+        "uptimeMs": 174255916,
+        "processStartUptimeMs": 174218465,
+        "processCpuTimeMs": 5578,
+        "captureStartElapsedRealtimeNs": 174255916107090,
+        "captureEndElapsedRealtimeNs": 174255916134965,
+        "heapTotalBytes": 17350879,
+        "heapFreeBytes": 8277999,
+        "heapUsedBytes": 9072880,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 20929248,
+        "nativeSizeBytes": 38137856,
+        "nativeFreeBytes": 12881392,
+        "allocationCountingRequested": true,
+        "legacyGlobalAllocCount": 173,
+        "legacyGlobalAllocBytes": 38696,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "4",
+          "art.gc.gc-time": "795",
+          "art.gc.bytes-allocated": "1125063456",
+          "art.gc.bytes-freed": "1115990576",
+          "art.gc.gc-count-rate-histogram": "0:1,1:1,48:1,51:1",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:1,1:3",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "101",
+          "art.gc.blocking-gc-time": "33"
+        }
+      },
+      "after": {
+        "schemaVersion": 1,
+        "command": "sg-runtime-stats",
+        "pid": 28787,
+        "uptimeMs": 174258647,
+        "processStartUptimeMs": 174218465,
+        "processCpuTimeMs": 7061,
+        "captureStartElapsedRealtimeNs": 174258647942008,
+        "captureEndElapsedRealtimeNs": 174258647988800,
+        "heapTotalBytes": 20103295,
+        "heapFreeBytes": 4661279,
+        "heapUsedBytes": 15442016,
+        "heapMaxBytes": 201326592,
+        "nativeAllocatedBytes": 24100400,
+        "nativeSizeBytes": 40480768,
+        "nativeFreeBytes": 11938464,
+        "allocationCountingRequested": true,
+        "legacyGlobalAllocCount": 582159,
+        "legacyGlobalAllocBytes": 352656760,
+        "legacyGlobalGcInvocationCount": 0,
+        "runtimeStats": {
+          "art.gc.blocking-gc-count": "4",
+          "art.gc.gc-time": "1059",
+          "art.gc.bytes-allocated": "1486428992",
+          "art.gc.bytes-freed": "1470986976",
+          "art.gc.gc-count-rate-histogram": "0:1,1:1,48:1,51:1",
+          "art.gc.total-time-waiting-for-gc": null,
+          "art.gc.blocking-gc-count-rate-histogram": "0:1,1:3",
+          "art.gc.pre-oome-gc-count": null,
+          "art.gc.objects-allocated": null,
+          "art.gc.gc-count": "135",
+          "art.gc.blocking-gc-time": "33"
+        }
+      },
+      "runtime_deltas": {
+        "art.gc.bytes-freed": 354996400,
+        "art.gc.gc-time": 264,
+        "art.gc.blocking-gc-time": 0,
+        "art.gc.blocking-gc-count": 0,
+        "art.gc.bytes-allocated": 361365536,
+        "art.gc.gc-count": 34
+      },
+      "elapsed_ms": 2731,
+      "process_cpu_delta_ms": 1483,
+      "allocation_counting_enabled": true,
+      "legacy_deltas": {
+        "legacyGlobalAllocCount": 581986,
+        "legacyGlobalAllocBytes": 352618064,
+        "legacyGlobalGcInvocationCount": 0
+      },
+      "snapshot_sha256": {
+        "before": "5d2e73aaa7aad689a7a200108c69dad95ed0beb367b462cfbf405b9b725e5356",
+        "after": "b7d1f9ad9356dd6bd8f07fde8163af9315683b48a93746408697ca479a2eff20"
+      }
+    }
+  ],
+  "captureProtocolNote": "Prepared documentation mentioned an additional two-second launch wait. The executed loop did not use that wait; it used am start followed by the capture helper, which resets and settles for one second. Metadata was corrected to the executed protocol; metric values are unchanged.",
+  "rawEvidence": {
+    "sourceRelativeToTask": "evidence/final-followup/android/analysis/final-followup-comparison.json",
+    "sha256": "55d9e7a05434e0405e1bf5477ee4f595fe839e78eb59645d1fa9269a40e25b9e",
+    "omitted": "Detailed timed runtime snapshots with repeated trace stage/GPU metadata are retained in the local source. Summary, per-run metrics, separate diagnostics, notes and gestures are unchanged.",
+    "omittedTimedSnapshotCount": 12
+  }
+}
