@@ -8,6 +8,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotSame
+import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -62,7 +63,7 @@ class LiveMaterialGeometryCacheTest {
     }
 
     @Test
-    fun entryAndByteLimitsBothEvictTheLeastRecentlyUsedGeometry() {
+    fun entryAndByteLimitsBothPreferRecentlyReusedGeometry() {
         val bytes = estimatedGeometryBytes(render(base))
         for (cache in listOf(
             LiveMaterialGeometryCache(maxEntries = 2),
@@ -83,6 +84,118 @@ class LiveMaterialGeometryCacheTest {
             assertNotSame(second, cached(2), "Least recently used second geometry must have been evicted")
             assertEquals(4, builds)
             assertEquals(GeometryCacheSnapshot(2, bytes * 2), cache.snapshot())
+        }
+    }
+
+    @Test
+    fun firstUseIsCachedImmediatelyAndReturningToAnEarlierRecipeHits() {
+        val firstGeometry = fixtureGeometry()
+        val secondGeometry = fixtureGeometry()
+        val bytes = estimatedGeometryBytes(firstGeometry)
+        val cache = LiveMaterialGeometryCache(maxBytes = bytes * 2, maxEntries = 2)
+        val secondKey = base.copy(tumble = 0.06)
+        assertSame(firstGeometry, cache.geometryFor(base) { firstGeometry })
+        assertEquals(GeometryCacheSnapshot(1, bytes), cache.snapshot())
+        assertSame(secondGeometry, cache.geometryFor(secondKey) { secondGeometry })
+        assertSame(firstGeometry, cache.geometryFor(base) { error("A -> B -> A must reuse the first result") })
+        assertSame(secondGeometry, cache.geometryFor(secondKey) { error("First-use admission must preserve B too") })
+        assertEquals(GeometryCacheSnapshot(2, bytes * 2), cache.snapshot())
+    }
+
+    @Test
+    fun repeatedGeometrySurvivesAScanWhileFirstUseEntriesStayBounded() {
+        val bytes = estimatedGeometryBytes(fixtureGeometry())
+        val cache = LiveMaterialGeometryCache(maxBytes = bytes * 4, maxEntries = 4)
+        val hotKeys = listOf(base.copy(seed = 1), base.copy(seed = 2))
+        val hot = hotKeys.map { key ->
+            cache.geometryFor(key) { fixtureGeometry() }.also {
+                assertSame(it, cache.getIfPresent(key), "A draw-time hit also earns protection")
+            }
+        }
+        repeat(40) { index ->
+            cache.geometryFor(base.copy(seed = 100 + index)) { fixtureGeometry() }
+            val retained = checkNotNull(cache.snapshot())
+            assertTrue(retained.retainedBytes <= bytes * 4)
+            assertTrue(retained.entries <= 4)
+        }
+        hotKeys.forEachIndexed { index, key ->
+            assertSame(hot[index], cache.getIfPresent(key), "A one-off scan must not displace proven reuse")
+        }
+        assertNull(cache.getIfPresent(base.copy(seed = 100)))
+        assertEquals(GeometryCacheSnapshot(4, bytes * 4), cache.snapshot())
+    }
+
+    @Test
+    fun protectedEntryAndByteTargetsDemoteTheLeastRecentlyUsedHit() {
+        val bytes = estimatedGeometryBytes(fixtureGeometry())
+        for (cache in listOf(
+            LiveMaterialGeometryCache(maxBytes = bytes * 8, maxEntries = 4),
+            LiveMaterialGeometryCache(maxBytes = bytes * 4, maxEntries = 32),
+        )) {
+            val values = (1..4).associateWith { seed ->
+                val key = base.copy(seed = seed)
+                cache.geometryFor(key) { fixtureGeometry() }
+            }
+            for (seed in 1..3) assertSame(values[seed], cache.getIfPresent(base.copy(seed = seed)))
+            // Refresh protected A; promoting D must demote B, not A or C.
+            assertSame(values[1], cache.getIfPresent(base.copy(seed = 1)))
+            assertSame(values[4], cache.getIfPresent(base.copy(seed = 4)))
+            val fifth = cache.geometryFor(base.copy(seed = 5)) { fixtureGeometry() }
+            assertNull(cache.getIfPresent(base.copy(seed = 2)))
+            for (seed in listOf(1, 3, 4)) assertSame(values[seed], cache.getIfPresent(base.copy(seed = seed)))
+            assertSame(fifth, cache.getIfPresent(base.copy(seed = 5)))
+            assertEquals(GeometryCacheSnapshot(4, bytes * 4), cache.snapshot())
+        }
+    }
+
+    @Test
+    fun aLargeFirstUseCanBorrowProtectedCapacityWithoutEvictingItself() {
+        val smallBytes = estimatedGeometryBytes(fixtureGeometry())
+        val cache = LiveMaterialGeometryCache(maxBytes = smallBytes * 4, maxEntries = 4)
+        for (seed in 1..3) {
+            val key = base.copy(seed = seed)
+            cache.geometryFor(key) { fixtureGeometry() }
+            if (seed < 3) assertTrue(cache.getIfPresent(key) != null)
+        }
+        val large = fixtureGeometry(samples = 100)
+        val largeBytes = estimatedGeometryBytes(large)
+        assertTrue(largeBytes > smallBytes * 3)
+        assertTrue(largeBytes <= smallBytes * 4)
+        val key = base.copy(seed = 4)
+        assertSame(large, cache.geometryFor(key) { large })
+        assertEquals(GeometryCacheSnapshot(1, largeBytes), cache.snapshot())
+        repeat(3) {
+            assertSame(large, cache.geometryFor(key) { error("The protected target must not become an admission limit") })
+        }
+        assertEquals(GeometryCacheSnapshot(1, largeBytes), cache.snapshot())
+    }
+
+    @Test
+    fun clearReleasesBothQueuesAndSingleEntryAndDisabledBudgetsRemainUsable() {
+        val bytes = estimatedGeometryBytes(fixtureGeometry())
+        val cache = LiveMaterialGeometryCache(maxBytes = bytes * 4, maxEntries = 4)
+        val first = cache.geometryFor(base) { fixtureGeometry() }
+        assertSame(first, cache.getIfPresent(base))
+        val secondKey = base.copy(seed = 43)
+        cache.geometryFor(secondKey) { fixtureGeometry() }
+        assertTrue(cache.clear())
+        assertEquals(GeometryCacheSnapshot(0, 0L), cache.snapshot())
+        assertNull(cache.getIfPresent(base))
+        assertNull(cache.getIfPresent(secondKey))
+        assertNotSame(first, cache.geometryFor(base) { fixtureGeometry() })
+
+        val single = LiveMaterialGeometryCache(maxBytes = bytes, maxEntries = 1)
+        val one = single.geometryFor(base) { fixtureGeometry() }
+        repeat(3) { assertSame(one, single.getIfPresent(base)) }
+        val replacement = single.geometryFor(secondKey) { fixtureGeometry() }
+        assertNull(single.getIfPresent(base))
+        assertSame(replacement, single.getIfPresent(secondKey))
+        assertEquals(GeometryCacheSnapshot(1, bytes), single.snapshot())
+
+        for (disabled in listOf(LiveMaterialGeometryCache(maxBytes = 0), LiveMaterialGeometryCache(maxEntries = 0))) {
+            val uncached = disabled.geometryFor(base) { fixtureGeometry() }
+            assertNotSame(uncached, disabled.geometryFor(base) { fixtureGeometry() })
+            assertEquals(GeometryCacheSnapshot(0, 0L), disabled.snapshot())
         }
     }
 
@@ -178,6 +291,14 @@ class LiveMaterialGeometryCacheTest {
 
     private fun render(key: LiveMaterialGeometryKey): LiveMaterialGeometry = makeLiveMaterialGeometry(
         key.widthDp, key.heightDp, key.shape, key.tumble, key.seed, composeMaskRasterizer, key.fieldScale,
+    )
+
+    private fun fixtureGeometry(samples: Int = 1) = LiveMaterialGeometry(
+        segments = emptyList(),
+        geometryA = NativeFloatTexture(samples, 1, ByteArray(samples * 8)),
+        geometryB = NativeFloatTexture(samples, 1, ByteArray(samples * 8)),
+        fieldScale = 1f,
+        gradientScales = floatArrayOf(1f, 1f),
     )
 
     private fun assertGeometryEquals(expected: LiveMaterialGeometry, actual: LiveMaterialGeometry) {
