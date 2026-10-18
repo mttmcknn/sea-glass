@@ -64,7 +64,7 @@ kotlin {
 
 mavenPublishing {
     coordinates(artifactId = "sea-glass")
-    publishToMavenCentral(automaticRelease = false)
+    publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 
     pom {

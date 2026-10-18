@@ -1,4 +1,4 @@
-name: Stage Maven Central release
+name: Publish to Maven Central
 
 on:
   workflow_dispatch:
@@ -16,12 +16,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: stage-maven-central
+  group: publish-maven-central
   cancel-in-progress: false
 
 jobs:
-  stage:
-    name: Verify and stage the approved release
+  publish:
+    name: Verify and publish the approved release
     runs-on: macos-26
     timeout-minutes: 60
     steps:
@@ -68,8 +68,8 @@ jobs:
           if properties.get('GROUP') != 'dev.mttmcknn':
               raise SystemExit('Publication must use the verified dev.mttmcknn namespace.')
           publishing = Path('sea-glass/build.gradle.kts').read_text()
-          if 'publishToMavenCentral(automaticRelease = false)' not in publishing:
-              raise SystemExit('The library must retain manual Central publication.')
+          if 'publishToMavenCentral(automaticRelease = true)' not in publishing:
+              raise SystemExit('The library must use the approved automatic Central publication flow.')
           print(f'Approved candidate: dev.mttmcknn:sea-glass:{version}, {tag}, {head}')
           PY
 
@@ -102,7 +102,7 @@ jobs:
       - name: Run JVM and iOS tests, check the playground, and build the demo
         run: >-
           ./gradlew :sea-glass:jvmTest :sea-glass:iosSimulatorArm64Test
-          :desktopApp:verifyPlayground
+          :desktopApp:verifyPlayground :desktopApp:verifyLongList
           :androidApp:assembleDemoRelease
           -PseaGlass.android=true -Psigning.useGpgCmd=false
           --no-configuration-cache --no-daemon
@@ -113,7 +113,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           if [ -z "$ORG_GRADLE_PROJECT_signingInMemoryKey" ]; then
-            echo 'Configure the GPG_SIGNING_KEY repository secret before staging.' >&2
+            echo 'Configure the GPG_SIGNING_KEY repository secret before publishing.' >&2
             exit 1
           fi
           ./gradlew :sea-glass:publishAllPublicationsToLocalVerificationRepository \
@@ -139,7 +139,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Stage the release in Maven Central
+      - name: Publish and release in Maven Central
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
@@ -147,21 +147,21 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           if [ -z "$ORG_GRADLE_PROJECT_mavenCentralUsername" ] || [ -z "$ORG_GRADLE_PROJECT_mavenCentralPassword" ]; then
-            echo 'Configure the OSSRH_USERNAME and OSSRH_PASSWORD Central token secrets before staging.' >&2
+            echo 'Configure the OSSRH_USERNAME and OSSRH_PASSWORD Central token secrets before publishing.' >&2
             exit 1
           fi
-          ./gradlew :sea-glass:publishToMavenCentral \
+          ./gradlew :sea-glass:publishAndReleaseToMavenCentral \
             -PseaGlass.android=true -Psigning.useGpgCmd=false \
             --no-configuration-cache --no-daemon
 
-      - name: Record the staged candidate
+      - name: Record the release submission
         env:
           RELEASE_VERSION: ${{ inputs.release_version }}
           APPROVED_SHA: ${{ inputs.approved_sha }}
         run: |
           {
-            printf 'Staged dev.mttmcknn:sea-glass:%s from %s.\n\n' "$RELEASE_VERSION" "$APPROVED_SHA"
-            printf 'Review the deployment in the Central Portal and publish it manually after approval.\n'
+            printf 'Submitted dev.mttmcknn:sea-glass:%s from %s for automatic Central publication.\n\n' "$RELEASE_VERSION" "$APPROVED_SHA"
+            printf 'Verify the Central deployment state and all five public artifact sets; upload success alone does not establish availability.\n'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload verification reports

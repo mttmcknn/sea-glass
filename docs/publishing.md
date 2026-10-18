@@ -1,6 +1,6 @@
 # Maven publishing
 
-Sea Glass is configured for Maven Central through `com.vanniktech.maven.publish` 0.37.0. Releases can be staged locally or through a manually dispatched GitHub Actions workflow, then published manually in the Central Portal. Only the `sea-glass` library module is published; pushing a tag does not upload a release.
+Sea Glass is configured for Maven Central through `com.vanniktech.maven.publish` 0.37.0. Approved releases are published by a manually dispatched GitHub Actions workflow. The workflow signs and verifies all five publications, then automatically releases them after Central validation. The same publishing task is available locally when that route is explicitly chosen. Only the `sea-glass` library module is published; pushing a tag does not upload a release.
 
 The first release candidate coordinates are `dev.mttmcknn:sea-glass:0.1.0`. `GROUP` and `VERSION_NAME` live in the root `gradle.properties`. Follow the [release process](releasing.md) for version policy and candidate approval. This setup does not establish that an artifact is available on Central. Until publication is verified, use the composite-build instructions in the [README](../README.md#install).
 
@@ -26,13 +26,13 @@ The five expected artifacts share the same group and version:
 
 Inspect the generated POM and Gradle module metadata for each artifact. Confirm that the platform files, source JARs, and Javadoc JARs are present. The plugin currently supplies placeholder Javadoc JARs; API documentation is in this repository. A successful local upload alone verifies packaging, not Central namespace ownership, signatures, or portal acceptance. Signing is optional for snapshots when no key is configured; non-snapshot builds require a signing key even for local verification. Use the publication verifier to check signatures explicitly.
 
-Run `:androidApp:assembleDemoRelease` and `:desktopApp:verifyPlayground` for the sample checks before choosing a release candidate. iOS compilation does not verify rendering on a device. Physical-device performance and older-Android fallback coverage remain separate checks.
+Run `:androidApp:assembleDemoRelease`, `:desktopApp:verifyPlayground`, and `:desktopApp:verifyLongList` for the sample checks before choosing a release candidate. iOS compilation does not verify rendering on a device. Physical-device performance and older-Android fallback coverage remain separate checks.
 
 ## Verify changes in GitHub Actions
 
 The [verification workflow](../.github/workflows/ci.yml) runs on pushes and pull requests to `main`, and manual dispatch. On macOS with JDK 17, Xcode, and Android SDK 36, it runs the JVM and iOS simulator tests and playground checks, builds the Android demo, and builds all five local Maven publications. It checks their coordinates, metadata, archive contents, and checksums and uploads verification reports. The iOS simulator tests exercise common library logic; they do not establish iOS rendering or physical-device coverage.
 
-CI uses `-PVERSION_NAME=0.0.0-SNAPSHOT` only for its local publication check. This lets pull requests, including forks, verify packaging without signing secrets even when the committed version is a release. It does not change the version in source or upload artifacts to Maven Central. Signature verification belongs to the release staging workflow.
+CI uses `-PVERSION_NAME=0.0.0-SNAPSHOT` only for its local publication check. This lets pull requests, including forks, verify packaging without signing secrets even when the committed version is a release. It does not change the version in source or upload artifacts to Maven Central. Signature verification belongs to the release publishing workflow.
 
 ## Set up Central access
 
@@ -75,7 +75,7 @@ Never commit tokens or private signing keys. See the [plugin's Central setup](ht
 
 ## Configure GitHub release credentials
 
-The [release staging workflow](../.github/workflows/publish.yml) uses in-memory signing on its hosted runner. Configure these Actions secrets in the `mttmcknn/sea-glass` repository:
+The [release publishing workflow](../.github/workflows/publish.yml) uses in-memory signing on its hosted runner. Configure these Actions secrets in the `mttmcknn/sea-glass` repository:
 
 | Repository secret | Value |
 | --- | --- |
@@ -96,23 +96,23 @@ Publication requires approval of the visible candidate details: version and tag,
 
 ## Publish an approved candidate
 
-After the candidate is approved and credentials are available, choose local staging or the GitHub workflow. For local staging, run from the prepared commit with all targets enabled:
+After the candidate and final public release are approved and credentials are available, use the GitHub workflow. Check Central for any existing deployment and public version before uploading; resume an existing deployment instead of duplicating an uncertain upload. If local publication is explicitly chosen instead, run from the prepared commit with all targets enabled:
 
 ```sh
-./gradlew :sea-glass:publishToMavenCentral
+./gradlew :sea-glass:publishAndReleaseToMavenCentral
 ```
 
 Add `-Psigning.useGpgCmd=true` when using the local GPG-agent setup above.
 
-For GitHub staging, the workflow must first exist on the repository's default branch. Create and push the approved `vX.Y.Z` tag pointing to the approved commit, then dispatch **Stage Maven Central release** against that tag. Supply the matching `release_version` and full 40-character `approved_sha`. For example, replace the placeholders in:
+For GitHub publication, the workflow must first exist on the repository's default branch. Create and push the approved `vX.Y.Z` tag pointing to the approved commit, then dispatch **Publish to Maven Central** against that tag. Supply the matching `release_version` and full 40-character `approved_sha`. For example, replace the placeholders in:
 
 ```sh
 gh workflow run publish.yml --repo mttmcknn/sea-glass --ref "vX.Y.Z" \
   -f "release_version=X.Y.Z" -f "approved_sha=FULL_APPROVED_COMMIT_SHA"
 ```
 
-The workflow rejects branch dispatches, snapshots, mismatched tags or commits, version mismatches, and groups outside the verified `dev.mttmcknn` namespace. It reruns the JVM and iOS simulator tests, playground checks, and Android demo build, then builds and verifies all five signed publications before staging them. There is no test-bypass input. The signed local publication set and verification reports are retained as workflow artifacts for 14 days.
+The workflow rejects branch dispatches, snapshots, mismatched tags or commits, version mismatches, and groups outside the verified `dev.mttmcknn` namespace. It reruns the JVM and iOS simulator tests, playground and long-list checks, and Android demo build, then builds and verifies all five signed publications before publishing them. There is no test-bypass input. The signed local publication set and verification reports are retained as workflow artifacts for 14 days.
 
-For a non-snapshot release, `automaticRelease = false` leaves the uploaded deployment for manual publication in the Central Portal. Review its validation result, then publish it there. For a `-SNAPSHOT` version, this same task makes the snapshot available immediately; it is not a dry run. `publishAndReleaseToMavenCentral` also releases automatically and is outside the manual workflow described here.
+The library uses `automaticRelease = true`, and the workflow calls `publishAndReleaseToMavenCentral`. A non-snapshot deployment proceeds from validation to final publication without a browser session or a separate Portal click. Both `publishToMavenCentral` under this configuration and `publishAndReleaseToMavenCentral` can make artifacts public; neither is a dry run. Snapshot uploads also become available immediately. The release workflow rejects snapshot versions.
 
 Verify all five published artifacts and their platform metadata at the destination. Keep the release tag pointing to the approved commit and advance to the agreed next development version. Do not treat a successful upload as proof that consumers can resolve every variant.
