@@ -1,5 +1,7 @@
 # Sea Glass
 
+[![Featured in Android Weekly #749](https://androidweekly.net/issues/issue-749/badge)](https://androidweekly.net/issues/issue-749)
+
 Frosted, softly tumbled glass for Jetpack Compose and Compose Multiplatform. The library ports the approved [web playground](https://sea-glass-playground.mttmcknn.chatgpt.site): seeded outlines, microscopic frost, a curved colored interior, a luminous lower edge, and soft transmitted light beneath each piece.
 
 <p align="center">
