@@ -49,7 +49,7 @@ fun main(args: Array<String>) = runBlocking {
     val checkpoints = mutableListOf<String>()
     val comparisonFailures = mutableListOf<String>()
     val scene = ImageComposeScene(LongListWidth, LongListHeight, Density(1f), coroutineContext) {
-        SeaGlassPlayground(initialScene = "long-list")
+        SeaGlassPlayground(initialScene = "long-list", enableScrollDiagnostics = true)
     }
     try {
         LongListPixels().use { pixels ->
@@ -77,10 +77,14 @@ fun main(args: Array<String>) = runBlocking {
             scene.assertListButton("long-list-save-0", "Save ", "Not saved").longListClick()
             scene.longListPump()
             scene.assertListButton("long-list-save-0", "Unsave ", "Saved")
+            scene.verifyRowDialog("long-list-open-0", 1)
+            // Navigate to controls rather than assuming how many variable-height
+            // cards fit below the introduction at this viewport and font scale.
+            scene.jumpToListItem(2)
             scene.assertListButton("long-list-play-1", "Play ", "Paused").longListClick()
             scene.longListPump()
             scene.assertListButton("long-list-play-1", "Pause ", "Playing")
-            scene.verifyRowDialog("long-list-open-0", 1)
+            scene.jumpToListItem(3)
             scene.verifyRowDialog("long-list-action-2-0", 3)
             println("PASS: Note, listening and action rows expose working controls and accessible state.")
 
@@ -269,7 +273,9 @@ private fun ImageComposeScene.assertListButton(tag: String, descriptionPrefix: S
 @OptIn(ExperimentalComposeUiApi::class)
 private fun ImageComposeScene.assertLazyRows(): LongListSnapshot {
     val snapshot = SeaGlassLongListDiagnostics.snapshot
-    check(snapshot.active && snapshot.datasetId == LongListDataset)
+    check(snapshot.active && snapshot.datasetId == LongListDataset) {
+        "Expected active $LongListDataset diagnostics; ensure enableScrollDiagnostics is true (got $snapshot)"
+    }
     check(snapshot.visibleKeys.isNotEmpty() && snapshot.visibleKeys.distinct().size == snapshot.visibleKeys.size)
     val rows = mountedRows()
     // At this fixed viewport, 24 leaves ample room for prefetch and partially
