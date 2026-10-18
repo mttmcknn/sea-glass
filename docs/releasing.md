@@ -1,6 +1,6 @@
 # Release process
 
-Sea Glass uses [Semantic Versioning](https://semver.org/) so consumers can judge the compatibility of a library update. The planned first release is **0.1.0**, with tag **v0.1.0**. After its artifacts are verified on Maven Central, development moves to **0.2.0-SNAPSHOT**.
+Sea Glass uses [Semantic Versioning](https://semver.org/) so consumers can judge the compatibility of a library update. The first public release is **0.1.0**, with tag **v0.1.0**. Its five platform publications have been verified on Maven Central, and development now uses **0.2.0-SNAPSHOT**.
 
 ## Choose a version
 

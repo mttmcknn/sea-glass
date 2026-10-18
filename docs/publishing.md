@@ -2,7 +2,7 @@
 
 Sea Glass is configured for Maven Central through `com.vanniktech.maven.publish` 0.37.0. Approved releases are published by a manually dispatched GitHub Actions workflow. The workflow signs and verifies all five publications, then automatically releases them after Central validation. The same publishing task is available locally when that route is explicitly chosen. Only the `sea-glass` library module is published; pushing a tag does not upload a release.
 
-The first release candidate coordinates are `dev.mttmcknn:sea-glass:0.1.0`. `GROUP` and `VERSION_NAME` live in the root `gradle.properties`. Follow the [release process](releasing.md) for version policy and candidate approval. This setup does not establish that an artifact is available on Central. Until publication is verified, use the composite-build instructions in the [README](../README.md#install).
+The first public release is `dev.mttmcknn:sea-glass:0.1.0`, with all five platform publications verified on Maven Central. Tag `v0.1.0` identifies release commit `18b632bf89c88be72b4e77d22787e0e9a9f0f74f`; [the release workflow](https://github.com/mttmcknn/sea-glass/actions/runs/39175629959) contains its build and signing evidence. Development now uses `0.2.0-SNAPSHOT`. `GROUP` and `VERSION_NAME` live in the root `gradle.properties`. Follow the [release process](releasing.md) for version policy and candidate approval, and the [README](../README.md#install) to install the published library.
 
 ## Check the artifacts locally
 

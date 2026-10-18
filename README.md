@@ -10,16 +10,7 @@ Frosted color, softly tumbled edges, and a little seaside whimsy for Jetpack Com
 
 ## Install
 
-The current release candidate is [0.1.0](docs/releases/0.1.0.md); Maven Central availability has not been verified. In an existing Compose app, use a local Sea Glass checkout as a composite build:
-
-```kotlin
-// Your app's settings.gradle.kts; adjust the path to your checkout.
-includeBuild("../sea-glass") {
-    dependencySubstitution {
-        substitute(module("dev.mttmcknn:sea-glass")).using(project(":sea-glass"))
-    }
-}
-```
+[Sea Glass 0.1.0](https://central.sonatype.com/artifact/dev.mttmcknn/sea-glass/0.1.0) is available on Maven Central. Add `mavenCentral()` to your repositories, then add the dependency in an existing Compose app:
 
 ```kotlin
 // Android dependencies, or commonMain.dependencies in a KMP app.
