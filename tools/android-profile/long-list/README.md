@@ -58,6 +58,16 @@ python3 tools/android-profile/long-list/analyze.py /absolute/evidence/blocks/LAB
 
 The analyzer scopes traces to verified PIDs, checks gesture counts, actual list movement, scene/density/configuration identity and trace health, and retains frame, CPU, allocation/GC and memory metrics. Inspect every flag and endpoint comparison before aggregation. Equal input gestures do not guarantee identical offsets or exposed rows. Keep process CPU and scheduled CPU separate. Do not treat shader compilation as GPU execution or sum nested stages as total CPU.
 
+For additional RenderThread attribution after validating the captures:
+
+```sh
+python3 tools/android-profile/long-list/render-cost.py /absolute/evidence/blocks/LABEL1 /absolute/evidence/blocks/LABEL2 \
+  --trace-processor /absolute/trace_processor_shell \
+  --output /absolute/evidence/render-attribution
+```
+
+This offline helper intersects slices with scheduled-running intervals, subtracts direct child work for exclusive CPU, and saves queries, raw CSV, category totals and matched-frame details. It checks incomplete slices, scheduler overlap and negative partitions. Inspect its flags and the full analyzer's results. Use `--phases down` for one phase; the default is down plus revisit. GPU execution and blur/shadow cost cannot be isolated from these generic CPU labels. See the [render-cost report](../../../docs/performance/render-cost-investigation.md) and [rejected experiment patches](render-cost-experiments/README.md) for the measured limits of upload changes.
+
 `visual-checkpoints.sh` makes separate top/down/revisit captures outside timing. For pixel comparisons, use the same exact list item and offset, wait for ripples/animations to finish, and exclude only identified system UI such as the clock. Keep original image/video bytes. Screen-recorded frame rates are not unrecorded benchmark results.
 
 Desktop checks and exact PNG comparison:

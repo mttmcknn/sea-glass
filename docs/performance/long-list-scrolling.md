@@ -67,3 +67,5 @@ The local evidence directory is `../evidence/scroll-followup/` relative to this 
 The reproducible capture/analyzer helpers and matched temporary patches are in [`tools/android-profile/long-list`](../../tools/android-profile/long-list/README.md). The temporary profiling patches are absent from production source. The candidate patch was checked to reconstruct every measured source file exactly.
 
 The remaining substantial work is render-thread/GPU investigation on representative physical Android hardware. This change's supported benefit is less geometry work and allocation at the same visual output and cache budget.
+
+The subsequent [render-cost investigation](render-cost-investigation.md) separates repeated RenderThread uploads from UI-side input creation and records two rejected remedies. It adds no further production optimization.
