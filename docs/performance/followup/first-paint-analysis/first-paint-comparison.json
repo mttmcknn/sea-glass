@@ -1,0 +1,1012 @@
+{
+  "schemaVersion": 1,
+  "before": "baseline",
+  "after": "performance",
+  "inputs": [
+    {
+      "variant": "baseline",
+      "path": "evidence/final-followup/baseline/first-paint.log",
+      "sha256": "d4d98eedabaa0cc44a47689c58fc3033d874ce53709fd8f41609e65742cfdf07",
+      "buildSuccessful": true
+    },
+    {
+      "variant": "performance",
+      "path": "evidence/final-followup/performance/first-paint.log",
+      "sha256": "48eda71f6b6419f1161e2c219b410736b0bd2fab8e0f6e8b0cff5f1e7797aadd",
+      "buildSuccessful": true
+    }
+  ],
+  "references": [
+    {
+      "path": "evidence/references/capsule-0.rgba",
+      "bytes": 2080000,
+      "sha256": "6fab4deb1fc54c15b5c7c292bfa35685413f6593512ca89d6828c1a058cafeb6"
+    },
+    {
+      "path": "evidence/references/capsule-1.rgba",
+      "bytes": 2080000,
+      "sha256": "bcd9cb919a6014558774283cafd64a40d9825ac40909ccc76cf0652389636fe8"
+    },
+    {
+      "path": "evidence/references/capsule-2.rgba",
+      "bytes": 2080000,
+      "sha256": "2829d41a77399800f0f9f568ed7695cd401e886717d85a3e42adb44191c069fa"
+    },
+    {
+      "path": "evidence/references/chat-0.rgba",
+      "bytes": 2080000,
+      "sha256": "4e73484334568d64ace93a0a14afbe6934127d5629a0e873b270f697d0436e47"
+    },
+    {
+      "path": "evidence/references/chat-1.rgba",
+      "bytes": 2080000,
+      "sha256": "0698f68c640abc63be673044a938b750227f14cf2ddaaf1f7ae2df63d3e2d257"
+    },
+    {
+      "path": "evidence/references/chat-2.rgba",
+      "bytes": 2080000,
+      "sha256": "2ca586e5e7ef3931a17a685e12878ac2a483c8275eb03809109f096e00175afe"
+    },
+    {
+      "path": "evidence/references/disc-0.rgba",
+      "bytes": 2080000,
+      "sha256": "9b6ec44d40103776ae854a3d75c041b80a2f8a4a4babd714675024b18007ff12"
+    },
+    {
+      "path": "evidence/references/disc-1.rgba",
+      "bytes": 2080000,
+      "sha256": "6a5be05a964e773ced11711057c97318c12633c1de2de5bc30b31f13abf39018"
+    },
+    {
+      "path": "evidence/references/disc-2.rgba",
+      "bytes": 2080000,
+      "sha256": "5c570814eade48915c2a877b99ed183de707bf5b2039d3628c8bfc278a997ad3"
+    },
+    {
+      "path": "evidence/references/email-0.rgba",
+      "bytes": 2080000,
+      "sha256": "500dee20bb05c91df60dcb1b207ad3ffe109652303ec37063ad23da9aa169541"
+    },
+    {
+      "path": "evidence/references/email-1.rgba",
+      "bytes": 2080000,
+      "sha256": "9a13205181b71974cf78ebd4ec92b965a66ded7ffc82a61a1b67a06236d32886"
+    },
+    {
+      "path": "evidence/references/email-2.rgba",
+      "bytes": 2080000,
+      "sha256": "91d84dae7e145c377e28439313416605f0379bdbf8b465c85842bd46c7c52983"
+    },
+    {
+      "path": "evidence/references/music-0.rgba",
+      "bytes": 2080000,
+      "sha256": "8a874100625602f35948d707bb5487d202f2bffa9f503ca9b0d13a3249ed2b5b"
+    },
+    {
+      "path": "evidence/references/music-1.rgba",
+      "bytes": 2080000,
+      "sha256": "b74ba59350c592021c24104e9ebba00d09a335d2edcb110abdb5bc7f8b039c0c"
+    },
+    {
+      "path": "evidence/references/music-2.rgba",
+      "bytes": 2080000,
+      "sha256": "4a217602e52ade3fca3b1eb85b196f0e9d0f89d35af4129119b4ef3effead1d2"
+    },
+    {
+      "path": "evidence/references/phone-0.rgba",
+      "bytes": 2080000,
+      "sha256": "efba08645456a57f1e5ab1f3baa9ce6862f2b0caba01ea5dba6b79cd2a06c79b"
+    },
+    {
+      "path": "evidence/references/phone-1.rgba",
+      "bytes": 2080000,
+      "sha256": "a41d498e6bd9a60700e2e3cfad69a74814b66232a872894299b2c4ad0243e4e2"
+    },
+    {
+      "path": "evidence/references/phone-2.rgba",
+      "bytes": 2080000,
+      "sha256": "796f2fdbaf626a5eb311e9eb32798a354a6f5a6278148ca5dacb91722b54df30"
+    },
+    {
+      "path": "evidence/references/toolbar-0.rgba",
+      "bytes": 2080000,
+      "sha256": "578f1e8f0f2ebe712619fd49184654441bdc33e0099f74f502c681f22a6158cc"
+    },
+    {
+      "path": "evidence/references/toolbar-1.rgba",
+      "bytes": 2080000,
+      "sha256": "8fa1639dd5512f339847df20c593e3bd985c55502bedf0c02ecf5b1751331ddf"
+    },
+    {
+      "path": "evidence/references/toolbar-2.rgba",
+      "bytes": 2080000,
+      "sha256": "1493a2d98cd6c405b149f4d441ad986fe8a6ec4f2efe06eec2adcb39892ad2d3"
+    }
+  ],
+  "priorReferenceManifest": "evidence/jvm-analysis/comparison.json",
+  "totals": {
+    "baseline": {
+      "samples": 42,
+      "immediateExact": 25,
+      "finalExactByHarnessContract": 42,
+      "byCache": {
+        "cold": {
+          "samples": 21,
+          "medianFinalFrameMs": 48.143,
+          "immediateExact": 12
+        },
+        "revisit": {
+          "samples": 21,
+          "medianFinalFrameMs": 42.891,
+          "immediateExact": 13
+        }
+      }
+    },
+    "performance": {
+      "samples": 42,
+      "immediateExact": 30,
+      "finalExactByHarnessContract": 42,
+      "byCache": {
+        "cold": {
+          "samples": 21,
+          "medianFinalFrameMs": 46.765,
+          "immediateExact": 12
+        },
+        "revisit": {
+          "samples": 21,
+          "medianFinalFrameMs": 41.369,
+          "immediateExact": 18
+        }
+      }
+    }
+  },
+  "cases": [
+    {
+      "fixture": "capsule",
+      "cache": "cold",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 36.921,
+          "p95NearestRank": 39.759,
+          "min": 3.171,
+          "max": 39.759,
+          "values": [
+            3.171,
+            36.921,
+            39.759
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 39.881,
+          "p95NearestRank": 82.784,
+          "min": 37.052,
+          "max": 82.784,
+          "values": [
+            37.052,
+            39.881,
+            82.784
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 2.266,
+          "p95NearestRank": 42.498,
+          "min": 1.929,
+          "max": 42.498,
+          "values": [
+            1.929,
+            2.266,
+            42.498
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 46.092,
+          "p95NearestRank": 71.962,
+          "min": 43.974,
+          "max": 71.962,
+          "values": [
+            43.974,
+            46.092,
+            71.962
+          ]
+        },
+        "immediateExact": 1,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "capsule",
+      "cache": "revisit",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 26.731,
+          "p95NearestRank": 35.529,
+          "min": 20.416,
+          "max": 35.529,
+          "values": [
+            20.416,
+            26.731,
+            35.529
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 26.831,
+          "p95NearestRank": 35.669,
+          "min": 21.381,
+          "max": 35.669,
+          "values": [
+            21.381,
+            26.831,
+            35.669
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 26.452,
+          "p95NearestRank": 26.808,
+          "min": 0.57,
+          "max": 26.808,
+          "values": [
+            0.57,
+            26.452,
+            26.808
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 26.543,
+          "p95NearestRank": 26.892,
+          "min": 25.368,
+          "max": 26.892,
+          "values": [
+            25.368,
+            26.543,
+            26.892
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "disc",
+      "cache": "cold",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 1.653,
+          "p95NearestRank": 26.815,
+          "min": 1.136,
+          "max": 26.815,
+          "values": [
+            1.136,
+            1.653,
+            26.815
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 27.58,
+          "p95NearestRank": 28.672,
+          "min": 26.907,
+          "max": 28.672,
+          "values": [
+            26.907,
+            27.58,
+            28.672
+          ]
+        },
+        "immediateExact": 1,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 1.319,
+          "p95NearestRank": 25.436,
+          "min": 0.861,
+          "max": 25.436,
+          "values": [
+            0.861,
+            1.319,
+            25.436
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 26.242,
+          "p95NearestRank": 28.97,
+          "min": 25.601,
+          "max": 28.97,
+          "values": [
+            25.601,
+            26.242,
+            28.97
+          ]
+        },
+        "immediateExact": 1,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "disc",
+      "cache": "revisit",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 0.619,
+          "p95NearestRank": 0.643,
+          "min": 0.452,
+          "max": 0.643,
+          "values": [
+            0.452,
+            0.619,
+            0.643
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 20.724,
+          "p95NearestRank": 20.992,
+          "min": 18.056,
+          "max": 20.992,
+          "values": [
+            18.056,
+            20.724,
+            20.992
+          ]
+        },
+        "immediateExact": 0,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 17.733,
+          "p95NearestRank": 21.558,
+          "min": 12.743,
+          "max": 21.558,
+          "values": [
+            12.743,
+            17.733,
+            21.558
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 17.876,
+          "p95NearestRank": 21.659,
+          "min": 12.871,
+          "max": 21.659,
+          "values": [
+            12.871,
+            17.876,
+            21.659
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "toolbar",
+      "cache": "cold",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 2.121,
+          "p95NearestRank": 38.248,
+          "min": 1.354,
+          "max": 38.248,
+          "values": [
+            1.354,
+            2.121,
+            38.248
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 46.061,
+          "p95NearestRank": 48.143,
+          "min": 38.366,
+          "max": 48.143,
+          "values": [
+            38.366,
+            46.061,
+            48.143
+          ]
+        },
+        "immediateExact": 1,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 2.149,
+          "p95NearestRank": 41.125,
+          "min": 1.098,
+          "max": 41.125,
+          "values": [
+            1.098,
+            2.149,
+            41.125
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 41.242,
+          "p95NearestRank": 41.945,
+          "min": 38.884,
+          "max": 41.945,
+          "values": [
+            38.884,
+            41.242,
+            41.945
+          ]
+        },
+        "immediateExact": 1,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "toolbar",
+      "cache": "revisit",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 34.862,
+          "p95NearestRank": 40.358,
+          "min": 3.415,
+          "max": 40.358,
+          "values": [
+            3.415,
+            34.862,
+            40.358
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 40.446,
+          "p95NearestRank": 46.392,
+          "min": 34.962,
+          "max": 46.392,
+          "values": [
+            34.962,
+            40.446,
+            46.392
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 33.994,
+          "p95NearestRank": 39.08,
+          "min": 32.461,
+          "max": 39.08,
+          "values": [
+            32.461,
+            33.994,
+            39.08
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 34.08,
+          "p95NearestRank": 39.165,
+          "min": 32.561,
+          "max": 39.165,
+          "values": [
+            32.561,
+            34.08,
+            39.165
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "music",
+      "cache": "cold",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 1.841,
+          "p95NearestRank": 1.87,
+          "min": 1.056,
+          "max": 1.87,
+          "values": [
+            1.056,
+            1.841,
+            1.87
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 56.143,
+          "p95NearestRank": 103.943,
+          "min": 54.21,
+          "max": 103.943,
+          "values": [
+            54.21,
+            56.143,
+            103.943
+          ]
+        },
+        "immediateExact": 0,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 2.279,
+          "p95NearestRank": 46.653,
+          "min": 1.856,
+          "max": 46.653,
+          "values": [
+            1.856,
+            2.279,
+            46.653
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 52.781,
+          "p95NearestRank": 95.831,
+          "min": 46.765,
+          "max": 95.831,
+          "values": [
+            46.765,
+            52.781,
+            95.831
+          ]
+        },
+        "immediateExact": 1,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "music",
+      "cache": "revisit",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 42.617,
+          "p95NearestRank": 42.781,
+          "min": 1.397,
+          "max": 42.781,
+          "values": [
+            1.397,
+            42.617,
+            42.781
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 42.891,
+          "p95NearestRank": 51.942,
+          "min": 42.732,
+          "max": 51.942,
+          "values": [
+            42.732,
+            42.891,
+            51.942
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 40.853,
+          "p95NearestRank": 44.186,
+          "min": 1.455,
+          "max": 44.186,
+          "values": [
+            1.455,
+            40.853,
+            44.186
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 44.349,
+          "p95NearestRank": 50.351,
+          "min": 40.957,
+          "max": 50.351,
+          "values": [
+            40.957,
+            44.349,
+            50.351
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "phone",
+      "cache": "cold",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 45.218,
+          "p95NearestRank": 54.928,
+          "min": 41.772,
+          "max": 54.928,
+          "values": [
+            41.772,
+            45.218,
+            54.928
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 45.311,
+          "p95NearestRank": 55.018,
+          "min": 41.852,
+          "max": 55.018,
+          "values": [
+            41.852,
+            45.311,
+            55.018
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 47.794,
+          "p95NearestRank": 55.324,
+          "min": 43.488,
+          "max": 55.324,
+          "values": [
+            43.488,
+            47.794,
+            55.324
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 47.905,
+          "p95NearestRank": 55.483,
+          "min": 43.572,
+          "max": 55.483,
+          "values": [
+            43.572,
+            47.905,
+            55.483
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "phone",
+      "cache": "revisit",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 42.497,
+          "p95NearestRank": 44.019,
+          "min": 1.449,
+          "max": 44.019,
+          "values": [
+            1.449,
+            42.497,
+            44.019
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 44.103,
+          "p95NearestRank": 56.518,
+          "min": 42.582,
+          "max": 56.518,
+          "values": [
+            42.582,
+            44.103,
+            56.518
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 44.54,
+          "p95NearestRank": 46.093,
+          "min": 41.236,
+          "max": 46.093,
+          "values": [
+            41.236,
+            44.54,
+            46.093
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 44.65,
+          "p95NearestRank": 46.194,
+          "min": 41.369,
+          "max": 46.194,
+          "values": [
+            41.369,
+            44.65,
+            46.194
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "email",
+      "cache": "cold",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 55.217,
+          "p95NearestRank": 73.92,
+          "min": 1.021,
+          "max": 73.92,
+          "values": [
+            1.021,
+            55.217,
+            73.92
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 63.264,
+          "p95NearestRank": 74.06,
+          "min": 55.321,
+          "max": 74.06,
+          "values": [
+            55.321,
+            63.264,
+            74.06
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 63.305,
+          "p95NearestRank": 81.114,
+          "min": 1.75,
+          "max": 81.114,
+          "values": [
+            1.75,
+            63.305,
+            81.114
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 68.095,
+          "p95NearestRank": 81.202,
+          "min": 63.408,
+          "max": 81.202,
+          "values": [
+            63.408,
+            68.095,
+            81.202
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "email",
+      "cache": "revisit",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 1.171,
+          "p95NearestRank": 50.62,
+          "min": 1.137,
+          "max": 50.62,
+          "values": [
+            1.137,
+            1.171,
+            50.62
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 64.757,
+          "p95NearestRank": 65.944,
+          "min": 50.716,
+          "max": 65.944,
+          "values": [
+            50.716,
+            64.757,
+            65.944
+          ]
+        },
+        "immediateExact": 1,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 51.677,
+          "p95NearestRank": 52.065,
+          "min": 1.314,
+          "max": 52.065,
+          "values": [
+            1.314,
+            51.677,
+            52.065
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 52.169,
+          "p95NearestRank": 58.452,
+          "min": 51.772,
+          "max": 58.452,
+          "values": [
+            51.772,
+            52.169,
+            58.452
+          ]
+        },
+        "immediateExact": 2,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "chat",
+      "cache": "cold",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 57.868,
+          "p95NearestRank": 102.787,
+          "min": 42.793,
+          "max": 102.787,
+          "values": [
+            42.793,
+            57.868,
+            102.787
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 57.967,
+          "p95NearestRank": 102.869,
+          "min": 42.895,
+          "max": 102.869,
+          "values": [
+            42.895,
+            57.967,
+            102.869
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 53.403,
+          "p95NearestRank": 100.349,
+          "min": 41.953,
+          "max": 100.349,
+          "values": [
+            41.953,
+            53.403,
+            100.349
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 53.704,
+          "p95NearestRank": 100.46,
+          "min": 42.13,
+          "max": 100.46,
+          "values": [
+            42.13,
+            53.704,
+            100.46
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      }
+    },
+    {
+      "fixture": "chat",
+      "cache": "revisit",
+      "baseline": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 48.772,
+          "p95NearestRank": 48.956,
+          "min": 45.165,
+          "max": 48.956,
+          "values": [
+            45.165,
+            48.772,
+            48.956
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 48.883,
+          "p95NearestRank": 49.053,
+          "min": 45.262,
+          "max": 49.053,
+          "values": [
+            45.262,
+            48.883,
+            49.053
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      },
+      "performance": {
+        "firstFrameMs": {
+          "n": 3,
+          "median": 43.975,
+          "p95NearestRank": 51.691,
+          "min": 42.116,
+          "max": 51.691,
+          "values": [
+            42.116,
+            43.975,
+            51.691
+          ]
+        },
+        "finalFrameMs": {
+          "n": 3,
+          "median": 44.076,
+          "p95NearestRank": 51.788,
+          "min": 42.228,
+          "max": 51.788,
+          "values": [
+            42.228,
+            44.076,
+            51.788
+          ]
+        },
+        "immediateExact": 3,
+        "finalExactByHarnessContract": 3
+      }
+    }
+  ],
+  "finalExactEvidence": "BenchmarkFirstPaint.measureFirstPaint prints a row only after contentEquals(target); complete 42-row logs and BUILD SUCCESSFUL establish final equality under that inspected harness contract. This parser does not independently rerender pixels.",
+  "limitations": [
+    "First render observation may precede asynchronous insertion and be empty; first_frame_ms alone is not time to correct glass. Immediate exactness is reported separately.",
+    "Three repetitions per fixture/cache in one JVM process per variant; descriptive medians, no significance claim.",
+    "520x1000 desktop software composition/drawing/pixel-readback proxy with 4ms polling; not Android/iOS, GPU execution, or screen presentation.",
+    "Reference hashes are recorded at analysis time. Only --reference-manifest proves equality to an earlier frozen manifest; logs do not themselves record the reference path."
+  ]
+}

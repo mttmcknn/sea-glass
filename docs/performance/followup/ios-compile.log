@@ -1,0 +1,78 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+Calculating task graph as no cached configuration is available for tasks: :sea-glass:compileKotlinIosSimulatorArm64
+:sea-glass:kmpPartiallyResolvedDependenciesChecker SKIPPED
+:sea-glass:checkKotlinGradlePluginConfigurationErrors SKIPPED
+:sea-glass:downloadKotlinNativeDistribution SKIPPED
+:sea-glass:convertXmlValueResourcesForAppleMain SKIPPED
+:sea-glass:copyNonXmlValueResourcesForAppleMain SKIPPED
+:sea-glass:prepareComposeResourcesTaskForAppleMain SKIPPED
+:sea-glass:generateResourceAccessorsForAppleMain SKIPPED
+:sea-glass:convertXmlValueResourcesForCommonMain SKIPPED
+:sea-glass:copyNonXmlValueResourcesForCommonMain SKIPPED
+:sea-glass:prepareComposeResourcesTaskForCommonMain SKIPPED
+:sea-glass:generateResourceAccessorsForCommonMain SKIPPED
+:sea-glass:convertXmlValueResourcesForIosMain SKIPPED
+:sea-glass:copyNonXmlValueResourcesForIosMain SKIPPED
+:sea-glass:prepareComposeResourcesTaskForIosMain SKIPPED
+:sea-glass:generateResourceAccessorsForIosMain SKIPPED
+:sea-glass:convertXmlValueResourcesForIosSimulatorArm64Main SKIPPED
+:sea-glass:copyNonXmlValueResourcesForIosSimulatorArm64Main SKIPPED
+:sea-glass:prepareComposeResourcesTaskForIosSimulatorArm64Main SKIPPED
+:sea-glass:generateResourceAccessorsForIosSimulatorArm64Main SKIPPED
+:sea-glass:convertXmlValueResourcesForNativeMain SKIPPED
+:sea-glass:copyNonXmlValueResourcesForNativeMain SKIPPED
+:sea-glass:prepareComposeResourcesTaskForNativeMain SKIPPED
+:sea-glass:generateResourceAccessorsForNativeMain SKIPPED
+:sea-glass:convertXmlValueResourcesForSkikoMain SKIPPED
+:sea-glass:copyNonXmlValueResourcesForSkikoMain SKIPPED
+:sea-glass:prepareComposeResourcesTaskForSkikoMain SKIPPED
+:sea-glass:generateResourceAccessorsForSkikoMain SKIPPED
+:sea-glass:generateActualResourceCollectorsForIosSimulatorArm64Main SKIPPED
+:sea-glass:generateComposeResClass SKIPPED
+:sea-glass:generateExpectResourceCollectorsForCommonMain SKIPPED
+:sea-glass:compileKotlinIosSimulatorArm64 SKIPPED
+
+BUILD SUCCESSFUL in 4s
+Configuration cache entry stored.
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+Reusing configuration cache.
+> Task :sea-glass:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :sea-glass:generateComposeResClass SKIPPED
+> Task :sea-glass:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForSkikoMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForSkikoMain NO-SOURCE
+> Task :sea-glass:kmpPartiallyResolvedDependenciesChecker
+> Task :sea-glass:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForSkikoMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForIosSimulatorArm64Main NO-SOURCE
+> Task :sea-glass:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sea-glass:generateResourceAccessorsForIosSimulatorArm64Main SKIPPED
+> Task :sea-glass:generateResourceAccessorsForAppleMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForNativeMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForCommonMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForSkikoMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForIosMain SKIPPED
+> Task :sea-glass:generateActualResourceCollectorsForIosSimulatorArm64Main SKIPPED
+> Task :sea-glass:downloadKotlinNativeDistribution UP-TO-DATE
+
+> Task :sea-glass:compileKotlinIosSimulatorArm64
+w: file:///Users/mmckenna/Documents/Codex/2026-10-17/task-2/sea-glass-performance/sea-glass/src/commonMain/kotlin/dev/mttmcknn/seaglass/internal/NativeMaterialShader.kt:75:10 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+w: file:///Users/mmckenna/Documents/Codex/2026-10-17/task-2/sea-glass-performance/sea-glass/src/skikoMain/kotlin/dev/mttmcknn/seaglass/internal/NativeMaterialShader.skiko.kt:17:10 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+
+BUILD SUCCESSFUL in 8s
+3 actionable tasks: 2 executed, 1 up-to-date
+Configuration cache entry reused.

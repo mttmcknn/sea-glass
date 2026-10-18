@@ -2,7 +2,7 @@
 
 Sea Glass is configured for Maven Central through `com.vanniktech.maven.publish` 0.37.0. Releases can be staged locally or through a manually dispatched GitHub Actions workflow, then published manually in the Central Portal. Only the `sea-glass` library module is published; pushing a tag does not upload a release.
 
-The first release candidate coordinates are `dev.mttmcknn:sea-glass:0.1.0`. `GROUP` and `VERSION_NAME` live in the root `gradle.properties`. Follow the [release process](releasing.md) for version policy and candidate approval. This setup does not establish that an artifact is available on Central. Until publication is verified, use the composite-build instructions in the [README](../README.md#use-in-an-app).
+The first release candidate coordinates are `dev.mttmcknn:sea-glass:0.1.0`. `GROUP` and `VERSION_NAME` live in the root `gradle.properties`. Follow the [release process](releasing.md) for version policy and candidate approval. This setup does not establish that an artifact is available on Central. Until publication is verified, use the composite-build instructions in the [README](../README.md#install).
 
 ## Check the artifacts locally
 

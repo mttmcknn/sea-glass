@@ -25,6 +25,8 @@ class MainActivity : ComponentActivity() {
                 materialColorScheme = rememberSeaGlassColorScheme(darkTheme = false),
                 materialColorSource = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     "Wallpaper colors" else "Material theme colors · wallpaper colors need Android 12+",
+                initialScene = intent.getStringExtra("seaglass.scene"),
+                enableScrollDiagnostics = intent.getBooleanExtra("seaglass.profile", false),
             )
         }
     }

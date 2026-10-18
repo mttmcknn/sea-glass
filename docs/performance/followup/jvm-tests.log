@@ -1,0 +1,50 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+Calculating task graph as no cached configuration is available for tasks: :sea-glass:jvmTest
+> Task :sea-glass:generateComposeResClass SKIPPED
+> Task :sea-glass:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :sea-glass:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForJvmTest NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForSkikoMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForSkikoMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForJvmTest NO-SOURCE
+> Task :sea-glass:kmpPartiallyResolvedDependenciesChecker
+> Task :sea-glass:prepareComposeResourcesTaskForSkikoMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForJvmTest NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :sea-glass:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sea-glass:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :sea-glass:generateResourceAccessorsForCommonMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForJvmMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForJvmTest SKIPPED
+> Task :sea-glass:generateResourceAccessorsForSkikoMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForCommonTest SKIPPED
+> Task :sea-glass:generateActualResourceCollectorsForJvmMain SKIPPED
+> Task :sea-glass:assembleJvmMainResources UP-TO-DATE
+> Task :sea-glass:assembleJvmTestResources UP-TO-DATE
+> Task :sea-glass:jvmProcessResources UP-TO-DATE
+> Task :sea-glass:processJvmMainResources SKIPPED
+> Task :sea-glass:jvmTestProcessResources UP-TO-DATE
+> Task :sea-glass:processJvmTestResources SKIPPED
+
+> Task :sea-glass:compileKotlinJvm
+w: file:///Users/mmckenna/Documents/Codex/2026-10-17/task-2/sea-glass-performance/sea-glass/src/commonMain/kotlin/dev/mttmcknn/seaglass/internal/NativeMaterialShader.kt:75:10 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+w: file:///Users/mmckenna/Documents/Codex/2026-10-17/task-2/sea-glass-performance/sea-glass/src/skikoMain/kotlin/dev/mttmcknn/seaglass/internal/NativeMaterialShader.skiko.kt:17:10 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+
+> Task :sea-glass:compileJvmMainJava NO-SOURCE
+> Task :sea-glass:jvmMainClasses
+> Task :sea-glass:jvmJar
+> Task :sea-glass:compileTestKotlinJvm
+> Task :sea-glass:compileJvmTestJava NO-SOURCE
+> Task :sea-glass:jvmTestClasses
+> Task :sea-glass:jvmTest
+
+BUILD SUCCESSFUL in 21s
+9 actionable tasks: 5 executed, 4 up-to-date
+Configuration cache entry stored.

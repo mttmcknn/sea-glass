@@ -1,0 +1,253 @@
+--- a/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploader.kt
++++ b/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploader.kt
+@@ -2,6 +2,7 @@
+
+ import android.annotation.TargetApi
+ import android.graphics.Bitmap
++import android.hardware.HardwareBuffer
+ import java.nio.ByteBuffer
+ import kotlin.math.min
+
+@@ -31,6 +32,24 @@
+         // bitmap never aliases the staging array, which may serve the next input.
+         bitmap.copyPixelsFromBuffer(pack(texture, bitmap.rowBytes, bitmap.byteCount))
+         return bitmap
++    }
++
++    /** A hardware-backed input for the API 33 RuntimeShader rendering path. */
++    @TargetApi(33)
++    fun uploadShaderInput(texture: NativeFloatTexture): Bitmap {
++        val staging = upload(texture)
++        val hardware = staging.copy(Bitmap.Config.HARDWARE, false) ?: return staging
++        // Android may silently convert unsupported F16 hardware copies to 8888.
++        // Retain the original numeric pixels instead of accepting that loss.
++        val isF16 = hardware.hardwareBuffer.use { it.format == HardwareBuffer.RGBA_FP16 }
++        if (!isF16) {
++            hardware.recycle()
++            return staging
++        }
++        // copy() finishes the transfer before returning. Only this unpublished
++        // staging bitmap is recycled; shaders and display lists own prior inputs.
++        staging.recycle()
++        return hardware
+     }
+
+     /** Returned storage is valid only until the next pack or clear on this instance. */
+--- a/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/NativeMaterialShader.android.kt
++++ b/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/NativeMaterialShader.android.kt
+@@ -41,7 +41,7 @@
+
+     override fun setInputTexture(name: String, texture: NativeFloatTexture) {
+         check(!closed)
+-        val bitmap = uploader.upload(texture)
++        val bitmap = uploader.uploadShaderInput(texture)
+         val input = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP).apply {
+             setFilterMode(BitmapShader.FILTER_MODE_LINEAR)
+         }
+--- /dev/null
++++ b/sea-glass/src/androidDeviceTest/kotlin/dev/mttmcknn/seaglass/internal/HardwareFloatTextureUploaderTest.kt
+@@ -0,0 +1,204 @@
++package dev.mttmcknn.seaglass.internal
++
++import android.graphics.Bitmap
++import android.graphics.BitmapShader
++import android.graphics.Canvas
++import android.graphics.Paint
++import android.graphics.RuntimeShader
++import android.graphics.Shader
++import android.hardware.HardwareBuffer
++import androidx.test.filters.SdkSuppress
++import java.nio.ByteBuffer
++import java.nio.ByteOrder
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertFailsWith
++import kotlin.test.assertFalse
++import kotlin.test.assertNotSame
++import kotlin.test.fail
++import org.junit.Assume.assumeTrue
++
++/** Hardware uploads and readbacks must run on Android, outside timing captures. */
++@SdkSuppress(minSdkVersion = 33)
++class HardwareFloatTextureUploaderTest {
++    @Test
++    fun finiteNumericFieldsRetainF16PixelsAndMetadata() {
++        val uploader = AndroidFloatTextureUploader()
++        try {
++            for ((index, size) in listOf(1 to 1, 3 to 7, 17 to 9, 128 to 64, 364 to 260, 512 to 512).withIndex()) {
++                val texture = texture(size.first, size.second, index)
++                val reference = uploader.upload(texture)
++                val actual = uploader.uploadShaderInput(texture)
++                try {
++                    assertEquals(texture.width, actual.width)
++                    assertEquals(texture.height, actual.height)
++                    assertEquals(reference.colorSpace, actual.colorSpace)
++                    assertEquals(reference.density, actual.density)
++                    assertEquals(reference.isPremultiplied, actual.isPremultiplied)
++                    if (supportsF16(texture.width, texture.height)) {
++                        assertEquals(Bitmap.Config.HARDWARE, actual.config, "Supported F16 input should exercise hardware")
++                    }
++                    if (actual.config == Bitmap.Config.HARDWARE) {
++                        assertFalse(actual.isMutable)
++                        actual.hardwareBuffer.use { assertEquals(HardwareBuffer.RGBA_FP16, it.format) }
++                    } else {
++                        assertEquals(Bitmap.Config.RGBA_F16, actual.config, "Fallback must retain numeric precision")
++                    }
++                    assertExactPixels(texture.rgbaF16, packedPixels(actual), "Input ${texture.width}x${texture.height}")
++                } finally {
++                    actual.recycle()
++                    reference.recycle()
++                }
++            }
++        } finally {
++            uploader.clear()
++        }
++    }
++
++    @Test
++    fun laterUploadsAndClearLeaveEarlierHardwareInputsAliveAndIndependent() {
++        assumeTrue("FP16 hardware buffers are unavailable", supportsF16(17, 9))
++        val uploader = AndroidFloatTextureUploader()
++        val retained = mutableListOf<Pair<Bitmap, ByteArray>>()
++        try {
++            repeat(4) { phase ->
++                val texture = texture(17, 9, phase)
++                val actual = uploader.uploadShaderInput(texture)
++                retained.lastOrNull()?.let { assertNotSame(it.first, actual) }
++                retained += actual to texture.rgbaF16.copyOf()
++                assertEquals(Bitmap.Config.HARDWARE, actual.config)
++            }
++            uploader.clear()
++            assertEquals(0, uploader.retainedScratchByteCount)
++            for ((bitmap, expected) in retained) {
++                assertFalse(bitmap.isRecycled)
++                assertExactPixels(expected, packedPixels(bitmap), "Prior inputs must retain their own pixels")
++            }
++        } finally {
++            uploader.clear()
++            retained.forEach { it.first.recycle() }
++        }
++    }
++
++    @Test
++    fun adversarialHalfPayloadsRemainExactThroughHardwareReadback() {
++        assumeTrue("FP16 hardware buffers are unavailable", supportsF16(17, 9))
++        val uploader = AndroidFloatTextureUploader()
++        // Diagnostic coverage beyond the production 0..1 RGB / alpha=1 contract:
++        // signed zero, negative finite values, largest finite halves, infinities,
++        // and NaN payloads expose driver conversion or canonicalization.
++        val texture = texture(17, 9, values = intArrayOf(
++            0x0000, 0x8000, 0x0001, 0x8001, 0x03ff, 0x0400,
++            0x3555, 0x3800, 0x3c00, 0xbc00, 0x7bff, 0xfbff,
++            0x7c00, 0xfc00, 0x7e00, 0x7e01,
++        ))
++        val actual = uploader.uploadShaderInput(texture)
++        try {
++            assertEquals(Bitmap.Config.HARDWARE, actual.config)
++            assertExactPixels(texture.rgbaF16, packedPixels(actual), "Adversarial half payloads")
++        } finally {
++            actual.recycle()
++            uploader.clear()
++        }
++    }
++
++    @Test
++    fun softwareCanvasRejectsRuntimeShaderWithBothCpuAndHardwareInputs() {
++        assumeTrue("FP16 hardware buffers are unavailable", supportsF16(3, 7))
++        val uploader = AndroidFloatTextureUploader()
++        val input = texture(3, 7)
++        val cpu = uploader.upload(input)
++        val hardware = uploader.uploadShaderInput(input)
++        val output = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888)
++        try {
++            assertEquals(Bitmap.Config.HARDWARE, hardware.config)
++            val canvas = Canvas(output)
++            assertFalse(canvas.isHardwareAccelerated)
++            fun drawFailure(bitmap: Bitmap): IllegalArgumentException {
++                val shader = RuntimeShader("uniform shader field; half4 main(float2 p) { return field.eval(p); }")
++                shader.setInputBuffer("field", BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP))
++                val paint = Paint().apply { this.shader = shader }
++                return assertFailsWith { canvas.drawRect(0f, 0f, 16f, 16f, paint) }
++            }
++            val baseline = drawFailure(cpu)
++            val candidate = drawFailure(hardware)
++            assertEquals(baseline.message, candidate.message, "Hardware inputs must not change software Canvas behavior")
++        } finally {
++            output.recycle()
++            hardware.recycle()
++            cpu.recycle()
++            uploader.clear()
++        }
++    }
++
++    private fun supportsF16(width: Int, height: Int): Boolean = HardwareBuffer.isSupported(
++        width, height, HardwareBuffer.RGBA_FP16, 1, HardwareBuffer.USAGE_GPU_SAMPLED_IMAGE,
++    )
++
++    private fun texture(
++        width: Int,
++        height: Int,
++        phase: Int = 0,
++        values: IntArray = intArrayOf(0x0000, 0x0001, 0x03ff, 0x0400, 0x1000, 0x3555, 0x37ff, 0x3800, 0x3801, 0x3bff, 0x3c00),
++    ): NativeFloatTexture {
++        val bytes = ByteArray(width * height * 8)
++        val buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
++        repeat(width * height * 4) { channel ->
++            buffer.putShort((if (channel % 4 == 3) 0x3c00 else values[(channel + phase) % values.size]).toShort())
++        }
++        return NativeFloatTexture(width, height, bytes)
++    }
++
++    private fun packedPixels(bitmap: Bitmap): ByteArray {
++        val readable = if (bitmap.config == Bitmap.Config.HARDWARE) {
++            // Android 16's direct hardware copy readback creates a render surface
++            // with the source alpha type. Skia rejects an unpremultiplied render
++            // target; Android ignores the failed readback and returns zero pixels.
++            // Use a separate premultiplied view of the same hardware buffer only
++            // for this diagnostic readback. Every fixture has alpha=1, so this
++            // reinterpretation changes no values or production bitmap metadata.
++            val readbackView = bitmap.hardwareBuffer.use { buffer ->
++                checkNotNull(Bitmap.wrapHardwareBuffer(buffer, bitmap.colorSpace))
++            }
++            try {
++                check(readbackView.isPremultiplied)
++                checkNotNull(readbackView.copy(Bitmap.Config.RGBA_F16, false))
++            } finally {
++                readbackView.recycle()
++            }
++        } else bitmap
++        try {
++            assertEquals(Bitmap.Config.RGBA_F16, readable.config)
++            val rows = ByteArray(readable.byteCount)
++            readable.copyPixelsToBuffer(ByteBuffer.wrap(rows))
++            val rowBytes = readable.width * 8
++            return ByteArray(rowBytes * readable.height).also { packed ->
++                repeat(readable.height) { row ->
++                    rows.copyInto(packed, row * rowBytes, row * readable.rowBytes, row * readable.rowBytes + rowBytes)
++                }
++            }
++        } finally {
++            if (readable !== bitmap) readable.recycle()
++        }
++    }
++
++    private fun assertExactPixels(expected: ByteArray, actual: ByteArray, description: String) {
++        assertEquals(expected.size, actual.size, "$description byte count")
++        var firstMismatch = -1
++        var mismatchCount = 0
++        for (index in expected.indices) {
++            if (expected[index] != actual[index]) {
++                if (firstMismatch == -1) firstMismatch = index
++                mismatchCount++
++            }
++        }
++        if (firstMismatch != -1) {
++            fun hex(value: Byte): String = (value.toInt() and 0xff).toString(16).padStart(2, '0')
++            fail(
++                "$description: $mismatchCount/${expected.size} bytes differ; " +
++                    "first mismatch at byte $firstMismatch: " +
++                    "expected 0x${hex(expected[firstMismatch])}, actual 0x${hex(actual[firstMismatch])}",
++            )
++        }
++    }
++}

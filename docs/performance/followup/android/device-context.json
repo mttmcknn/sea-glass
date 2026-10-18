@@ -1,0 +1,39 @@
+{
+  "deviceId": "056baaec-c2b1-4288-b3ae-84732ad5f5e0",
+  "startedAt": "2026-10-17T19:35:04.459Z",
+  "mainElapsedSeconds": 224.221,
+  "mainAndColdElapsedSeconds": 270.742,
+  "physicalDevice": false,
+  "ro.build.version.sdk": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"exitCode\": 0,\n  \"stdout\": \"36\\n\",\n  \"stderr\": \"\"\n}"
+      }
+    ]
+  },
+  "ro.build.version.release": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"exitCode\": 0,\n  \"stdout\": \"16\\n\",\n  \"stderr\": \"\"\n}"
+      }
+    ]
+  },
+  "ro.product.cpu.abi": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"exitCode\": 0,\n  \"stdout\": \"arm64-v8a\\n\",\n  \"stderr\": \"\"\n}"
+      }
+    ]
+  },
+  "ro.hardware.egl": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"exitCode\": 0,\n  \"stdout\": \"emulation\\n\",\n  \"stderr\": \"\"\n}"
+      }
+    ]
+  }
+}

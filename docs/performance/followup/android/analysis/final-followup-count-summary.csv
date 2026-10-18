@@ -1,0 +1,4 @@
+name,variant,geometry_builds,whole_process_legacy_object_delta,objects_per_build,whole_process_art_allocated_bytes,allocated_bytes_per_build,art_gc_count,art_gc_time_ms,legacy_gc_delta,requests,applied,final_cohorts,all_final_cohorts_presented,data_loss_flags,incomplete_geometry,trace_sha256
+baseline-count-1,baseline,483,890471,1843.625258799172,452136992,936101.4327122153,23,212,0,483,481,2,True,0,0,399c14205da356b1dfa5b6e29f0ede692cf63d864fb1432722a77127047f0c99
+checkpoint-count-1,checkpoint,490,910155,1857.4591836734694,374145056,763561.3387755102,35,272,0,490,490,2,True,0,0,7faa15e96868c5cde3a8191f290f9e43f79dd38ca1b3f4696d49b99f09226927
+performance-count-1,performance,483,581986,1204.9399585921326,361365536,748168.8115942029,34,264,0,483,483,2,True,0,0,f3cce2a24da97822b829e7f1567b3eb026bdf5e252b16b404131feb0a0bcca3c

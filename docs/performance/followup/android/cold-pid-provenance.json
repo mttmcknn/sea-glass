@@ -1,0 +1,38 @@
+[
+  {
+    "capture": "baseline-cold-1",
+    "pid": 29920,
+    "processStartUptimeMs": 174350429,
+    "snapshot": "evidence/final-followup/android/cold/baseline-cold-1/baseline-cold-1.runtime"
+  },
+  {
+    "capture": "baseline-cold-2",
+    "pid": 30308,
+    "processStartUptimeMs": 174373638,
+    "snapshot": "evidence/final-followup/android/cold/baseline-cold-2/baseline-cold-2.runtime"
+  },
+  {
+    "capture": "baseline-cold-3",
+    "pid": 30422,
+    "processStartUptimeMs": 174381357,
+    "snapshot": "evidence/final-followup/android/cold/baseline-cold-3/baseline-cold-3.runtime"
+  },
+  {
+    "capture": "performance-cold-1",
+    "pid": 30064,
+    "processStartUptimeMs": 174358105,
+    "snapshot": "evidence/final-followup/android/cold/performance-cold-1/performance-cold-1.runtime"
+  },
+  {
+    "capture": "performance-cold-2",
+    "pid": 30184,
+    "processStartUptimeMs": 174365816,
+    "snapshot": "evidence/final-followup/android/cold/performance-cold-2/performance-cold-2.runtime"
+  },
+  {
+    "capture": "performance-cold-3",
+    "pid": 30540,
+    "processStartUptimeMs": 174389076,
+    "snapshot": "evidence/final-followup/android/cold/performance-cold-3/performance-cold-3.runtime"
+  }
+]

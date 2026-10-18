@@ -5,7 +5,6 @@ import android.util.Half
 import androidx.test.filters.SdkSuppress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.ShortBuffer
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -23,7 +22,7 @@ class AndroidFloatTextureUploaderTest {
             val sizes = listOf(1 to 1, 3 to 7, 17 to 9, 128 to 64, 17 to 9, 512 to 512, 3 to 7)
             for ((index, size) in sizes.withIndex()) {
                 val texture = texture(size.first, size.second, index)
-                val expected = referenceUpload(texture)
+                val expected = referenceUpload(texture, sourceValues(size.first, size.second, index))
                 try {
                     val actual = uploader.upload(texture)
                     retained.lastOrNull()?.let { assertNotSame(it.first, actual) }
@@ -50,23 +49,39 @@ class AndroidFloatTextureUploaderTest {
     }
 
     @Test
-    fun scratchIsReusedBoundedAndReleased() {
+    fun tightRowsUseThePackedArrayWithoutScratch() {
         val uploader = AndroidFloatTextureUploader()
-        fun uploadAndRelease(width: Int, height: Int) = uploader.upload(texture(width, height)).recycle()
-        uploadAndRelease(512, 512)
+        val input = texture(512, 512)
+        val first = uploader.pack(input, rowBytes = 512 * 8, byteCount = input.rgbaF16.size)
+        first.position(first.limit())
+        val second = uploader.pack(input, rowBytes = 512 * 8, byteCount = input.rgbaF16.size)
+        assertTrue(second.array() === input.rgbaF16)
+        assertEquals(0, second.position())
+        assertEquals(input.rgbaF16.size, second.limit())
+        assertEquals(0, uploader.retainedScratchByteCount)
+        assertEquals(0, uploader.scratchAllocationCount)
+    }
+
+    @Test
+    fun paddedScratchIsReusedBoundedAndReleased() {
+        val uploader = AndroidFloatTextureUploader()
+        fun packPadded(width: Int, height: Int) = uploader.pack(
+            texture(width, height), rowBytes = (width + 1) * 8, byteCount = (width + 1) * height * 8,
+        )
+        packPadded(511, 512)
         assertEquals(2 * 1024 * 1024, uploader.retainedScratchByteCount)
         val allocations = uploader.scratchAllocationCount
-        repeat(3) { uploadAndRelease(17, 9) }
+        repeat(3) { packPadded(17, 9) }
         assertEquals(allocations, uploader.scratchAllocationCount, "Smaller uploads should reuse the same scratch buffer")
-        repeat(2) { uploadAndRelease(513, 512) }
+        repeat(2) { packPadded(512, 512) }
         assertEquals(2 * 1024 * 1024, uploader.retainedScratchByteCount, "Oversized transient buffers must not grow retained memory")
         assertEquals(allocations + 2, uploader.scratchAllocationCount)
-        uploadAndRelease(512, 512)
+        packPadded(511, 512)
         assertEquals(allocations + 2, uploader.scratchAllocationCount, "Oversized uploads must not evict the bounded scratch buffer")
         uploader.clear()
         assertEquals(0, uploader.retainedScratchByteCount)
-        uploadAndRelease(1, 1)
-        assertEquals(8, uploader.retainedScratchByteCount)
+        packPadded(1, 1)
+        assertEquals(16, uploader.retainedScratchByteCount)
         assertEquals(allocations + 3, uploader.scratchAllocationCount)
         uploader.clear()
     }
@@ -75,27 +90,27 @@ class AndroidFloatTextureUploaderTest {
     fun reusedRowsClearPaddingAndResetTheBufferWindow() {
         val uploader = AndroidFloatTextureUploader(maxScratchBytes = 128)
         try {
-            // Populate every short first, then reuse that storage for narrower
+            // Populate every row first, then reuse that storage for narrower
             // padded rows. Exercise padding even if this device aligns F16 rows
             // exactly to width * 8 in ordinary freshly created bitmaps.
-            uploader.pack(texture(4, 4, 3), rowBytes = 32, byteCount = 128).apply {
+            uploader.pack(texture(3, 4, 3), rowBytes = 32, byteCount = 128).apply {
                 position(limit())
             }
-            val narrow = texture(3, 4, 1)
-            for (byteCount in listOf(128, 120, 128)) {
+            val narrow = texture(2, 4, 1)
+            val originalValues = sourceValues(2, 4, 1)
+            for (byteCount in listOf(128, 112, 128)) {
                 val actual = uploader.pack(narrow, rowBytes = 32, byteCount = byteCount)
-                assertEquals(ByteOrder.nativeOrder(), actual.order())
                 assertEquals(0, actual.position())
-                assertEquals(byteCount / 2, actual.limit())
+                assertEquals(byteCount, actual.limit())
                 val expected = ByteBuffer.allocateDirect(byteCount).order(ByteOrder.nativeOrder())
                 for (row in 0 until narrow.height) {
                     expected.position(row * 32)
                     for (channel in 0 until narrow.width * 4) {
-                        expected.putShort(Half.toHalf(narrow.rgba[row * narrow.width * 4 + channel]))
+                        expected.putShort(Half.toHalf(originalValues[row * narrow.width * 4 + channel]))
                     }
                 }
                 expected.rewind()
-                assertContentEquals(shorts(expected.asShortBuffer()), shorts(actual))
+                assertContentEquals(bufferBytes(expected), bufferBytes(actual))
                 actual.position(actual.limit())
             }
             assertEquals(1, uploader.scratchAllocationCount)
@@ -105,28 +120,60 @@ class AndroidFloatTextureUploaderTest {
         }
     }
 
-    private fun texture(width: Int, height: Int, phase: Int = 0): NativeFloatTexture {
+    @Test
+    fun packedConversionMatchesAndroidAtEveryFiniteHalfRoundingBoundary() {
+        fun checkValue(value: Float) {
+            assertEquals(Half.toHalf(value).toInt() and 0xFFFF, float16Bits(value), "Input bits ${value.toRawBits()}")
+        }
+        // Each adjacent finite half pair has an exactly representable Float midpoint.
+        // Exercise both ties and their immediate Float neighbors, with both signs.
+        for (half in 0 until 0x7BFF) {
+            val lower = Half.toFloat(half.toShort())
+            val upper = Half.toFloat((half + 1).toShort())
+            val midpoint = (lower + upper) * 0.5f
+            val bits = midpoint.toRawBits()
+            for (nearby in bits - 1..bits + 1) {
+                val value = Float.fromBits(nearby)
+                checkValue(value)
+                checkValue(-value)
+            }
+        }
+        for (value in sourceValues(16, 1)) checkValue(value)
+        // Include arbitrary Float exponents, overflow, and NaN payloads.
+        var bits = 0x12345678
+        repeat(16_384) {
+            bits = bits xor (bits shl 13)
+            bits = bits xor (bits ushr 17)
+            bits = bits xor (bits shl 5)
+            checkValue(Float.fromBits(bits))
+        }
+    }
+
+    private fun texture(width: Int, height: Int, phase: Int = 0) =
+        NativeFloatTexture(width, height, sourceValues(width, height, phase))
+
+    private fun sourceValues(width: Int, height: Int, phase: Int = 0): FloatArray {
         val values = floatArrayOf(
             0f, -0f, Float.MIN_VALUE, 0.00006103515625f, 0.000060975552f,
             0.33333334f, 0.49987793f, 0.50024414f, 1f, -1f, 65504f, 65520f,
             Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NaN,
         )
-        return NativeFloatTexture(width, height, FloatArray(width * height * 4) { index ->
+        return FloatArray(width * height * 4) { index ->
             if (index % 4 == 3) 1f else values[(index + phase) % values.size]
-        })
+        }
     }
 
     private fun bytes(bitmap: Bitmap): ByteArray = ByteArray(bitmap.byteCount).also {
         bitmap.copyPixelsToBuffer(ByteBuffer.wrap(it))
     }
 
-    private fun shorts(buffer: ShortBuffer): ShortArray = ShortArray(buffer.remaining()).also {
+    private fun bufferBytes(buffer: ByteBuffer): ByteArray = ByteArray(buffer.remaining()).also {
         buffer.duplicate().get(it)
     }
 
     // Copied from AndroidMaterialShader.setInputTexture before changing the
     // production uploader. Keep this independent reference packing algorithm.
-    private fun referenceUpload(texture: NativeFloatTexture): Bitmap {
+    private fun referenceUpload(texture: NativeFloatTexture, originalValues: FloatArray): Bitmap {
         val bitmap = Bitmap.createBitmap(texture.width, texture.height, Bitmap.Config.RGBA_F16)
         bitmap.setPremultiplied(false)
         // copyPixelsFromBuffer preserves the numeric F16 channel values. The
@@ -138,7 +185,7 @@ class AndroidFloatTextureUploaderTest {
             buffer.position(row * bitmap.rowBytes)
             val start = row * channelsPerRow
             for (channel in 0 until channelsPerRow) {
-                buffer.putShort(Half.toHalf(texture.rgba[start + channel]))
+                buffer.putShort(Half.toHalf(originalValues[start + channel]))
             }
         }
         buffer.rewind()

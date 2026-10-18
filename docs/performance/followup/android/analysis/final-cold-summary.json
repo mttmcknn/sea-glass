@@ -1,0 +1,922 @@
+{
+  "notes": [
+    "Cold launch means a fresh process after force-stop with speed AOT and existing emulator/driver state; not a clean boot or cleared OS/GPU cache.",
+    "First material frame start to presentation excludes earlier launch work. am start TotalTime is launch completion, not proof of final pixels.",
+    "Initial requested/applied/presented markers establish revision delivery, not pixel identity. Shader CPU/wall time does not establish GPU execution.",
+    "PID selections were independently verified by endpoint files and runtime dump because Perfetto can retain pre-initialized/zygote names.",
+    "Cold medians are three observations per variant, separate from warm Tumble. No statistical significance or physical-device claim."
+  ],
+  "warnings": [],
+  "per_run": [
+    {
+      "name": "seaglass-baseline-cold-1",
+      "variant": "baseline",
+      "run": 1,
+      "trace_sha256": "6a0c8a13312d9e7f33851d5fd939f4c129ffacdfaa07eef910b1cb4aa275e19a",
+      "verified_pid": 29920,
+      "am_start_total_ms": 265,
+      "trace_duration_ms": 5769.679419,
+      "first_material_ui_ms": 188.023334,
+      "first_material_frame_start_to_present_ms": 205.10625,
+      "initial_material_first_request_to_present_ms": 163.969416,
+      "initial_requests": 7,
+      "initial_applied": 7,
+      "initial_presented": 7,
+      "initial_seven_presented_together": true,
+      "material_upload_frames": 1,
+      "app_scheduled_cpu_ms": 248.315955,
+      "ui_scheduled_cpu_ms": 71.136039,
+      "renderthread_scheduled_cpu_ms": 155.16279,
+      "heapdaemon_scheduled_cpu_ms": 0.541793,
+      "geometry_builds": 7,
+      "geometry_scheduled_cpu_ms": 10.985584,
+      "texture_scheduled_cpu_ms": 2.419624,
+      "shader_compile_count": 29,
+      "shader_compile_wall_ms": 108.236207,
+      "shader_compile_scheduled_cpu_ms": 104.439454,
+      "gc_count": 0,
+      "post_capture_pss_kib": 55364,
+      "timeline_app_deadline_misses": 1,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 2,
+      "incomplete_ui": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0,
+      "gpu_slice_count": 0,
+      "gpu_counter_track_count": 0
+    },
+    {
+      "name": "seaglass-baseline-cold-2",
+      "variant": "baseline",
+      "run": 2,
+      "trace_sha256": "3e1eaa8e9e6c7447c1a7ff15ca5effef9dda7dffccd357fc89bb6eb711bdcbff",
+      "verified_pid": 30308,
+      "am_start_total_ms": 283,
+      "trace_duration_ms": 5779.226919,
+      "first_material_ui_ms": 204.48725,
+      "first_material_frame_start_to_present_ms": 206.64375,
+      "initial_material_first_request_to_present_ms": 160.771625,
+      "initial_requests": 7,
+      "initial_applied": 7,
+      "initial_presented": 7,
+      "initial_seven_presented_together": true,
+      "material_upload_frames": 1,
+      "app_scheduled_cpu_ms": 255.250802,
+      "ui_scheduled_cpu_ms": 75.361499,
+      "renderthread_scheduled_cpu_ms": 169.013505,
+      "heapdaemon_scheduled_cpu_ms": 0.32525,
+      "geometry_builds": 7,
+      "geometry_scheduled_cpu_ms": 11.043666,
+      "texture_scheduled_cpu_ms": 2.235291,
+      "shader_compile_count": 29,
+      "shader_compile_wall_ms": 119.826625,
+      "shader_compile_scheduled_cpu_ms": 115.318379,
+      "gc_count": 0,
+      "post_capture_pss_kib": 55143,
+      "timeline_app_deadline_misses": 1,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 2,
+      "incomplete_ui": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0,
+      "gpu_slice_count": 0,
+      "gpu_counter_track_count": 0
+    },
+    {
+      "name": "seaglass-baseline-cold-3",
+      "variant": "baseline",
+      "run": 3,
+      "trace_sha256": "a3613ede2ba5ab9b7b8248074fce04f9bc18a45a0abca98832f3047adece0ff4",
+      "verified_pid": 30422,
+      "am_start_total_ms": 283,
+      "trace_duration_ms": 5799.866961,
+      "first_material_ui_ms": 184.974459,
+      "first_material_frame_start_to_present_ms": 191.714834,
+      "initial_material_first_request_to_present_ms": 158.343667,
+      "initial_requests": 7,
+      "initial_applied": 7,
+      "initial_presented": 7,
+      "initial_seven_presented_together": true,
+      "material_upload_frames": 1,
+      "app_scheduled_cpu_ms": 244.037913,
+      "ui_scheduled_cpu_ms": 69.590082,
+      "renderthread_scheduled_cpu_ms": 161.285167,
+      "heapdaemon_scheduled_cpu_ms": 1.099751,
+      "geometry_builds": 7,
+      "geometry_scheduled_cpu_ms": 10.485751,
+      "texture_scheduled_cpu_ms": 2.365501,
+      "shader_compile_count": 29,
+      "shader_compile_wall_ms": 113.68238,
+      "shader_compile_scheduled_cpu_ms": 106.690836,
+      "gc_count": 0,
+      "post_capture_pss_kib": 55433,
+      "timeline_app_deadline_misses": 1,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 2,
+      "incomplete_ui": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0,
+      "gpu_slice_count": 0,
+      "gpu_counter_track_count": 0
+    },
+    {
+      "name": "seaglass-performance-cold-1",
+      "variant": "performance",
+      "run": 1,
+      "trace_sha256": "104f25899c79d48d40252c68bc84c196cac9ea9d9380024f215b27576f5e5123",
+      "verified_pid": 30064,
+      "am_start_total_ms": 274,
+      "trace_duration_ms": 5789.850211,
+      "first_material_ui_ms": 186.079042,
+      "first_material_frame_start_to_present_ms": 192.361834,
+      "initial_material_first_request_to_present_ms": 153.955626,
+      "initial_requests": 7,
+      "initial_applied": 7,
+      "initial_presented": 7,
+      "initial_seven_presented_together": true,
+      "material_upload_frames": 1,
+      "app_scheduled_cpu_ms": 249.73003500000002,
+      "ui_scheduled_cpu_ms": 68.377419,
+      "renderthread_scheduled_cpu_ms": 158.500254,
+      "heapdaemon_scheduled_cpu_ms": 0.354415,
+      "geometry_builds": 7,
+      "geometry_scheduled_cpu_ms": 9.318543,
+      "texture_scheduled_cpu_ms": 0.625083,
+      "shader_compile_count": 29,
+      "shader_compile_wall_ms": 113.714124,
+      "shader_compile_scheduled_cpu_ms": 108.215502,
+      "gc_count": 0,
+      "post_capture_pss_kib": 53264,
+      "timeline_app_deadline_misses": 1,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 2,
+      "incomplete_ui": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0,
+      "gpu_slice_count": 0,
+      "gpu_counter_track_count": 0
+    },
+    {
+      "name": "seaglass-performance-cold-2",
+      "variant": "performance",
+      "run": 2,
+      "trace_sha256": "b42a2041cd065506dadf49f570dfaede9bc01c4cc94f3d5e19056ec027c0bdd5",
+      "verified_pid": 30184,
+      "am_start_total_ms": 272,
+      "trace_duration_ms": 5790.181794,
+      "first_material_ui_ms": 192.33,
+      "first_material_frame_start_to_present_ms": 194.82625,
+      "initial_material_first_request_to_present_ms": 148.860583,
+      "initial_requests": 7,
+      "initial_applied": 7,
+      "initial_presented": 7,
+      "initial_seven_presented_together": true,
+      "material_upload_frames": 1,
+      "app_scheduled_cpu_ms": 242.834637,
+      "ui_scheduled_cpu_ms": 71.279297,
+      "renderthread_scheduled_cpu_ms": 160.964465,
+      "heapdaemon_scheduled_cpu_ms": 0.290375,
+      "geometry_builds": 7,
+      "geometry_scheduled_cpu_ms": 9.326542,
+      "texture_scheduled_cpu_ms": 0.540166,
+      "shader_compile_count": 29,
+      "shader_compile_wall_ms": 112.594542,
+      "shader_compile_scheduled_cpu_ms": 107.204544,
+      "gc_count": 0,
+      "post_capture_pss_kib": 53068,
+      "timeline_app_deadline_misses": 1,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 2,
+      "incomplete_ui": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0,
+      "gpu_slice_count": 0,
+      "gpu_counter_track_count": 0
+    },
+    {
+      "name": "seaglass-performance-cold-3",
+      "variant": "performance",
+      "run": 3,
+      "trace_sha256": "e2b5271f3ca4059a83e5788647490e23d23074a383e92788f39d2507c32ddde9",
+      "verified_pid": 30540,
+      "am_start_total_ms": 259,
+      "trace_duration_ms": 5795.507544,
+      "first_material_ui_ms": 191.610708,
+      "first_material_frame_start_to_present_ms": 204.575167,
+      "initial_material_first_request_to_present_ms": 172.540584,
+      "initial_requests": 7,
+      "initial_applied": 7,
+      "initial_presented": 7,
+      "initial_seven_presented_together": true,
+      "material_upload_frames": 1,
+      "app_scheduled_cpu_ms": 255.768753,
+      "ui_scheduled_cpu_ms": 65.446459,
+      "renderthread_scheduled_cpu_ms": 169.984081,
+      "heapdaemon_scheduled_cpu_ms": 0.573959,
+      "geometry_builds": 7,
+      "geometry_scheduled_cpu_ms": 9.552709,
+      "texture_scheduled_cpu_ms": 0.693247,
+      "shader_compile_count": 29,
+      "shader_compile_wall_ms": 124.527166,
+      "shader_compile_scheduled_cpu_ms": 118.24304,
+      "gc_count": 0,
+      "post_capture_pss_kib": 53056,
+      "timeline_app_deadline_misses": 1,
+      "gfx_deadline_misses": 0,
+      "gfx_deadline_eligible": 2,
+      "incomplete_ui": 0,
+      "incomplete_geometry": 0,
+      "data_loss_flags": 0,
+      "gpu_slice_count": 0,
+      "gpu_counter_track_count": 0
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "run": {
+        "n": 3,
+        "median": 2,
+        "min": 1,
+        "max": 3,
+        "values": [
+          1,
+          2,
+          3
+        ]
+      },
+      "verified_pid": {
+        "n": 3,
+        "median": 30308,
+        "min": 29920,
+        "max": 30422,
+        "values": [
+          29920,
+          30308,
+          30422
+        ]
+      },
+      "am_start_total_ms": {
+        "n": 3,
+        "median": 283,
+        "min": 265,
+        "max": 283,
+        "values": [
+          265,
+          283,
+          283
+        ]
+      },
+      "trace_duration_ms": {
+        "n": 3,
+        "median": 5779.226919,
+        "min": 5769.679419,
+        "max": 5799.866961,
+        "values": [
+          5769.679419,
+          5779.226919,
+          5799.866961
+        ]
+      },
+      "first_material_ui_ms": {
+        "n": 3,
+        "median": 188.023334,
+        "min": 184.974459,
+        "max": 204.48725,
+        "values": [
+          188.023334,
+          204.48725,
+          184.974459
+        ]
+      },
+      "first_material_frame_start_to_present_ms": {
+        "n": 3,
+        "median": 205.10625,
+        "min": 191.714834,
+        "max": 206.64375,
+        "values": [
+          205.10625,
+          206.64375,
+          191.714834
+        ]
+      },
+      "initial_material_first_request_to_present_ms": {
+        "n": 3,
+        "median": 160.771625,
+        "min": 158.343667,
+        "max": 163.969416,
+        "values": [
+          163.969416,
+          160.771625,
+          158.343667
+        ]
+      },
+      "initial_requests": {
+        "n": 3,
+        "median": 7,
+        "min": 7,
+        "max": 7,
+        "values": [
+          7,
+          7,
+          7
+        ]
+      },
+      "initial_applied": {
+        "n": 3,
+        "median": 7,
+        "min": 7,
+        "max": 7,
+        "values": [
+          7,
+          7,
+          7
+        ]
+      },
+      "initial_presented": {
+        "n": 3,
+        "median": 7,
+        "min": 7,
+        "max": 7,
+        "values": [
+          7,
+          7,
+          7
+        ]
+      },
+      "material_upload_frames": {
+        "n": 3,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "values": [
+          1,
+          1,
+          1
+        ]
+      },
+      "app_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 248.315955,
+        "min": 244.037913,
+        "max": 255.250802,
+        "values": [
+          248.315955,
+          255.250802,
+          244.037913
+        ]
+      },
+      "ui_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 71.136039,
+        "min": 69.590082,
+        "max": 75.361499,
+        "values": [
+          71.136039,
+          75.361499,
+          69.590082
+        ]
+      },
+      "renderthread_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 161.285167,
+        "min": 155.16279,
+        "max": 169.013505,
+        "values": [
+          155.16279,
+          169.013505,
+          161.285167
+        ]
+      },
+      "heapdaemon_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 0.541793,
+        "min": 0.32525,
+        "max": 1.099751,
+        "values": [
+          0.541793,
+          0.32525,
+          1.099751
+        ]
+      },
+      "geometry_builds": {
+        "n": 3,
+        "median": 7,
+        "min": 7,
+        "max": 7,
+        "values": [
+          7,
+          7,
+          7
+        ]
+      },
+      "geometry_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 10.985584,
+        "min": 10.485751,
+        "max": 11.043666,
+        "values": [
+          10.985584,
+          11.043666,
+          10.485751
+        ]
+      },
+      "texture_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 2.365501,
+        "min": 2.235291,
+        "max": 2.419624,
+        "values": [
+          2.419624,
+          2.235291,
+          2.365501
+        ]
+      },
+      "shader_compile_count": {
+        "n": 3,
+        "median": 29,
+        "min": 29,
+        "max": 29,
+        "values": [
+          29,
+          29,
+          29
+        ]
+      },
+      "shader_compile_wall_ms": {
+        "n": 3,
+        "median": 113.68238,
+        "min": 108.236207,
+        "max": 119.826625,
+        "values": [
+          108.236207,
+          119.826625,
+          113.68238
+        ]
+      },
+      "shader_compile_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 106.690836,
+        "min": 104.439454,
+        "max": 115.318379,
+        "values": [
+          104.439454,
+          115.318379,
+          106.690836
+        ]
+      },
+      "gc_count": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "post_capture_pss_kib": {
+        "n": 3,
+        "median": 55364,
+        "min": 55143,
+        "max": 55433,
+        "values": [
+          55364,
+          55143,
+          55433
+        ]
+      },
+      "timeline_app_deadline_misses": {
+        "n": 3,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "values": [
+          1,
+          1,
+          1
+        ]
+      },
+      "gfx_deadline_misses": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "gfx_deadline_eligible": {
+        "n": 3,
+        "median": 2,
+        "min": 2,
+        "max": 2,
+        "values": [
+          2,
+          2,
+          2
+        ]
+      },
+      "incomplete_ui": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "incomplete_geometry": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "data_loss_flags": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "gpu_slice_count": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "gpu_counter_track_count": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "performance": {
+      "run": {
+        "n": 3,
+        "median": 2,
+        "min": 1,
+        "max": 3,
+        "values": [
+          1,
+          2,
+          3
+        ]
+      },
+      "verified_pid": {
+        "n": 3,
+        "median": 30184,
+        "min": 30064,
+        "max": 30540,
+        "values": [
+          30064,
+          30184,
+          30540
+        ]
+      },
+      "am_start_total_ms": {
+        "n": 3,
+        "median": 272,
+        "min": 259,
+        "max": 274,
+        "values": [
+          274,
+          272,
+          259
+        ]
+      },
+      "trace_duration_ms": {
+        "n": 3,
+        "median": 5790.181794,
+        "min": 5789.850211,
+        "max": 5795.507544,
+        "values": [
+          5789.850211,
+          5790.181794,
+          5795.507544
+        ]
+      },
+      "first_material_ui_ms": {
+        "n": 3,
+        "median": 191.610708,
+        "min": 186.079042,
+        "max": 192.33,
+        "values": [
+          186.079042,
+          192.33,
+          191.610708
+        ]
+      },
+      "first_material_frame_start_to_present_ms": {
+        "n": 3,
+        "median": 194.82625,
+        "min": 192.361834,
+        "max": 204.575167,
+        "values": [
+          192.361834,
+          194.82625,
+          204.575167
+        ]
+      },
+      "initial_material_first_request_to_present_ms": {
+        "n": 3,
+        "median": 153.955626,
+        "min": 148.860583,
+        "max": 172.540584,
+        "values": [
+          153.955626,
+          148.860583,
+          172.540584
+        ]
+      },
+      "initial_requests": {
+        "n": 3,
+        "median": 7,
+        "min": 7,
+        "max": 7,
+        "values": [
+          7,
+          7,
+          7
+        ]
+      },
+      "initial_applied": {
+        "n": 3,
+        "median": 7,
+        "min": 7,
+        "max": 7,
+        "values": [
+          7,
+          7,
+          7
+        ]
+      },
+      "initial_presented": {
+        "n": 3,
+        "median": 7,
+        "min": 7,
+        "max": 7,
+        "values": [
+          7,
+          7,
+          7
+        ]
+      },
+      "material_upload_frames": {
+        "n": 3,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "values": [
+          1,
+          1,
+          1
+        ]
+      },
+      "app_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 249.73003500000002,
+        "min": 242.834637,
+        "max": 255.768753,
+        "values": [
+          249.73003500000002,
+          242.834637,
+          255.768753
+        ]
+      },
+      "ui_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 68.377419,
+        "min": 65.446459,
+        "max": 71.279297,
+        "values": [
+          68.377419,
+          71.279297,
+          65.446459
+        ]
+      },
+      "renderthread_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 160.964465,
+        "min": 158.500254,
+        "max": 169.984081,
+        "values": [
+          158.500254,
+          160.964465,
+          169.984081
+        ]
+      },
+      "heapdaemon_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 0.354415,
+        "min": 0.290375,
+        "max": 0.573959,
+        "values": [
+          0.354415,
+          0.290375,
+          0.573959
+        ]
+      },
+      "geometry_builds": {
+        "n": 3,
+        "median": 7,
+        "min": 7,
+        "max": 7,
+        "values": [
+          7,
+          7,
+          7
+        ]
+      },
+      "geometry_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 9.326542,
+        "min": 9.318543,
+        "max": 9.552709,
+        "values": [
+          9.318543,
+          9.326542,
+          9.552709
+        ]
+      },
+      "texture_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 0.625083,
+        "min": 0.540166,
+        "max": 0.693247,
+        "values": [
+          0.625083,
+          0.540166,
+          0.693247
+        ]
+      },
+      "shader_compile_count": {
+        "n": 3,
+        "median": 29,
+        "min": 29,
+        "max": 29,
+        "values": [
+          29,
+          29,
+          29
+        ]
+      },
+      "shader_compile_wall_ms": {
+        "n": 3,
+        "median": 113.714124,
+        "min": 112.594542,
+        "max": 124.527166,
+        "values": [
+          113.714124,
+          112.594542,
+          124.527166
+        ]
+      },
+      "shader_compile_scheduled_cpu_ms": {
+        "n": 3,
+        "median": 108.215502,
+        "min": 107.204544,
+        "max": 118.24304,
+        "values": [
+          108.215502,
+          107.204544,
+          118.24304
+        ]
+      },
+      "gc_count": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "post_capture_pss_kib": {
+        "n": 3,
+        "median": 53068,
+        "min": 53056,
+        "max": 53264,
+        "values": [
+          53264,
+          53068,
+          53056
+        ]
+      },
+      "timeline_app_deadline_misses": {
+        "n": 3,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "values": [
+          1,
+          1,
+          1
+        ]
+      },
+      "gfx_deadline_misses": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "gfx_deadline_eligible": {
+        "n": 3,
+        "median": 2,
+        "min": 2,
+        "max": 2,
+        "values": [
+          2,
+          2,
+          2
+        ]
+      },
+      "incomplete_ui": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "incomplete_geometry": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "data_loss_flags": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "gpu_slice_count": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      },
+      "gpu_counter_track_count": {
+        "n": 3,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "values": [
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  }
+}

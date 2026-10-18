@@ -90,8 +90,11 @@ private val LocalMaterialYouEnabled = compositionLocalOf { false }
 fun SeaGlassPlayground(
     materialColorScheme: ColorScheme = FallbackMaterialColors,
     materialColorSource: String = "Material theme colors",
+    initialScene: String? = null,
+    enableScrollDiagnostics: Boolean = false,
 ) {
     var materialYou by rememberSaveable { mutableStateOf(false) }
+    var longList by rememberSaveable { mutableStateOf(initialScene == "long-list") }
     MaterialTheme(colorScheme = if (materialYou) materialColorScheme else PlaygroundColors) {
         CompositionLocalProvider(LocalMaterialYouEnabled provides materialYou) {
             var style by rememberSaveable(stateSaver = RecipeSaver) { mutableStateOf(SeaGlassStyle()) }
@@ -143,7 +146,9 @@ fun SeaGlassPlayground(
                 }
             }
             Box(Modifier.fillMaxSize().background(Page)) {
-                if (previewOnly) {
+                if (longList) {
+                    LongListScene(onBack = { longList = false }, enableScrollDiagnostics = enableScrollDiagnostics)
+                } else if (previewOnly) {
                     ShowcasePreview(scene, style, paletteIndex, showcase, onExit = closePreview)
                 } else {
                     Column(Modifier.fillMaxSize().safeDrawingPadding()) {
@@ -158,6 +163,9 @@ fun SeaGlassPlayground(
                                 Eyebrow("MATERIAL PLAYGROUND")
                             }
                             Spacer(Modifier.weight(1f))
+                            TextButton(onClick = { longList = true }, modifier = Modifier.testTag("playground-long-list")) {
+                                Text("Long list")
+                            }
                             TextButton(onClick = reset) { Text("Reset") }
                         }
                         BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {

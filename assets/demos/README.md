@@ -1,6 +1,6 @@
 # Demo GIFs
 
-Five 720 × 900, 20 fps loops for the [main README](../../README.md#demos). The assets total 7,581,416 bytes (7.58 MB). These are composed promotional graphics: the glass surfaces and UI states are captured from Compose, while the card motion, cuts, tap cues, code typing, highlights, and comparison wipes are editorial animation.
+Five 720 × 900, 20 fps loops linked from the [main README](../../README.md#explore). The assets total 7,581,416 bytes (7.58 MB). These are composed promotional graphics: the glass surfaces and UI states are captured from Compose, while the card motion, cuts, tap cues, code typing, highlights, and comparison wipes are editorial animation.
 
 | Asset | Duration | Size | What it shows |
 | --- | ---: | ---: | --- |

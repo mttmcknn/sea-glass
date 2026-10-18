@@ -32,6 +32,7 @@ import dev.mttmcknn.seaglass.SeaGlassShape
 import dev.mttmcknn.seaglass.SeaGlassStyle
 import dev.mttmcknn.seaglass.SeaGlassSurface
 import dev.mttmcknn.seaglass.seaGlass
+import java.awt.EventQueue
 import kotlin.coroutines.CoroutineContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,8 +44,8 @@ import kotlin.test.fail
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.skia.Bitmap
 
@@ -241,14 +242,7 @@ class LiveMaterialRendererUpdateTest {
     }
 
     private fun TestScope.deliverPendingChanges() {
-        // ImageComposeScene has no platform frame host to deliver global snapshot
-        // writes made by the worker's UI continuation. Drain that continuation,
-        // apply its snapshot changes, then run any dispatched draw invalidations.
-        // This does not force a redraw: the production snapshot read must observe
-        // completion and invalidate the scene for the next render itself.
-        runCurrent()
-        Snapshot.sendApplyNotifications()
-        runCurrent()
+        deliverPendingChanges(testScheduler)
     }
 
     private class Build(val key: LiveMaterialGeometryKey) {
@@ -283,6 +277,7 @@ class LiveMaterialRendererUpdateTest {
         var contour: Path? = null
             private set
         private val renderer = checkNotNull(LiveMaterialRenderer.create(updates))
+        private val scheduler = checkNotNull(context[TestCoroutineScheduler])
         private val scene = ImageComposeScene(width = 320, height = 224, density = Density(1f), coroutineContext = context)
         private var frameTime = 0L
 
@@ -311,11 +306,16 @@ class LiveMaterialRendererUpdateTest {
             }
         }
 
-        fun render(): ByteArray = scene.render(frameTime.also { frameTime += 16_666_667L }).use { image ->
-            Bitmap().use { bitmap ->
-                check(bitmap.allocN32Pixels(image.width, image.height))
-                check(image.readPixels(bitmap))
-                checkNotNull(bitmap.readPixels())
+        fun render(): ByteArray {
+            // Deliver caller state writes as well as worker completions before
+            // this one requested frame; rendering alone is not an AWT barrier.
+            deliverPendingChanges(scheduler)
+            return scene.render(frameTime.also { frameTime += 16_666_667L }).use { image ->
+                Bitmap().use { bitmap ->
+                    check(bitmap.allocN32Pixels(image.width, image.height))
+                    check(image.readPixels(bitmap))
+                    checkNotNull(bitmap.readPixels())
+                }
             }
         }
 
@@ -337,6 +337,23 @@ class LiveMaterialRendererUpdateTest {
 
     companion object {
         private val Palette = RenderPalette(0xFFC0DED0.toInt(), 0xFFE6FFF0.toInt(), 0xFF396C5A.toInt())
+
+        private fun deliverPendingChanges(scheduler: TestCoroutineScheduler) {
+            scheduler.runCurrent()
+            // Desktop Compose's GlobalSnapshotManager uses the AWT event thread
+            // even when scene coroutines use our test scheduler. Wait behind any
+            // in-flight global apply notification, then flush remaining writes on
+            // that same dispatcher before capturing the scene. A notification on
+            // the test thread alone can race an observer already running on AWT.
+            if (EventQueue.isDispatchThread()) {
+                Snapshot.sendApplyNotifications()
+            } else {
+                EventQueue.invokeAndWait { Snapshot.sendApplyNotifications() }
+            }
+            scheduler.runCurrent()
+            // No forced draw or extra frame: production snapshot observation
+            // must still invalidate the material and content clip by itself.
+        }
 
         private fun assertExactPixelsEqual(expected: ByteArray, actual: ByteArray, message: String = "Pixel buffers must be identical") {
             if (expected.contentEquals(actual)) return

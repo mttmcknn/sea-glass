@@ -1,0 +1,73 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+Calculating task graph as no cached configuration is available for tasks: :desktopApp:verifyPlayground
+> Task :sea-glass:generateComposeResClass SKIPPED
+> Task :sea-glass:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :sample:generateComposeResClass SKIPPED
+> Task :sample:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :desktopApp:generateComposeResClass SKIPPED
+> Task :desktopApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sample:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sample:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :desktopApp:convertXmlValueResourcesForMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForSkikoMain NO-SOURCE
+> Task :desktopApp:copyNonXmlValueResourcesForMain NO-SOURCE
+> Task :sea-glass:convertXmlValueResourcesForSkikoMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sea-glass:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :sample:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :sample:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :desktopApp:prepareComposeResourcesTaskForMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForSkikoMain NO-SOURCE
+> Task :sample:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :sea-glass:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :sample:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :sample:generateResourceAccessorsForJvmMain SKIPPED
+> Task :sea-glass:kmpPartiallyResolvedDependenciesChecker
+> Task :sample:kmpPartiallyResolvedDependenciesChecker
+> Task :sample:generateResourceAccessorsForCommonMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForJvmMain SKIPPED
+> Task :sea-glass:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sea-glass:generateResourceAccessorsForSkikoMain SKIPPED
+> Task :desktopApp:generateResourceAccessorsForMain SKIPPED
+> Task :sea-glass:generateResourceAccessorsForCommonMain SKIPPED
+> Task :sample:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sample:generateActualResourceCollectorsForJvmMain SKIPPED
+> Task :desktopApp:generateActualResourceCollectorsForMain SKIPPED
+> Task :sea-glass:generateActualResourceCollectorsForJvmMain SKIPPED
+> Task :sample:assembleJvmMainResources UP-TO-DATE
+> Task :desktopApp:assembleMainResources UP-TO-DATE
+> Task :sea-glass:assembleJvmMainResources UP-TO-DATE
+> Task :sample:jvmProcessResources UP-TO-DATE
+> Task :desktopApp:processResources UP-TO-DATE
+> Task :sea-glass:jvmProcessResources UP-TO-DATE
+> Task :sample:processJvmMainResources SKIPPED
+> Task :sea-glass:processJvmMainResources SKIPPED
+> Task :sea-glass:compileKotlinJvm UP-TO-DATE
+> Task :sea-glass:compileJvmMainJava NO-SOURCE
+> Task :sea-glass:jvmMainClasses UP-TO-DATE
+> Task :sea-glass:jvmJar UP-TO-DATE
+> Task :sample:compileKotlinJvm
+> Task :sample:compileJvmMainJava NO-SOURCE
+> Task :sample:jvmMainClasses
+> Task :sample:jvmJar UP-TO-DATE
+> Task :desktopApp:compileKotlin
+> Task :desktopApp:compileJava NO-SOURCE
+> Task :desktopApp:classes UP-TO-DATE
+
+> Task :desktopApp:verifyPlayground
+PASS: SeaGlassButton supports keyboard focus and activation, and disabled controls neither activate nor receive traversal focus.
+PASS: Controls scroll independently and Tumble updates the visible components.
+PASS: Material You recolors glass and restores the selected palette without changing the recipe or seed.
+PASS: 600 → 599 → 700 dp switches layout without losing the selected recipe.
+PASS: Keyboard preview entry/exit restores focus and preserves the selected scene, playback state, and recipe.
+PASS: Choosing a palette leaves Material You; Reset restores the default material and disables Material You.
+PASS: Components and Shape study retain the selected material color in preview; preview palette actions update the controls.
+PASS: Fieldnotes preserves saved state and working save/compose callbacks through preview transitions.
+
+BUILD SUCCESSFUL in 1m 49s
+14 actionable tasks: 5 executed, 9 up-to-date
+Configuration cache entry stored.

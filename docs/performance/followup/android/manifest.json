@@ -1,0 +1,198 @@
+{
+  "status": "completed",
+  "package": "dev.mttmcknn.seaglass.sample",
+  "viewport": {
+    "width": 1600,
+    "height": 2400,
+    "dpi": 320
+  },
+  "apks": {
+    "baseline": {
+      "path": "/Users/mmckenna/Documents/Codex/2026-10-17/task-2/evidence/gc-followup/baseline/app.apk",
+      "bytes": 1332006,
+      "sha256": "50b8ba535b5d7d0b222025d7d447973dd4943a64aabf7ccccf5added3debcd7f"
+    },
+    "checkpoint": {
+      "path": "/Users/mmckenna/Documents/Codex/2026-10-17/task-2/evidence/gc-followup/checkpoint/app.apk",
+      "bytes": 1332006,
+      "sha256": "79e267aec00f3cfa223e86f3926c7d30479c79f7e3021ee0a39f63a7cf95285a"
+    },
+    "performance": {
+      "path": "/Users/mmckenna/Documents/Codex/2026-10-17/task-2/evidence/final-followup/performance/app.apk",
+      "bytes": 1332006,
+      "sha256": "090c7f2e2500a413c37c100a8a7a2736661258448cf1a036bef617126a904e08"
+    }
+  },
+  "blocks": [
+    {
+      "label": "B1",
+      "variant": "baseline",
+      "round": 1,
+      "directory": "blocks/baseline-block-1",
+      "warmup": "baseline-warmup-1",
+      "timed": [
+        "baseline-tumble-1",
+        "baseline-tumble-2"
+      ],
+      "diagnostics": [
+        "baseline-idle-1",
+        "baseline-count-1"
+      ],
+      "startedEpochSeconds": 1792265745,
+      "completedEpochSeconds": 1792265790,
+      "pid": "27797",
+      "completeCaptures": 5
+    },
+    {
+      "label": "C1",
+      "variant": "checkpoint",
+      "round": 1,
+      "directory": "blocks/checkpoint-block-1",
+      "warmup": "checkpoint-warmup-1",
+      "timed": [
+        "checkpoint-tumble-1",
+        "checkpoint-tumble-2"
+      ],
+      "diagnostics": [
+        "checkpoint-idle-1",
+        "checkpoint-count-1"
+      ],
+      "startedEpochSeconds": 1792265792,
+      "completedEpochSeconds": 1792265837,
+      "pid": "28381",
+      "completeCaptures": 5
+    },
+    {
+      "label": "F1",
+      "variant": "performance",
+      "round": 1,
+      "directory": "blocks/performance-block-1",
+      "warmup": "performance-warmup-1",
+      "timed": [
+        "performance-tumble-1",
+        "performance-tumble-2"
+      ],
+      "diagnostics": [
+        "performance-idle-1",
+        "performance-count-1"
+      ],
+      "startedEpochSeconds": 1792265839,
+      "completedEpochSeconds": 1792265884,
+      "pid": "28787",
+      "completeCaptures": 5
+    },
+    {
+      "label": "F2",
+      "variant": "performance",
+      "round": 2,
+      "directory": "blocks/performance-block-2",
+      "warmup": "performance-warmup-2",
+      "timed": [
+        "performance-tumble-3",
+        "performance-tumble-4"
+      ],
+      "diagnostics": [],
+      "startedEpochSeconds": 1792265885,
+      "completedEpochSeconds": 1792265912,
+      "pid": "29150",
+      "completeCaptures": 3
+    },
+    {
+      "label": "C2",
+      "variant": "checkpoint",
+      "round": 2,
+      "directory": "blocks/checkpoint-block-2",
+      "warmup": "checkpoint-warmup-2",
+      "timed": [
+        "checkpoint-tumble-3",
+        "checkpoint-tumble-4"
+      ],
+      "diagnostics": [],
+      "startedEpochSeconds": 1792265914,
+      "completedEpochSeconds": 1792265940,
+      "pid": "29399",
+      "completeCaptures": 3
+    },
+    {
+      "label": "B2",
+      "variant": "baseline",
+      "round": 2,
+      "directory": "blocks/baseline-block-2",
+      "warmup": "baseline-warmup-2",
+      "timed": [
+        "baseline-tumble-3",
+        "baseline-tumble-4"
+      ],
+      "diagnostics": [],
+      "startedEpochSeconds": 1792265942,
+      "completedEpochSeconds": 1792265969,
+      "pid": "29661",
+      "completeCaptures": 3
+    }
+  ],
+  "helpers": {
+    "capture.sh": "299d93a8403a6ee71d766a9f6ff15d218acdd25e6d7a8b6cce150863b17a3684",
+    "capture-block.sh": "e99cca54e03967827d0c6099d0b00029c2afa9363881f67162c94abe0aabb454",
+    "capture-cold.sh": "fc506a807a693b7190aa9c9b0c23c6ea34a8f3c7f5ca0ac22c897be8d45aa48d",
+    "config.pbtxt": "d648794fb7cca76929d9ace4fa783538158521c4bd4be587944298866cf713c2"
+  },
+  "processProtocol": "Install frozen APK; speed AOT; separate shell am force-stop and am start -W calls for each later block; initial block already freshly launched. Each capture resets and settles for one second; no additional two-second launch wait was used.",
+  "traceBasename": "{variant}-{workload}-{run}.perfetto-trace inside each raw block; staging adds seaglass- prefix.",
+  "excluded": [
+    "incomplete-session"
+  ],
+  "timing": "No host analysis/build work during capture. Counting separate and last in each first variant block.",
+  "optionalColdProtocol": {
+    "directory": "cold",
+    "variants": [
+      "baseline",
+      "performance"
+    ],
+    "runsPerVariant": 3,
+    "plannedOrder": [
+      "baseline-cold-1",
+      "performance-cold-1",
+      "performance-cold-2",
+      "baseline-cold-2",
+      "baseline-cold-3",
+      "performance-cold-3"
+    ],
+    "protocol": "Install and speed AOT each capture; force-stop; start six-second trace; am start -W; sleep six seconds; snapshots.",
+    "validation": "Separate protocol; main block completion validation does not assert cold captures exist.",
+    "limitation": "Fresh app process; shader-driver and filesystem caches may be warm."
+  },
+  "session": {
+    "deviceId": "056baaec-c2b1-4288-b3ae-84732ad5f5e0",
+    "deviceStartedUtc": "2026-10-17T19:35:04.459Z",
+    "hostOrchestrationElapsedSeconds": 224.221,
+    "hostElapsedSource": "Reported by root capturing agent; excludes emulator startup.",
+    "rawFirstBlockStartEpochSeconds": 1792265745,
+    "rawLastBlockCompleteEpochSeconds": 1792265969,
+    "rawBlockSpanSeconds": 224,
+    "validatedBlocks": 6,
+    "validatedCaptures": 24,
+    "distinctProcessCount": 6,
+    "evidenceType": "Android emulator; not physical Android"
+  },
+  "visualComparison": {
+    "path": "visual-comparison.json",
+    "scope": "Baseline vs performance reset screenshots; crop excludes system bars.",
+    "result": {
+      "crop": [
+        0,
+        144,
+        1600,
+        2304
+      ],
+      "dimensions": [
+        1600,
+        2400
+      ],
+      "channels": 4,
+      "changed_pixels": 0,
+      "exact": true,
+      "maximum_channel_difference": 0,
+      "mean_absolute_channel_difference": 0.0
+    }
+  }
+}

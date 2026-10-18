@@ -2,27 +2,25 @@ package dev.mttmcknn.seaglass.internal
 
 import android.annotation.TargetApi
 import android.graphics.Bitmap
-import android.util.Half
-import java.nio.ShortBuffer
+import java.nio.ByteBuffer
 import kotlin.math.min
 
 /**
- * One shader's F16 packing scratch, confined to its drawing thread. A synchronous
- * copy gives every upload its own bitmap; only the staging array is reused.
+ * Upload immutable F16 bytes directly when the bitmap has tightly packed rows.
+ * Only padded rows need shader-owned, bounded scratch. The synchronous bitmap
+ * copy gives every upload independent storage, including earlier display lists.
  */
 @TargetApi(26)
 internal class AndroidFloatTextureUploader(private val maxScratchBytes: Int = 2 * 1024 * 1024) {
     init { require(maxScratchBytes >= 0) }
 
-    private class Scratch(shortCount: Int) {
-        val channels = ShortArray(shortCount)
-        // A wrapped ShortArray uses the device's native byte order, matching the
-        // previous native-order ByteBuffer.putShort packing exactly.
-        val buffer: ShortBuffer = ShortBuffer.wrap(channels)
+    private class Scratch(byteCount: Int) {
+        val bytes = ByteArray(byteCount)
+        val buffer: ByteBuffer = ByteBuffer.wrap(bytes)
     }
 
     private var scratch: Scratch? = null
-    internal val retainedScratchByteCount: Int get() = (scratch?.channels?.size ?: 0) * 2
+    internal val retainedScratchByteCount: Int get() = scratch?.bytes?.size ?: 0
     internal var scratchAllocationCount: Int = 0
         private set
 
@@ -36,32 +34,33 @@ internal class AndroidFloatTextureUploader(private val maxScratchBytes: Int = 2 
     }
 
     /** Returned storage is valid only until the next pack or clear on this instance. */
-    internal fun pack(texture: NativeFloatTexture, rowBytes: Int, byteCount: Int): ShortBuffer {
-        val channelsPerRow = texture.width * 4
-        require(rowBytes >= channelsPerRow.toLong() * 2L && rowBytes % 2 == 0)
-        require(byteCount.toLong() >= (texture.height - 1L) * rowBytes + channelsPerRow * 2L && byteCount % 2 == 0)
+    internal fun pack(texture: NativeFloatTexture, rowBytes: Int, byteCount: Int): ByteBuffer {
+        val packedRowBytes = texture.width * 8
+        require(rowBytes >= packedRowBytes.toLong() && rowBytes % 2 == 0)
+        require(byteCount.toLong() >= (texture.height - 1L) * rowBytes + packedRowBytes && byteCount % 2 == 0)
         require(byteCount.toLong() <= texture.height.toLong() * rowBytes)
-        val shortCount = byteCount / 2
-        val storage = scratch?.takeIf { it.channels.size >= shortCount } ?: Scratch(shortCount).also {
+        // Supported Android ABIs are little-endian, matching the canonical bytes.
+        // This buffer view is fresh because copyPixelsFromBuffer advances it.
+        if (rowBytes == packedRowBytes && byteCount == texture.rgbaF16.size) {
+            return ByteBuffer.wrap(texture.rgbaF16)
+        }
+        val storage = scratch?.takeIf { it.bytes.size >= byteCount } ?: Scratch(byteCount).also {
             scratchAllocationCount++
             // A one-off oversized input must not enlarge or evict the bounded
             // buffer. Its temporary storage can be collected after this copy.
             if (byteCount <= maxScratchBytes) scratch = it
         }
-        val rowShorts = rowBytes / 2
         for (row in 0 until texture.height) {
-            val source = row * channelsPerRow
-            val destination = row * rowShorts
-            for (channel in 0 until channelsPerRow) {
-                storage.channels[destination + channel] = Half.toHalf(texture.rgba[source + channel])
-            }
+            val source = row * packedRowBytes
+            val destination = row * rowBytes
+            texture.rgbaF16.copyInto(storage.bytes, destination, source, source + packedRowBytes)
             // A fresh direct buffer was zero-initialized, including allocator
             // padding. Preserve those bytes when reusing a larger staging array.
-            storage.channels.fill(0, destination + channelsPerRow, min(destination + rowShorts, shortCount))
+            storage.bytes.fill(0, destination + packedRowBytes, min(destination + rowBytes, byteCount))
         }
         return storage.buffer.apply {
             clear()
-            limit(shortCount)
+            limit(byteCount)
         }
     }
 

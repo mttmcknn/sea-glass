@@ -19,9 +19,13 @@ internal data class LiveMaterialGeometryKey(
  * A drawing thread never waits for another drawing thread: a contended cache is
  * bypassed. Builders run outside the lock. Once published, geometry arrays and
  * contour objects must remain read-only, including while native inputs upload.
+ *
+ * First use enters probation immediately. A cache hit earns protection against
+ * one-off scans; protection has a 75% target, while both queues share the same
+ * total byte and entry limits. Large entries can borrow protected capacity.
  */
 internal class LiveMaterialGeometryCache(
-    private val maxBytes: Long = 8L * 1024 * 1024,
+    private val maxBytes: Long = 4L * 1024 * 1024,
     private val maxEntries: Int = 32,
 ) {
     init {
@@ -30,16 +34,20 @@ internal class LiveMaterialGeometryCache(
     }
 
     private val mutex = Mutex()
-    private val entries = LinkedHashMap<LiveMaterialGeometryKey, Entry>()
+    private val probation = LinkedHashMap<LiveMaterialGeometryKey, Entry>()
+    private val protectedEntries = LinkedHashMap<LiveMaterialGeometryKey, Entry>()
+    // Divide before multiplying to avoid overflow for caller-supplied budgets.
+    private val protectedMaxBytes = maxBytes / 4 * 3 + maxBytes % 4 * 3 / 4
+    private val protectedMaxEntries = (maxEntries.toLong() * 3 / 4).toInt()
     private var retainedBytes = 0L
+    private var protectedBytes = 0L
     private var generation = 0L
 
     /** A draw may reuse a ready result, but must never wait for a worker. */
     internal fun getIfPresent(key: LiveMaterialGeometryKey): LiveMaterialGeometry? {
         if (!mutex.tryLock()) return null
         try {
-            val entry = entries.remove(key) ?: return null
-            entries[key] = entry
+            val entry = getAndProtect(key) ?: return null
             return entry.geometry
         } finally {
             mutex.unlock()
@@ -50,8 +58,7 @@ internal class LiveMaterialGeometryCache(
         if (maxEntries == 0 || maxBytes == 0L || !mutex.tryLock()) return build()
         val generationAtMiss: Long
         try {
-            entries.remove(key)?.let { entry ->
-                entries[key] = entry
+            getAndProtect(key)?.let { entry ->
                 return entry.geometry
             }
             generationAtMiss = generation
@@ -65,15 +72,23 @@ internal class LiveMaterialGeometryCache(
         try {
             // clear() also invalidates misses that were already building.
             if (generation != generationAtMiss) return geometry
-            entries.remove(key)?.let { entry ->
-                entries[key] = entry
+            getAndProtect(key)?.let { entry ->
                 return entry.geometry
             }
-            while (entries.size >= maxEntries || retainedBytes > maxBytes - bytes) {
-                val oldest = entries.keys.first()
-                retainedBytes -= checkNotNull(entries.remove(oldest)).bytes
+            // Make room before insertion, so even an entry larger than the
+            // probation allowance is retained on its first use. Protection is
+            // a preference, not another allocation or a hard admission limit.
+            while (entryCount >= maxEntries || retainedBytes > maxBytes - bytes) {
+                val evicted = if (probation.isNotEmpty()) {
+                    checkNotNull(probation.remove(probation.keys.first()))
+                } else {
+                    checkNotNull(protectedEntries.remove(protectedEntries.keys.first())).also {
+                        protectedBytes -= it.bytes
+                    }
+                }
+                retainedBytes -= evicted.bytes
             }
-            entries[key] = Entry(geometry, bytes)
+            probation[key] = Entry(geometry, bytes)
             retainedBytes += bytes
             return geometry
         } finally {
@@ -86,8 +101,10 @@ internal class LiveMaterialGeometryCache(
         if (!mutex.tryLock()) return false
         try {
             generation++
-            entries.clear()
+            probation.clear()
+            protectedEntries.clear()
             retainedBytes = 0L
+            protectedBytes = 0L
             return true
         } finally {
             mutex.unlock()
@@ -98,10 +115,30 @@ internal class LiveMaterialGeometryCache(
     internal fun snapshot(): GeometryCacheSnapshot? {
         if (!mutex.tryLock()) return null
         try {
-            return GeometryCacheSnapshot(entries.size, retainedBytes)
+            return GeometryCacheSnapshot(entryCount, retainedBytes)
         } finally {
             mutex.unlock()
         }
+    }
+
+    private val entryCount: Int get() = probation.size + protectedEntries.size
+
+    /** Called with the cache lock held; moving an entry never changes total bytes. */
+    private fun getAndProtect(key: LiveMaterialGeometryKey): Entry? {
+        protectedEntries.remove(key)?.let { entry ->
+            protectedEntries[key] = entry
+            return entry
+        }
+        val entry = probation.remove(key) ?: return null
+        protectedEntries[key] = entry
+        protectedBytes += entry.bytes
+        while (protectedEntries.size > protectedMaxEntries || protectedBytes > protectedMaxBytes) {
+            val oldest = protectedEntries.keys.first()
+            val demoted = checkNotNull(protectedEntries.remove(oldest))
+            protectedBytes -= demoted.bytes
+            probation[oldest] = demoted
+        }
+        return entry
     }
 
     private data class Entry(val geometry: LiveMaterialGeometry, val bytes: Long)
@@ -113,7 +150,7 @@ internal data class GeometryCacheSnapshot(val entries: Int, val retainedBytes: L
 // Count all four points per segment even if a producer shares endpoints.
 // This budget excludes each renderer's GPU inputs.
 internal fun estimatedGeometryBytes(geometry: LiveMaterialGeometry): Long =
-    (geometry.geometryA.rgba.size.toLong() + geometry.geometryB.rgba.size + geometry.gradientScales.size) * 4L +
+    geometry.geometryA.rgbaF16.size.toLong() + geometry.geometryB.rgbaF16.size + geometry.gradientScales.size * 4L +
         geometry.segments.size * 192L + 512L
 
 internal val sharedLiveMaterialGeometryCache = LiveMaterialGeometryCache()

@@ -1,0 +1,17 @@
+{
+  "crop": [
+    0,
+    144,
+    1600,
+    2304
+  ],
+  "dimensions": [
+    1600,
+    2400
+  ],
+  "channels": 4,
+  "changed_pixels": 0,
+  "exact": true,
+  "maximum_channel_difference": 0,
+  "mean_absolute_channel_difference": 0.0
+}

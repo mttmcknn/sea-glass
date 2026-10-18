@@ -1,0 +1,107 @@
+[
+  {
+    "path": "evidence/references/capsule-0.rgba",
+    "bytes": 2080000,
+    "sha256": "6fab4deb1fc54c15b5c7c292bfa35685413f6593512ca89d6828c1a058cafeb6"
+  },
+  {
+    "path": "evidence/references/capsule-1.rgba",
+    "bytes": 2080000,
+    "sha256": "bcd9cb919a6014558774283cafd64a40d9825ac40909ccc76cf0652389636fe8"
+  },
+  {
+    "path": "evidence/references/capsule-2.rgba",
+    "bytes": 2080000,
+    "sha256": "2829d41a77399800f0f9f568ed7695cd401e886717d85a3e42adb44191c069fa"
+  },
+  {
+    "path": "evidence/references/chat-0.rgba",
+    "bytes": 2080000,
+    "sha256": "4e73484334568d64ace93a0a14afbe6934127d5629a0e873b270f697d0436e47"
+  },
+  {
+    "path": "evidence/references/chat-1.rgba",
+    "bytes": 2080000,
+    "sha256": "0698f68c640abc63be673044a938b750227f14cf2ddaaf1f7ae2df63d3e2d257"
+  },
+  {
+    "path": "evidence/references/chat-2.rgba",
+    "bytes": 2080000,
+    "sha256": "2ca586e5e7ef3931a17a685e12878ac2a483c8275eb03809109f096e00175afe"
+  },
+  {
+    "path": "evidence/references/disc-0.rgba",
+    "bytes": 2080000,
+    "sha256": "9b6ec44d40103776ae854a3d75c041b80a2f8a4a4babd714675024b18007ff12"
+  },
+  {
+    "path": "evidence/references/disc-1.rgba",
+    "bytes": 2080000,
+    "sha256": "6a5be05a964e773ced11711057c97318c12633c1de2de5bc30b31f13abf39018"
+  },
+  {
+    "path": "evidence/references/disc-2.rgba",
+    "bytes": 2080000,
+    "sha256": "5c570814eade48915c2a877b99ed183de707bf5b2039d3628c8bfc278a997ad3"
+  },
+  {
+    "path": "evidence/references/email-0.rgba",
+    "bytes": 2080000,
+    "sha256": "500dee20bb05c91df60dcb1b207ad3ffe109652303ec37063ad23da9aa169541"
+  },
+  {
+    "path": "evidence/references/email-1.rgba",
+    "bytes": 2080000,
+    "sha256": "9a13205181b71974cf78ebd4ec92b965a66ded7ffc82a61a1b67a06236d32886"
+  },
+  {
+    "path": "evidence/references/email-2.rgba",
+    "bytes": 2080000,
+    "sha256": "91d84dae7e145c377e28439313416605f0379bdbf8b465c85842bd46c7c52983"
+  },
+  {
+    "path": "evidence/references/music-0.rgba",
+    "bytes": 2080000,
+    "sha256": "8a874100625602f35948d707bb5487d202f2bffa9f503ca9b0d13a3249ed2b5b"
+  },
+  {
+    "path": "evidence/references/music-1.rgba",
+    "bytes": 2080000,
+    "sha256": "b74ba59350c592021c24104e9ebba00d09a335d2edcb110abdb5bc7f8b039c0c"
+  },
+  {
+    "path": "evidence/references/music-2.rgba",
+    "bytes": 2080000,
+    "sha256": "4a217602e52ade3fca3b1eb85b196f0e9d0f89d35af4129119b4ef3effead1d2"
+  },
+  {
+    "path": "evidence/references/phone-0.rgba",
+    "bytes": 2080000,
+    "sha256": "efba08645456a57f1e5ab1f3baa9ce6862f2b0caba01ea5dba6b79cd2a06c79b"
+  },
+  {
+    "path": "evidence/references/phone-1.rgba",
+    "bytes": 2080000,
+    "sha256": "a41d498e6bd9a60700e2e3cfad69a74814b66232a872894299b2c4ad0243e4e2"
+  },
+  {
+    "path": "evidence/references/phone-2.rgba",
+    "bytes": 2080000,
+    "sha256": "796f2fdbaf626a5eb311e9eb32798a354a6f5a6278148ca5dacb91722b54df30"
+  },
+  {
+    "path": "evidence/references/toolbar-0.rgba",
+    "bytes": 2080000,
+    "sha256": "578f1e8f0f2ebe712619fd49184654441bdc33e0099f74f502c681f22a6158cc"
+  },
+  {
+    "path": "evidence/references/toolbar-1.rgba",
+    "bytes": 2080000,
+    "sha256": "8fa1639dd5512f339847df20c593e3bd985c55502bedf0c02ecf5b1751331ddf"
+  },
+  {
+    "path": "evidence/references/toolbar-2.rgba",
+    "bytes": 2080000,
+    "sha256": "1493a2d98cd6c405b149f4d441ad986fe8a6ec4f2efe06eec2adcb39892ad2d3"
+  }
+]

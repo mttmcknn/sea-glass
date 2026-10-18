@@ -1,0 +1,39 @@
+diff --git a/sea-glass/src/androidDeviceTest/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploaderTest.kt b/sea-glass/src/androidDeviceTest/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploaderTest.kt
+index 57e39fe..c0c77db 100644
+--- a/sea-glass/src/androidDeviceTest/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploaderTest.kt
++++ b/sea-glass/src/androidDeviceTest/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploaderTest.kt
+@@ -8,6 +8,7 @@ import java.nio.ByteOrder
+ import kotlin.test.Test
+ import kotlin.test.assertContentEquals
+ import kotlin.test.assertEquals
++import kotlin.test.assertFalse
+ import kotlin.test.assertNotSame
+ import kotlin.test.assertTrue
+
+@@ -29,6 +30,7 @@ class AndroidFloatTextureUploaderTest {
+                     val expectedBytes = bytes(expected)
+                     retained += actual to expectedBytes
+                     assertEquals(Bitmap.Config.RGBA_F16, actual.config)
++                    assertFalse(actual.isMutable, "Published numeric input should be immutable")
+                     assertEquals(expected.isPremultiplied, actual.isPremultiplied)
+                     assertEquals(expected.colorSpace, actual.colorSpace)
+                     assertEquals(expected.rowBytes, actual.rowBytes)
+diff --git a/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploader.kt b/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploader.kt
+index ae6073e..1636d9b 100644
+--- a/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploader.kt
++++ b/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/AndroidFloatTextureUploader.kt
+@@ -30,7 +30,13 @@ internal class AndroidFloatTextureUploader(private val maxScratchBytes: Int = 2
+         // This copies bytes synchronously without color conversion. The returned
+         // bitmap never aliases the staging array, which may serve the next input.
+         bitmap.copyPixelsFromBuffer(pack(texture, bitmap.rowBytes, bitmap.byteCount))
+-        return bitmap
++        // Experiment: expose a frozen input to the graphics backend. This
++        // staging bitmap has never been published to a shader or display list.
++        return try {
++            checkNotNull(bitmap.copy(Bitmap.Config.RGBA_F16, false))
++        } finally {
++            bitmap.recycle()
++        }
+     }
+
+     /** Returned storage is valid only until the next pack or clear on this instance. */

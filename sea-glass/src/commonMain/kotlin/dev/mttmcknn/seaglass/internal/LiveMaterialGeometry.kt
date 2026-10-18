@@ -92,19 +92,19 @@ internal fun makeLiveMaterialGeometry(
     // conversions, while using the precision available in Android RGBA_F16.
     val gradientScaleA = 0.49f / maxGradientA
     val gradientScaleB = 0.49f / maxGradientB
-    val a = FloatArray(width * height * 4)
-    val b = FloatArray(width * height * 4)
+    val a = ByteArray(width * height * 8)
+    val b = ByteArray(width * height * 8)
     for (i in field.alpha.indices) {
         if (i % 8192 == 0) cancellationProbe()
-        val channel = i * 4
-        a[channel] = field.profile[i].coerceIn(0f, 1f)
-        a[channel + 1] = (0.5f + field.gradX[i] * gradientScaleA).coerceIn(0f, 1f)
-        a[channel + 2] = (0.5f + field.gradY[i] * gradientScaleA).coerceIn(0f, 1f)
-        a[channel + 3] = 1f
-        b[channel] = field.roundProfile[i].coerceIn(0f, 1f)
-        b[channel + 1] = (0.5f + field.roundGradX[i] * gradientScaleB).coerceIn(0f, 1f)
-        b[channel + 2] = (0.5f + field.roundGradY[i] * gradientScaleB).coerceIn(0f, 1f)
-        b[channel + 3] = 1f
+        val offset = i * 8
+        a.putFloat16(offset, field.profile[i].coerceIn(0f, 1f))
+        a.putFloat16(offset + 2, (0.5f + field.gradX[i] * gradientScaleA).coerceIn(0f, 1f))
+        a.putFloat16(offset + 4, (0.5f + field.gradY[i] * gradientScaleA).coerceIn(0f, 1f))
+        a[offset + 7] = 0x3c // Opaque alpha: binary16 1.0 = 0x3c00.
+        b.putFloat16(offset, field.roundProfile[i].coerceIn(0f, 1f))
+        b.putFloat16(offset + 2, (0.5f + field.roundGradX[i] * gradientScaleB).coerceIn(0f, 1f))
+        b.putFloat16(offset + 4, (0.5f + field.roundGradY[i] * gradientScaleB).coerceIn(0f, 1f))
+        b[offset + 7] = 0x3c
     }
     return LiveMaterialGeometry(
         segments = field.segments,
