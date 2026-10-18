@@ -39,6 +39,18 @@ tasks.register<JavaExec>("verifyPlayground") {
     systemProperty("java.awt.headless", "true")
 }
 
+tasks.register<JavaExec>("verifyLongList") {
+    group = "verification"
+    description = "Verify lazy list scrolling, revisit state and accessible actions; export exact-image checkpoints."
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass = "dev.mttmcknn.seaglass.desktop.VerifyLongListKt"
+    systemProperty("java.awt.headless", "true")
+    args(providers.gradleProperty("longListOutput").getOrElse(
+        layout.buildDirectory.dir("long-list-verification").get().asFile.absolutePath,
+    ))
+    providers.gradleProperty("longListReferences").orNull?.let { args(it) }
+}
+
 tasks.register<JavaExec>("benchmarkPlayground") {
     group = "verification"
     description = "Measure desktop Compose slider bursts and cold examples until their exact final material pixels appear."
