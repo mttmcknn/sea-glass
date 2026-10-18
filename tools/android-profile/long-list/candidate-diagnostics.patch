@@ -1,0 +1,308 @@
+--- a/androidApp/src/main/kotlin/dev/mttmcknn/seaglass/android/MainActivity.kt
++++ b/androidApp/src/main/kotlin/dev/mttmcknn/seaglass/android/MainActivity.kt
+@@ -3,14 +3,100 @@
+ import android.graphics.Color
+ import android.os.Build
+ import android.os.Bundle
++import android.os.Debug
++import android.os.Process
++import android.os.SystemClock
++import org.json.JSONObject
++import java.io.FileDescriptor
++import java.io.PrintWriter
+ import androidx.activity.ComponentActivity
+ import androidx.activity.SystemBarStyle
+ import androidx.activity.compose.setContent
+ import androidx.activity.enableEdgeToEdge
+ import dev.mttmcknn.seaglass.rememberSeaGlassColorScheme
+ import dev.mttmcknn.seaglass.sample.SeaGlassPlayground
++import dev.mttmcknn.seaglass.sample.SeaGlassLongListDiagnostics
+
+ class MainActivity : ComponentActivity() {
++    // BEGIN temporary Sea Glass runtime diagnostics; remove before shipping.
++    // Reads only unless a separate allocation-counting command is requested.
++    @Suppress("DEPRECATION")
++    override fun dump(prefix: String, fd: FileDescriptor?, writer: PrintWriter, args: Array<out String>?) {
++        val command = args?.firstOrNull()
++        when (command) {
++            "sg-runtime-stats" -> Unit
++            "sg-start-counting" -> {
++                Debug.startAllocCounting()
++                Debug.resetAllCounts()
++                sgAllocationCountingRequested = true
++            }
++            "sg-stop-counting" -> {
++                Debug.stopAllocCounting()
++                sgAllocationCountingRequested = false
++            }
++            else -> {
++                super.dump(prefix, fd, writer, args)
++                return
++            }
++        }
++        // Capture all numeric values before constructing JSON. These getters and
++        // getRuntimeStats still have observer cost; measure paired idle dumps too.
++        val captureStartNs = SystemClock.elapsedRealtimeNanos()
++        val uptimeMs = SystemClock.uptimeMillis()
++        val pid = Process.myPid()
++        val processStartUptimeMs = Process.getStartUptimeMillis()
++        val processCpuTimeMs = Process.getElapsedCpuTime()
++        val runtime = Runtime.getRuntime()
++        val heapTotalBytes = runtime.totalMemory()
++        val heapFreeBytes = runtime.freeMemory()
++        val heapMaxBytes = runtime.maxMemory()
++        val nativeAllocatedBytes = Debug.getNativeHeapAllocatedSize()
++        val nativeSizeBytes = Debug.getNativeHeapSize()
++        val nativeFreeBytes = Debug.getNativeHeapFreeSize()
++        // Legacy counters may be unsupported or overflow; retain the raw values.
++        val legacyAllocCount = Debug.getGlobalAllocCount()
++        val legacyAllocBytes = Debug.getGlobalAllocSize()
++        val legacyGcCount = Debug.getGlobalGcInvocationCount()
++        val runtimeStats = Debug.getRuntimeStats()
++        val captureEndNs = SystemClock.elapsedRealtimeNanos()
++        val json = JSONObject()
++            .put("schemaVersion", 1)
++            .put("command", command)
++            .put("pid", pid)
++            .put("uptimeMs", uptimeMs)
++            .put("processStartUptimeMs", processStartUptimeMs)
++            .put("processCpuTimeMs", processCpuTimeMs)
++            .put("captureStartElapsedRealtimeNs", captureStartNs)
++            .put("captureEndElapsedRealtimeNs", captureEndNs)
++            .put("heapTotalBytes", heapTotalBytes)
++            .put("heapFreeBytes", heapFreeBytes)
++            .put("heapUsedBytes", heapTotalBytes - heapFreeBytes)
++            .put("heapMaxBytes", heapMaxBytes)
++            .put("nativeAllocatedBytes", nativeAllocatedBytes)
++            .put("nativeSizeBytes", nativeSizeBytes)
++            .put("nativeFreeBytes", nativeFreeBytes)
++            .put("allocationCountingRequested", sgAllocationCountingRequested)
++            .put("legacyGlobalAllocCount", legacyAllocCount)
++            .put("legacyGlobalAllocBytes", legacyAllocBytes)
++            .put("legacyGlobalGcInvocationCount", legacyGcCount)
++            .put("runtimeStats", JSONObject(runtimeStats))
++        val scroll = SeaGlassLongListDiagnostics.snapshot
++        json.put("scrollScene", JSONObject()
++            .put("datasetId", scroll.datasetId)
++            .put("active", scroll.active)
++            .put("firstVisibleItemIndex", scroll.firstVisibleItemIndex)
++            .put("firstVisibleItemScrollOffset", scroll.firstVisibleItemScrollOffset)
++            .put("visibleKeys", org.json.JSONArray(scroll.visibleKeys))
++            .put("isScrollInProgress", scroll.isScrollInProgress))
++        writer.println(prefix + "SEAGLASS_RUNTIME_STATS " + json.toString())
++    }
++
++    companion object {
++        // Tracks only requests through this diagnostic hook, not profiler state.
++        private var sgAllocationCountingRequested = false
++    }
++    // END temporary Sea Glass runtime diagnostics.
++
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         // The playground always draws a light canvas, even in system dark mode.
+--- a/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/MaterialTrace.android.kt
++++ b/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/MaterialTrace.android.kt
+@@ -8,6 +8,14 @@
+ internal actual fun beginMaterialTrace(name: String) = Trace.beginSection(name)
+ internal actual fun endMaterialTrace() = Trace.endSection()
+
++// TEMPORARY scroll-profile instrumentation. Names/formatting stay behind the trace gate.
++internal actual fun traceMaterialCounter(name: String, value: Long, ownerId: Int) {
++    if (Build.VERSION.SDK_INT >= 29 && Trace.isEnabled()) {
++        val counterName = if (ownerId == 0) "SeaGlass.$name" else "SeaGlass.$name:$ownerId"
++        Trace.setCounter(counterName, value)
++    }
++}
++
+ private val materialTraceIds = AtomicInteger()
+ internal actual fun nextMaterialTraceId(): Int = materialTraceIds.incrementAndGet()
+ internal actual fun traceMaterialRevision(stage: String, surfaceId: Int, revision: Long) {
+--- a/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/NativeMaterialShader.android.kt
++++ b/sea-glass/src/androidMain/kotlin/dev/mttmcknn/seaglass/internal/NativeMaterialShader.android.kt
+@@ -26,8 +26,13 @@
+         this.shader = this@AndroidMaterialShader.shader
+     }
+     private val inputs = mutableMapOf<String, BitmapShader>()
++    // TEMPORARY: numeric ownership only, never an extra bitmap/texture reference.
++    private val diagnosticInputBytes = mutableMapOf<String, Long>()
++    private val diagnosticId = nextMaterialTraceId()
+     private val uploader = AndroidFloatTextureUploader()
+     private var closed = false
++
++    init { traceMaterialRevision("NativeCreate", diagnosticId, 0L) }
+
+     override fun setFloatUniform(name: String, values: FloatArray) {
+         check(!closed)
+@@ -47,6 +52,11 @@
+         }
+         shader.setInputBuffer(name, input)
+         inputs[name] = input
++        diagnosticInputBytes[name] = bitmap.allocationByteCount.toLong()
++        traceMaterialRevision("NativeUpload", diagnosticId, bitmap.allocationByteCount.toLong())
++        traceMaterialCounter("NativeBoundInputCount", inputs.size.toLong(), diagnosticId)
++        traceMaterialCounter("NativeBoundInputBytes", diagnosticInputBytes.values.sum(), diagnosticId)
++        traceMaterialCounter("UploaderScratchBytes", uploader.retainedScratchByteCount.toLong(), diagnosticId)
+         // Do not recycle a replaced bitmap: a previously recorded display list
+         // may still reference its shader. Native reference/GC ownership is safe.
+     }
+@@ -62,6 +72,13 @@
+         paint.shader = null
+         inputs.clear()
+         uploader.clear()
++        diagnosticInputBytes.clear()
++        traceMaterialRevision("NativeClose", diagnosticId, 0L)
++        // Bound-input accounting ends with the owner. This is NOT a native-free
++        // event: RuntimeShader/display-list references may outlive this close.
++        traceMaterialCounter("NativeBoundInputCount", 0L, diagnosticId)
++        traceMaterialCounter("NativeBoundInputBytes", 0L, diagnosticId)
++        traceMaterialCounter("UploaderScratchBytes", 0L, diagnosticId)
+         // Dropping this instance releases RuntimeShader and its remaining child
+         // textures through the framework's native allocation ownership.
+     }
+--- a/sea-glass/src/commonMain/kotlin/dev/mttmcknn/seaglass/internal/LiveMaterialGeometryCache.kt
++++ b/sea-glass/src/commonMain/kotlin/dev/mttmcknn/seaglass/internal/LiveMaterialGeometryCache.kt
+@@ -45,9 +45,17 @@
+
+     /** A draw may reuse a ready result, but must never wait for a worker. */
+     internal fun getIfPresent(key: LiveMaterialGeometryKey): LiveMaterialGeometry? {
+-        if (!mutex.tryLock()) return null
++        if (!mutex.tryLock()) {
++            traceMaterialRevision("CacheBypassBusyGet", 0, 0L)
++            return null
++        }
+         try {
+-            val entry = getAndProtect(key) ?: return null
++            traceCacheState()
++            val entry = getAndProtect(key) ?: run {
++                traceMaterialRevision("CacheMissGet", 0, 0L)
++                return null
++            }
++            traceMaterialRevision("CacheHitGet", 0, 0L)
+             return entry.geometry
+         } finally {
+             mutex.unlock()
+@@ -55,12 +63,22 @@
+     }
+
+     internal fun geometryFor(key: LiveMaterialGeometryKey, build: () -> LiveMaterialGeometry): LiveMaterialGeometry {
+-        if (maxEntries == 0 || maxBytes == 0L || !mutex.tryLock()) return build()
++        if (maxEntries == 0 || maxBytes == 0L) {
++            traceMaterialRevision("CacheBypassDisabledGeometry", 0, 0L)
++            return build()
++        }
++        if (!mutex.tryLock()) {
++            traceMaterialRevision("CacheBypassBusyGeometry", 0, 0L)
++            return build()
++        }
+         val generationAtMiss: Long
+         try {
++            traceCacheState()
+             getAndProtect(key)?.let { entry ->
++                traceMaterialRevision("CacheHitGeometry", 0, 0L)
+                 return entry.geometry
+             }
++            traceMaterialRevision("CacheMissGeometry", 0, 0L)
+             generationAtMiss = generation
+         } finally {
+             mutex.unlock()
+@@ -68,11 +86,22 @@
+
+         val geometry = build()
+         val bytes = estimatedGeometryBytes(geometry)
+-        if (bytes > maxBytes || !mutex.tryLock()) return geometry
++        if (bytes > maxBytes) {
++            traceMaterialRevision("CacheSkipOversized", 0, bytes)
++            return geometry
++        }
++        if (!mutex.tryLock()) {
++            traceMaterialRevision("CacheSkipBusyStore", 0, bytes)
++            return geometry
++        }
+         try {
+             // clear() also invalidates misses that were already building.
+-            if (generation != generationAtMiss) return geometry
++            if (generation != generationAtMiss) {
++                traceMaterialRevision("CacheSkipClearedGeneration", 0, bytes)
++                return geometry
++            }
+             getAndProtect(key)?.let { entry ->
++                traceMaterialRevision("CacheConcurrentWinner", 0, bytes)
+                 return entry.geometry
+             }
+             // Make room before insertion, so even an entry larger than the
+@@ -87,9 +116,12 @@
+                     }
+                 }
+                 retainedBytes -= evicted.bytes
++                traceMaterialRevision("CacheEvict", 0, evicted.bytes)
+             }
+             probation[key] = Entry(geometry, bytes)
+             retainedBytes += bytes
++            traceMaterialRevision("CacheStore", 0, bytes)
++            traceCacheState()
+             return geometry
+         } finally {
+             mutex.unlock()
+@@ -105,6 +137,8 @@
+             protectedEntries.clear()
+             retainedBytes = 0L
+             protectedBytes = 0L
++            traceMaterialRevision("CacheClear", 0, 0L)
++            traceCacheState()
+             return true
+         } finally {
+             mutex.unlock()
+@@ -141,6 +175,12 @@
+         return entry
+     }
+
++    // Called only while this cache lock is held. No samples or keys are retained.
++    private fun traceCacheState() {
++        traceMaterialCounter("GeometryCacheEntries", entryCount.toLong())
++        traceMaterialCounter("GeometryCacheBytes", retainedBytes)
++    }
++
+     private data class Entry(val geometry: LiveMaterialGeometry, val bytes: Long)
+ }
+
+--- a/sea-glass/src/commonMain/kotlin/dev/mttmcknn/seaglass/internal/LiveMaterialRenderer.kt
++++ b/sea-glass/src/commonMain/kotlin/dev/mttmcknn/seaglass/internal/LiveMaterialRenderer.kt
+@@ -23,6 +23,10 @@
+     private var appliedRevision = 0L
+     private var tracedRevision = 0L
+     private val uniforms = LiveMaterialUniforms(shader)
++    // TEMPORARY: count a lifetime once even if an owner closes idempotently.
++    private var diagnosticClosed = false
++
++    init { traceMaterialRevision("RendererCreate", updates.traceId, 0L) }
+
+     /** The composable's LaunchedEffect owns this consumer and its cancellation. */
+     suspend fun prepareUpdates() = updates.run()
+@@ -107,6 +111,10 @@
+     }
+
+     fun close() {
++        if (!diagnosticClosed) {
++            diagnosticClosed = true
++            traceMaterialRevision("RendererClose", updates.traceId, 0L)
++        }
+         updates.close()
+         shader.close()
+     }
+--- a/sea-glass/src/commonMain/kotlin/dev/mttmcknn/seaglass/internal/MaterialTrace.kt
++++ b/sea-glass/src/commonMain/kotlin/dev/mttmcknn/seaglass/internal/MaterialTrace.kt
+@@ -16,3 +16,6 @@
+ /** Unique Android trace identity; no renderer state or logging outside tracing. */
+ internal expect fun nextMaterialTraceId(): Int
+ internal expect fun traceMaterialRevision(stage: String, surfaceId: Int, revision: Long)
++
++// TEMPORARY scroll-profile instrumentation; ownerId 0 denotes a shared cache.
++internal expect fun traceMaterialCounter(name: String, value: Long, ownerId: Int = 0)
+--- a/sea-glass/src/skikoMain/kotlin/dev/mttmcknn/seaglass/internal/MaterialTrace.skiko.kt
++++ b/sea-glass/src/skikoMain/kotlin/dev/mttmcknn/seaglass/internal/MaterialTrace.skiko.kt
+@@ -4,3 +4,4 @@
+ internal actual fun endMaterialTrace() = Unit
+ internal actual fun nextMaterialTraceId(): Int = 0
+ internal actual fun traceMaterialRevision(stage: String, surfaceId: Int, revision: Long) = Unit
++internal actual fun traceMaterialCounter(name: String, value: Long, ownerId: Int) = Unit

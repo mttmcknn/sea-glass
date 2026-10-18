@@ -1,0 +1,23 @@
+{
+  "dataset_id": null,
+  "viewport_width": 1080,
+  "viewport_height": 2400,
+  "density_dpi": 420,
+  "coordinates_verified": false,
+  "swipe_x": null,
+  "swipe_high_y": null,
+  "swipe_low_y": null,
+  "drag_count": 4,
+  "drag_duration_ms": 400,
+  "drag_gap_seconds": 0.2,
+  "fling_count": 2,
+  "fling_duration_ms": 120,
+  "fling_gap_seconds": 0.8,
+  "minimum_settle_seconds": 2,
+  "device_id": null,
+  "device_started_utc": null,
+  "device_model": null,
+  "device_fingerprint": null,
+  "emulator": true,
+  "notes": "Template only. Verify actual scene/viewport/coordinates before use."
+}
